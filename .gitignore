@@ -1,0 +1,6 @@
+out/
+templates/
+git/
+mono-glue/
+release-*
+
