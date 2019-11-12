@@ -9,8 +9,21 @@ if [ -z $1 ]; then
   exit 1
 fi
 
+# For signing keystore and password.
+source ./config.sh
+
+can_sign=0
+if [ ! -z "${SIGN_KEYSTORE}" ] && [ ! -z "${SIGN_PASSWORD}" ]; then
+  can_sign=1
+else
+  echo "Disabling binary signing as config.sh does not define the required data."
+fi
+
 function sign {
-  ./osslsigncode -pkcs12 REDACTED.pkcs12 -pass "REDACTED" -n "Godot Game Engine" -i "https://godotengine.org" -t http://timestamp.comodoca.com -in $1 -out $1-signed
+  if [ $can_sign == 0 ]; then
+    return
+  fi
+  ./osslsigncode -pkcs12 ${SIGN_KEYSTORE} -pass "${SIGN_PASSWORD}" -n "${SIGN_NAME}" -i "${SIGN_URL}" -t http://timestamp.comodoca.com -in $1 -out $1-signed
   mv $1-signed $1
 }
 

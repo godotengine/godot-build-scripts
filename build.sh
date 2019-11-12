@@ -4,7 +4,14 @@ set -e
 
 OPTIND=1
 
-registry="registry.prehensile-tales.com"
+# For default registry.
+if [ ! -e config.sh ]; then
+  echo "No config.sh, copying default values from config.sh.in."
+  cp config.sh.in config.sh
+fi
+source ./config.sh
+
+registry="${REGISTRY}"
 username=""
 password=""
 godot_version=""

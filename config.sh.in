@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Configuration file for user-specific details.
+# This file is gitignore'd and will be sourced by build scripts.
+
+# Registry for build containers.
+# The default registry is the one used for official Godot builds.
+# Note that some of its images are private and only accessible to selected
+# contributors.
+# You can build your own registry with scripts at
+# https://github.com/godotengine/build-containers
+export REGISTRY="registry.prehensile-tales.com"
+
+# Set up your own signing keystore and relevant details below.
+# If you do not fill all SIGN_* fields, signing will be skipped.
+
+# Path to pkcs12 archive.
+export SIGN_KEYSTORE=""
+
+# Password for the private key.
+export SIGN_PASSWORD=""
+
+# Name and URL of the signed application.
+# Use your own when making a thirdparty build.
+export SIGN_NAME=""
+export SIGN_URL=""
