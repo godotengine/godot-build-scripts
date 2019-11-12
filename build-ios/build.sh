@@ -3,7 +3,7 @@
 set -e
 
 export BUILD_NAME=official
-export SCONS="scons -j16 verbose=yes warnings=no progress=no"
+export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export IOS_SDK="11.2"
 export OPTIONS="osxcross_sdk=darwin15 builtin_libpng=yes builtin_openssl=yes builtin_zlib=yes debug_symbols=no use_static_cpp=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"

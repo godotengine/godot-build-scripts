@@ -4,7 +4,7 @@ set -e
 
 export BUILD_NAME=official
 export OPTIONS="builtin_libpng=yes builtin_openssl=yes builtin_zlib=yes debug_symbols=no"
-export SCONS="scons -j16 verbose=yes warnings=no progress=no"
+export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export TERM=xterm
 export MONO32_PREFIX=/usr
 export MONO64_PREFIX=/usr

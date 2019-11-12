@@ -11,6 +11,9 @@
 # https://github.com/godotengine/build-containers
 export REGISTRY="registry.prehensile-tales.com"
 
+# Default number of parallel cores for each build.
+export NUM_CORES=16
+
 # Set up your own signing keystore and relevant details below.
 # If you do not fill all SIGN_* fields, signing will be skipped.
 

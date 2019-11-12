@@ -4,12 +4,16 @@ set -e
 
 OPTIND=1
 
-# For default registry.
+# For default registry and number of cores.
 if [ ! -e config.sh ]; then
   echo "No config.sh, copying default values from config.sh.in."
   cp config.sh.in config.sh
 fi
 source ./config.sh
+
+if [ -z "${NUM_CORES}" ]; then
+  export NUM_CORES=16
+fi
 
 registry="${REGISTRY}"
 username=""
@@ -123,35 +127,37 @@ export basedir="$(pwd)"
 mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
+export podman_run="${podman} run -it --rm --env NUM_CORES -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+
 mkdir -p ${basedir}/mono-glue
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-mono-glue:/root/build -v ${basedir}/mono-glue:/root/mono-glue -w /root/ ${registry}/godot/mono-glue:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
+${podman_run} -v ${basedir}/build-mono-glue:/root/build ${registry}/godot/mono-glue:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
 mkdir -p ${basedir}/out/windows
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-windows:/root/build -v ${basedir}/mono-glue:/root/mono-glue -v ${basedir}/out/windows:/root/out -w /root/ ${registry}/godot/windows:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
+${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out ${registry}/godot/windows:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
 mkdir -p ${basedir}/out/linux/x64
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-linux:/root/build -v ${basedir}/mono-glue:/root/mono-glue -v ${basedir}/out/linux/x64:/root/out -w /root/ ${registry}/godot/ubuntu-64:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux64
+${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x64:/root/out ${registry}/godot/ubuntu-64:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux64
 
 mkdir -p ${basedir}/out/linux/x86
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-linux:/root/build -v ${basedir}/mono-glue:/root/mono-glue -v ${basedir}/out/linux/x86:/root/out -w /root/ ${registry}/godot/ubuntu-32:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux32
+${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x86:/root/out ${registry}/godot/ubuntu-32:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux32
 
 mkdir -p ${basedir}/out/server/x64
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-server:/root/build -v ${basedir}/mono-glue:/root/mono-glue -v ${basedir}/out/server/x64:/root/out -w /root/ ${registry}/godot/ubuntu-64:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
+${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server/x64:/root/out ${registry}/godot/ubuntu-64:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
 
 mkdir -p ${basedir}/out/javascript
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-javascript:/root/build -v ${basedir}/mono-glue:/root/mono-glue -v ${basedir}/out/javascript:/root/out -w /root/ ${registry}/godot/javascript:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
+${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out ${registry}/godot/javascript:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
 
 mkdir -p ${basedir}/out/macosx/x64
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-macosx:/root/build -v ${basedir}/mono-glue:/root/mono-glue -v ${basedir}/out/macosx/x64:/root/out -w /root/ ${registry}/godot-private/macosx:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
+${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx/x64:/root/out ${registry}/godot-private/macosx:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
 
 mkdir -p ${basedir}/out/android
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -w /root/ ${registry}/godot-private/android:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
+${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out ${registry}/godot-private/android:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
 
 mkdir -p ${basedir}/out/ios
-${podman} run -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out -w /root/ ${registry}/godot-private/ios:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
+${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out ${registry}/godot-private/ios:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
 
 mkdir -p ${basedir}/out/uwp
-${podman} run --ulimit nofile=32768:32768 -it --rm -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out -w /root/ ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
+${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
 
 if [ ! -z "$SUDO_UID" ]; then
   chown -R "${SUDO_UID}":"${SUDO_GID}" ${basedir}/out
