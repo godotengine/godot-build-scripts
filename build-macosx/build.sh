@@ -18,41 +18,27 @@ tar xf /root/godot.tar.gz --strip-components=1
 
 cp /root/mono-glue/*.cpp modules/mono/glue
 
-while ! $SCONS platform=osx $OPTIONS tools=yes target=release_debug; do
-  echo "Retry"
-done
+$SCONS platform=osx $OPTIONS tools=yes target=release_debug
 
 mkdir -p /root/out/tools
 cp -rvp bin/* /root/out/tools
 rm -rf bin
 
-while ! $SCONS platform=osx $OPTIONS tools=no target=release_debug; do
-  echo "Retry"
-done
-
-while ! $SCONS platform=osx $OPTIONS tools=no target=release; do
-  echo "Retry"
-done
+$SCONS platform=osx $OPTIONS tools=no target=release_debug
+$SCONS platform=osx $OPTIONS tools=no target=release
 
 mkdir -p /root/out/templates
 cp -rvp bin/* /root/out/templates
 rm -rf bin
 
-while ! $SCONS platform=osx $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes; do
-  echo "Retry"
-done
+$SCONS platform=osx $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes
 
 mkdir -p /root/out/tools-mono
 cp -rvp bin/* /root/out/tools-mono
 rm -rf bin
 
-while ! $SCONS platform=osx $OPTIONS $OPTIONS_MONO tools=no target=release_debug; do
-  echo "Retry"
-done
-
-while ! $SCONS platform=osx $OPTIONS $OPTIONS_MONO tools=no target=release; do
-  echo "Retry"
-done
+$SCONS platform=osx $OPTIONS $OPTIONS_MONO tools=no target=release_debug
+$SCONS platform=osx $OPTIONS $OPTIONS_MONO tools=no target=release
 
 mkdir -p /root/out/templates-mono
 cp -rvp bin/* /root/out/templates-mono

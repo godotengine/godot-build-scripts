@@ -17,7 +17,7 @@ mkdir godot
 cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
-$SCONS platform=server CC=$CC CXX=$CXX $OPTIONS tools=no target=release_debug 
+$SCONS platform=server CC=$CC CXX=$CXX $OPTIONS tools=no target=release_debug
 $SCONS platform=server CC=$CC CXX=$CXX $OPTIONS tools=no target=release
 mkdir -p /root/out/templates
 cp -rvp bin/* /root/out/templates

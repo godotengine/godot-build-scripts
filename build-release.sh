@@ -10,52 +10,21 @@ if [ -z $1 ]; then
 fi
 
 function sign {
-	./osslsigncode -pkcs12 REDACTED.pkcs12 -pass "REDACTED" -n "Godot Game Engine" -i "https://godotengine.org" -t http://timestamp.comodoca.com -in $1 -out $1-signed
-	mv $1-signed $1
+  ./osslsigncode -pkcs12 REDACTED.pkcs12 -pass "REDACTED" -n "Godot Game Engine" -i "https://godotengine.org" -t http://timestamp.comodoca.com -in $1 -out $1-signed
+  mv $1-signed $1
 }
 
 export GODOT_VERSION=$1
 
 # Tarball
+
 mkdir -p release-${GODOT_VERSION}
 rm -rf release-${GODOT_VERSION}/*.xz release-${GODOT_VERSION}/*.sha256
 zcat godot.tar.gz | xz -c > release-${GODOT_VERSION}/godot-${GODOT_VERSION}.tar.xz
 sha256sum release-${GODOT_VERSION}/godot-${GODOT_VERSION}.tar.xz > release-${GODOT_VERSION}/godot-${GODOT_VERSION}.tar.xz.sha256
 
-# Ubuntu-32
-mkdir -p templates
-rm -f templates/linux_x11_32*
+# Linux 64
 
-cp out/linux/x86/templates/godot.x11.opt.debug.32 templates/linux_x11_32_debug
-cp out/linux/x86/templates/godot.x11.opt.32 templates/linux_x11_32_release
-
-mkdir -p release-${GODOT_VERSION}
-rm -f release-${GODOT_VERSION}/*linux*32*
-
-cp out/linux/x86/tools/godot.x11.opt.tools.32 Godot_v${GODOT_VERSION}_x11.32
-zip -q -9 Godot_v${GODOT_VERSION}_x11.32.zip Godot_v${GODOT_VERSION}_x11.32
-mv Godot_v${GODOT_VERSION}_x11.32.zip release-${GODOT_VERSION}
-rm Godot_v${GODOT_VERSION}_x11.32
-
-mkdir -p mono/release-${GODOT_VERSION}
-rm -rf mono/release-${GODOT_VERSION}/*linux*32*
-
-mkdir -p Godot_v${GODOT_VERSION}_mono_x11_32
-cp out/linux/x86/tools-mono/godot.x11.opt.tools.32.mono Godot_v${GODOT_VERSION}_mono_x11_32/Godot_v${GODOT_VERSION}_mono_x11.32
-cp -rp out/linux/x86/tools-mono/GodotSharp/ Godot_v${GODOT_VERSION}_mono_x11_32
-cp -rp mono-glue/Api Godot_v${GODOT_VERSION}_mono_x11_32/GodotSharp/Api
-zip -r -q -9 Godot_v${GODOT_VERSION}_mono_x11_32.zip Godot_v${GODOT_VERSION}_mono_x11_32
-mv Godot_v${GODOT_VERSION}_mono_x11_32.zip mono/release-${GODOT_VERSION}
-rm -rf Godot_v${GODOT_VERSION}_mono_x11_32
-
-mkdir -p mono/templates
-rm -rf mono/templates/*linux*32*
-
-cp -rp out/linux/x86/templates-mono/data.mono.x11.32.* mono/templates/
-cp out/linux/x86/templates-mono/godot.x11.opt.debug.32.mono mono/templates/linux_x11_32_debug
-cp out/linux/x86/templates-mono/godot.x11.opt.32.mono mono/templates/linux_x11_32_release
-
-# Ubuntu-64
 mkdir -p templates
 rm -f templates/linux_x11_64*
 
@@ -88,54 +57,39 @@ cp -rp out/linux/x64/templates-mono/data.mono.x11.64.* mono/templates/
 cp out/linux/x64/templates-mono/godot.x11.opt.debug.64.mono mono/templates/linux_x11_64_debug
 cp out/linux/x64/templates-mono/godot.x11.opt.64.mono mono/templates/linux_x11_64_release
 
-# Server
+# Linux 32
 
-cp out/server/x64/templates/godot_server.x11.opt.64 Godot_v${GODOT_VERSION}_linux_server.64
-zip -q -9 Godot_v${GODOT_VERSION}_linux_server.64.zip Godot_v${GODOT_VERSION}_linux_server.64
-mv Godot_v${GODOT_VERSION}_linux_server.64.zip release-${GODOT_VERSION}
-rm Godot_v${GODOT_VERSION}_linux_server.64
+mkdir -p templates
+rm -f templates/linux_x11_32*
 
-cp out/server/x64/tools/godot_server.x11.opt.tools.64 Godot_v${GODOT_VERSION}_linux_headless.64
-zip -q -9 Godot_v${GODOT_VERSION}_linux_headless.64.zip Godot_v${GODOT_VERSION}_linux_headless.64
-mv Godot_v${GODOT_VERSION}_linux_headless.64.zip release-${GODOT_VERSION}
-rm Godot_v${GODOT_VERSION}_linux_headless.64
+cp out/linux/x86/templates/godot.x11.opt.debug.32 templates/linux_x11_32_debug
+cp out/linux/x86/templates/godot.x11.opt.32 templates/linux_x11_32_release
 
-# UWP
-mkdir -p templates 
-rm -f templates/uwp*
-rm -rf uwp_template_*
+mkdir -p release-${GODOT_VERSION}
+rm -f release-${GODOT_VERSION}/*linux*32*
 
-for arch in ARM Win32 x64; do
-  cp -r git/misc/dist/uwp_template uwp_template_${arch}
+cp out/linux/x86/tools/godot.x11.opt.tools.32 Godot_v${GODOT_VERSION}_x11.32
+zip -q -9 Godot_v${GODOT_VERSION}_x11.32.zip Godot_v${GODOT_VERSION}_x11.32
+mv Godot_v${GODOT_VERSION}_x11.32.zip release-${GODOT_VERSION}
+rm Godot_v${GODOT_VERSION}_x11.32
 
-  cp angle/winrt/10/src/Release_${arch}/libEGL.dll \
-     angle/winrt/10/src/Release_${arch}/libGLESv2.dll \
-     uwp_template_${arch}/
-  cp -r uwp_template_${arch} uwp_template_${arch}_debug
-done
+mkdir -p mono/release-${GODOT_VERSION}
+rm -rf mono/release-${GODOT_VERSION}/*linux*32*
 
-cp out/uwp/arm/godot.uwp.opt.32.arm.exe uwp_template_ARM/godot.uwp.exe
-cp out/uwp/arm/godot.uwp.opt.debug.32.arm.exe uwp_template_ARM_debug/godot.uwp.exe
-sign uwp_template_ARM/godot.uwp.exe
-sign uwp_template_ARM_debug/godot.uwp.exe
-cd uwp_template_ARM && zip -q -9 -r ../templates/uwp_arm_release.zip * && cd ..
-cd uwp_template_ARM_debug && zip -q -9 -r ../templates/uwp_arm_debug.zip * && cd ..
+mkdir -p Godot_v${GODOT_VERSION}_mono_x11_32
+cp out/linux/x86/tools-mono/godot.x11.opt.tools.32.mono Godot_v${GODOT_VERSION}_mono_x11_32/Godot_v${GODOT_VERSION}_mono_x11.32
+cp -rp out/linux/x86/tools-mono/GodotSharp/ Godot_v${GODOT_VERSION}_mono_x11_32
+cp -rp mono-glue/Api Godot_v${GODOT_VERSION}_mono_x11_32/GodotSharp/Api
+zip -r -q -9 Godot_v${GODOT_VERSION}_mono_x11_32.zip Godot_v${GODOT_VERSION}_mono_x11_32
+mv Godot_v${GODOT_VERSION}_mono_x11_32.zip mono/release-${GODOT_VERSION}
+rm -rf Godot_v${GODOT_VERSION}_mono_x11_32
 
-cp out/uwp/x86/godot.uwp.opt.32.x86.exe uwp_template_Win32/godot.uwp.exe
-cp out/uwp/x86/godot.uwp.opt.debug.32.x86.exe uwp_template_Win32_debug/godot.uwp.exe
-sign uwp_template_Win32/godot.uwp.exe
-sign uwp_template_Win32_debug/godot.uwp.exe
-cd uwp_template_Win32 && zip -q -9 -r ../templates/uwp_x86_release.zip * && cd ..
-cd uwp_template_Win32_debug && zip -q -9 -r ../templates/uwp_x86_debug.zip * && cd ..
+mkdir -p mono/templates
+rm -rf mono/templates/*linux*32*
 
-cp out/uwp/x64/godot.uwp.opt.64.x64.exe uwp_template_x64/godot.uwp.exe
-cp out/uwp/x64/godot.uwp.opt.debug.64.x64.exe uwp_template_x64_debug/godot.uwp.exe
-sign uwp_template_x64/godot.uwp.exe
-sign uwp_template_x64_debug/godot.uwp.exe
-cd uwp_template_x64 && zip -q -9 -r ../templates/uwp_x64_release.zip * && cd ..
-cd uwp_template_x64_debug && zip -q -9 -r ../templates/uwp_x64_debug.zip * && cd ..
-
-rm -rf uwp_template_*
+cp -rp out/linux/x86/templates-mono/data.mono.x11.32.* mono/templates/
+cp out/linux/x86/templates-mono/godot.x11.opt.debug.32.mono mono/templates/linux_x11_32_debug
+cp out/linux/x86/templates-mono/godot.x11.opt.32.mono mono/templates/linux_x11_32_release
 
 # Windows
 
@@ -280,6 +234,27 @@ chmod +x Godot_mono.app/Contents/MacOS/Godot
 zip -q -9 -r "mono/release-${GODOT_VERSION}/Godot_v${GODOT_VERSION}_mono_osx.64.zip" Godot_mono.app
 rm -rf Godot_mono.app
 
+# Server
+
+cp out/server/x64/templates/godot_server.x11.opt.64 Godot_v${GODOT_VERSION}_linux_server.64
+zip -q -9 Godot_v${GODOT_VERSION}_linux_server.64.zip Godot_v${GODOT_VERSION}_linux_server.64
+mv Godot_v${GODOT_VERSION}_linux_server.64.zip release-${GODOT_VERSION}
+rm Godot_v${GODOT_VERSION}_linux_server.64
+
+cp out/server/x64/tools/godot_server.x11.opt.tools.64 Godot_v${GODOT_VERSION}_linux_headless.64
+zip -q -9 Godot_v${GODOT_VERSION}_linux_headless.64.zip Godot_v${GODOT_VERSION}_linux_headless.64
+mv Godot_v${GODOT_VERSION}_linux_headless.64.zip release-${GODOT_VERSION}
+rm Godot_v${GODOT_VERSION}_linux_headless.64
+
+# Javascript
+
+cp out/javascript/godot.javascript.opt.zip templates/webassembly_release.zip
+cp out/javascript/godot.javascript.opt.debug.zip templates/webassembly_debug.zip
+
+# Android
+
+cp out/android/*.apk templates
+
 # iOS
 
 cp -r git/misc/dist/ios_xcode ios_xcode
@@ -292,11 +267,42 @@ zip -q -9 -r ../templates/iphone.zip *
 cd ..
 rm -rf ios_xcode
 
-# Android
-cp out/android/*.apk templates
+# UWP
 
-# Javascript
-cp out/javascript/godot.javascript.opt.zip templates/webassembly_release.zip
-cp out/javascript/godot.javascript.opt.debug.zip templates/webassembly_debug.zip
+mkdir -p templates
+rm -f templates/uwp*
+rm -rf uwp_template_*
+
+for arch in ARM Win32 x64; do
+  cp -r git/misc/dist/uwp_template uwp_template_${arch}
+
+  cp angle/winrt/10/src/Release_${arch}/libEGL.dll \
+     angle/winrt/10/src/Release_${arch}/libGLESv2.dll \
+     uwp_template_${arch}/
+  cp -r uwp_template_${arch} uwp_template_${arch}_debug
+done
+
+cp out/uwp/arm/godot.uwp.opt.32.arm.exe uwp_template_ARM/godot.uwp.exe
+cp out/uwp/arm/godot.uwp.opt.debug.32.arm.exe uwp_template_ARM_debug/godot.uwp.exe
+sign uwp_template_ARM/godot.uwp.exe
+sign uwp_template_ARM_debug/godot.uwp.exe
+cd uwp_template_ARM && zip -q -9 -r ../templates/uwp_arm_release.zip * && cd ..
+cd uwp_template_ARM_debug && zip -q -9 -r ../templates/uwp_arm_debug.zip * && cd ..
+
+cp out/uwp/x86/godot.uwp.opt.32.x86.exe uwp_template_Win32/godot.uwp.exe
+cp out/uwp/x86/godot.uwp.opt.debug.32.x86.exe uwp_template_Win32_debug/godot.uwp.exe
+sign uwp_template_Win32/godot.uwp.exe
+sign uwp_template_Win32_debug/godot.uwp.exe
+cd uwp_template_Win32 && zip -q -9 -r ../templates/uwp_x86_release.zip * && cd ..
+cd uwp_template_Win32_debug && zip -q -9 -r ../templates/uwp_x86_debug.zip * && cd ..
+
+cp out/uwp/x64/godot.uwp.opt.64.x64.exe uwp_template_x64/godot.uwp.exe
+cp out/uwp/x64/godot.uwp.opt.debug.64.x64.exe uwp_template_x64_debug/godot.uwp.exe
+sign uwp_template_x64/godot.uwp.exe
+sign uwp_template_x64_debug/godot.uwp.exe
+cd uwp_template_x64 && zip -q -9 -r ../templates/uwp_x64_release.zip * && cd ..
+cd uwp_template_x64_debug && zip -q -9 -r ../templates/uwp_x64_debug.zip * && cd ..
+
+rm -rf uwp_template_*
 
 exit 0

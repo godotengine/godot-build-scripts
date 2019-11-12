@@ -16,6 +16,6 @@ cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
 $SCONS platform=javascript ${OPTIONS} target=release_debug tools=no
-$SCONS platform=javascript ${OPTIONS} target=release tools=no 
+$SCONS platform=javascript ${OPTIONS} target=release tools=no
 
 cp -rvp bin/* /root/out/
