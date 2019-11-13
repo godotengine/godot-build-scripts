@@ -282,6 +282,12 @@ rm -rf ios_xcode
 
 # UWP
 
+if [ ! -d "angle" ]; then
+  echo "Downloading ANGLE binaries from https://github.com/GodotBuilder/godot-builds/releases/tag/_tools"
+  curl -LO https://github.com/GodotBuilder/godot-builds/releases/download/_tools/angle.7z
+  7z x angle.7z && rm -f angle.7z
+fi
+
 mkdir -p templates
 rm -f templates/uwp*
 rm -rf uwp_template_*
