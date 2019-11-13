@@ -58,7 +58,6 @@ rm -rf mono/release-${GODOT_VERSION}/*linux*64*
 mkdir -p Godot_v${GODOT_VERSION}_mono_x11_64
 cp out/linux/x64/tools-mono/godot.x11.opt.tools.64.mono Godot_v${GODOT_VERSION}_mono_x11_64/Godot_v${GODOT_VERSION}_mono_x11.64
 cp -rp out/linux/x64/tools-mono/GodotSharp Godot_v${GODOT_VERSION}_mono_x11_64
-cp -rp mono-glue/Api Godot_v${GODOT_VERSION}_mono_x11_64/GodotSharp/Api
 zip -r -q -9 Godot_v${GODOT_VERSION}_mono_x11_64.zip Godot_v${GODOT_VERSION}_mono_x11_64
 mv Godot_v${GODOT_VERSION}_mono_x11_64.zip mono/release-${GODOT_VERSION}
 rm -rf Godot_v${GODOT_VERSION}_mono_x11_64
@@ -92,7 +91,6 @@ rm -rf mono/release-${GODOT_VERSION}/*linux*32*
 mkdir -p Godot_v${GODOT_VERSION}_mono_x11_32
 cp out/linux/x86/tools-mono/godot.x11.opt.tools.32.mono Godot_v${GODOT_VERSION}_mono_x11_32/Godot_v${GODOT_VERSION}_mono_x11.32
 cp -rp out/linux/x86/tools-mono/GodotSharp/ Godot_v${GODOT_VERSION}_mono_x11_32
-cp -rp mono-glue/Api Godot_v${GODOT_VERSION}_mono_x11_32/GodotSharp/Api
 zip -r -q -9 Godot_v${GODOT_VERSION}_mono_x11_32.zip Godot_v${GODOT_VERSION}_mono_x11_32
 mv Godot_v${GODOT_VERSION}_mono_x11_32.zip mono/release-${GODOT_VERSION}
 rm -rf Godot_v${GODOT_VERSION}_mono_x11_32
@@ -149,7 +147,6 @@ cp out/windows/x64/tools-mono/godot.windows.opt.tools.64.mono.exe Godot_v${GODOT
 strip Godot_v${GODOT_VERSION}_mono_win64/Godot_v${GODOT_VERSION}_mono_win64.exe
 sign Godot_v${GODOT_VERSION}_mono_win64/Godot_v${GODOT_VERSION}_mono_win64.exe
 cp -rp out/windows/x64/tools-mono/GodotSharp Godot_v${GODOT_VERSION}_mono_win64
-cp -rp mono-glue/Api Godot_v${GODOT_VERSION}_mono_win64/GodotSharp/Api
 zip -r -q -9 Godot_v${GODOT_VERSION}_mono_win64.zip Godot_v${GODOT_VERSION}_mono_win64
 mv Godot_v${GODOT_VERSION}_mono_win64.zip mono/release-${GODOT_VERSION}
 rm -rf Godot_v${GODOT_VERSION}_mono_win64
@@ -163,7 +160,6 @@ cp out/windows/x86/tools-mono/godot.windows.opt.tools.32.mono.exe Godot_v${GODOT
 strip Godot_v${GODOT_VERSION}_mono_win32/Godot_v${GODOT_VERSION}_mono_win32.exe
 sign Godot_v${GODOT_VERSION}_mono_win32/Godot_v${GODOT_VERSION}_mono_win32.exe
 cp -rp  out/windows/x86/tools-mono/GodotSharp Godot_v${GODOT_VERSION}_mono_win32
-cp -rp mono-glue/Api Godot_v${GODOT_VERSION}_mono_win32/GodotSharp/Api
 zip -r -q -9 Godot_v${GODOT_VERSION}_mono_win32.zip Godot_v${GODOT_VERSION}_mono_win32
 mv Godot_v${GODOT_VERSION}_mono_win32.zip mono/release-${GODOT_VERSION}
 rm -rf Godot_v${GODOT_VERSION}_mono_win32
@@ -239,9 +235,9 @@ cp out/macosx/x64/tools-mono/godot.osx.opt.tools.64.mono Godot_mono.app/Contents
 mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}
 mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp
 mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp/Mono
+cp -rp out/macosx/x64/tools-mono/GodotSharp/Api Godot_mono.app/Contents/Frameworks/GodotSharp
 cp -rp out/macosx/x64/tools-mono/GodotSharp/Mono/lib Godot_mono.app/Contents/Frameworks/GodotSharp/Mono
 cp -rp out/macosx/x64/tools-mono/GodotSharp/Tools Godot_mono.app/Contents/Frameworks/GodotSharp
-cp -rp mono-glue/Api Godot_mono.app/Contents/Frameworks/GodotSharp
 cp -rp out/macosx/x64/tools-mono/GodotSharp/Mono/etc Godot_mono.app/Contents/Resources/GodotSharp/Mono
 chmod +x Godot_mono.app/Contents/MacOS/Godot
 zip -q -9 -r "mono/release-${GODOT_VERSION}/Godot_v${GODOT_VERSION}_mono_osx.64.zip" Godot_mono.app
@@ -266,7 +262,11 @@ cp out/javascript/godot.javascript.opt.debug.zip templates/webassembly_debug.zip
 
 # Android
 
-cp out/android/*.apk templates
+cp out/android/templates/*.apk templates
+cp out/android/templates/android_source.zip templates
+
+cp out/android/templates-mono/*.apk mono/templates
+cp out/android/templates-mono/android_source.zip mono/templates
 
 # iOS
 

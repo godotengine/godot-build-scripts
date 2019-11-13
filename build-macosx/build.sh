@@ -5,9 +5,8 @@ set -e
 export BUILD_NAME=official
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="osxcross_sdk=darwin17 builtin_libpng=yes builtin_openssl=yes builtin_zlib=yes debug_symbols=no use_static_cpp=yes use_lto=yes"
-export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
+export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/dependencies/mono"
 export TERM=xterm
-export MONO64_PREFIX=/root/dependencies/mono
 export PATH=/root/osxcross/target/bin:$PATH
 export OSXCROSS_ROOT=/root/osxcross
 
@@ -16,7 +15,8 @@ mkdir godot
 cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
-cp /root/mono-glue/*.cpp modules/mono/glue
+cp /root/mono-glue/*.cpp modules/mono/glue/
+cp -r /root/mono-glue/Managed/Generated modules/mono/glue/Managed/
 
 $SCONS platform=osx $OPTIONS tools=yes target=release_debug
 
