@@ -141,9 +141,6 @@ ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x64:
 mkdir -p ${basedir}/out/linux/x86
 ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x86:/root/out ${registry}/godot/ubuntu-32:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux32
 
-mkdir -p ${basedir}/out/server/x64
-${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server/x64:/root/out ${registry}/godot/ubuntu-64:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
-
 mkdir -p ${basedir}/out/javascript
 ${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out ${registry}/godot/javascript:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
 
@@ -155,6 +152,9 @@ ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:
 
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out ${registry}/godot-private/ios:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
+
+mkdir -p ${basedir}/out/server/x64
+${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server/x64:/root/out ${registry}/godot/ubuntu-64:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
 
 mkdir -p ${basedir}/out/uwp
 ${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp

@@ -57,3 +57,6 @@ mkdir -p /root/out/templates-mono
 cp bin/android_source.zip /root/out/templates-mono
 cp bin/android_debug.apk /root/out/templates-mono/android_debug.apk
 cp bin/android_release.apk /root/out/templates-mono/android_release.apk
+
+mkdir /root/out/templates-mono/bcl
+cp -r /root/mono-installs/android-bcl/monodroid /root/out/templates-mono/bcl/

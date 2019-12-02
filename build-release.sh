@@ -255,10 +255,32 @@ zip -q -9 Godot_v${GODOT_VERSION}_linux_headless.64.zip Godot_v${GODOT_VERSION}_
 mv Godot_v${GODOT_VERSION}_linux_headless.64.zip release-${GODOT_VERSION}
 rm Godot_v${GODOT_VERSION}_linux_headless.64
 
+mkdir -p Godot_v${GODOT_VERSION}_mono_linux_server_64
+cp out/server/x64/templates/godot_server.x11.opt.64.mono Godot_v${GODOT_VERSION}_mono_linux_server_64/Godot_v${GODOT_VERSION}_mono_linux_server.64
+cp -rp out/server/x64/templates/data.mono.server.64.release Godot_v${GODOT_VERSION}_mono_linux_server_64/data_Godot_v${GODOT_VERSION}_mono_linux_server
+zip -r -q -9 Godot_v${GODOT_VERSION}_mono_linux_server_64.zip Godot_v${GODOT_VERSION}_mono_linux_server_64
+mv Godot_v${GODOT_VERSION}_mono_linux_server_64.zip mono/release-${GODOT_VERSION}
+rm -rf Godot_v${GODOT_VERSION}_mono_linux_server_64
+
+mkdir -p Godot_v${GODOT_VERSION}_mono_linux_headless_64
+cp out/server/x64/tools/godot_server.x11.opt.tools.64.mono Godot_v${GODOT_VERSION}_mono_linux_headless_64/Godot_v${GODOT_VERSION}_mono_linux_headless.64
+cp -rp out/server/x64/tools/GodotSharp Godot_v${GODOT_VERSION}_mono_linux_headless_64
+zip -r -q -9 Godot_v${GODOT_VERSION}_mono_linux_headless_64.zip Godot_v${GODOT_VERSION}_mono_linux_headless_64
+mv Godot_v${GODOT_VERSION}_mono_linux_headless_64.zip mono/release-${GODOT_VERSION}
+rm -rf Godot_v${GODOT_VERSION}_mono_linux_headless_64
+
 # Javascript
 
-cp out/javascript/godot.javascript.opt.zip templates/webassembly_release.zip
-cp out/javascript/godot.javascript.opt.debug.zip templates/webassembly_debug.zip
+cp out/javascript/templates/godot.javascript.opt.zip templates/webassembly_release.zip
+cp out/javascript/templates/godot.javascript.opt.debug.zip templates/webassembly_debug.zip
+
+mkdir -p mono/templates
+
+cp out/javascript/templates-mono/godot.javascript.opt.mono.zip mono/templates/webassembly_release.zip
+cp out/javascript/templates-mono/godot.javascript.opt.debug.mono.zip mono/templates/webassembly_debug.zip
+
+mkdir -p mono/templates/bcl
+cp -r out/javascript/templates-mono/bcl/wasm mono/templates/bcl/
 
 # Android
 
@@ -267,6 +289,9 @@ cp out/android/templates/android_source.zip templates
 
 cp out/android/templates-mono/*.apk mono/templates
 cp out/android/templates-mono/android_source.zip mono/templates
+
+mkdir -p mono/templates/bcl
+cp -r out/android/templates-mono/bcl/monodroid mono/templates/bcl/
 
 # iOS
 
