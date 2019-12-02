@@ -4,11 +4,9 @@ set -e
 
 export BUILD_NAME=official
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="osxcross_sdk=darwin17 builtin_libpng=yes builtin_openssl=yes builtin_zlib=yes debug_symbols=no use_static_cpp=yes use_lto=yes"
+export OPTIONS="osxcross_sdk=darwin18 builtin_libpng=yes builtin_openssl=yes builtin_zlib=yes debug_symbols=no use_static_cpp=yes use_lto=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/dependencies/mono"
 export TERM=xterm
-export PATH=/root/osxcross/target/bin:$PATH
-export OSXCROSS_ROOT=/root/osxcross
 
 rm -rf godot
 mkdir godot
