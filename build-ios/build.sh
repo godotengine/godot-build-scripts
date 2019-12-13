@@ -24,4 +24,10 @@ $SCONS platform=iphone $OPTIONS arch=x86_64 tools=no target=release IPHONESDK="/
 /root/ioscross/arm64/bin/arm-apple-darwin11-lipo -create bin/libgodot.iphone.opt.arm64.a bin/libgodot.iphone.opt.x86_64.a -output /root/out/libgodot.iphone.opt.fat
 /root/ioscross/arm64/bin/arm-apple-darwin11-lipo -create bin/libgodot.iphone.opt.debug.arm64.a bin/libgodot.iphone.opt.debug.x86_64.a -output /root/out/libgodot.iphone.opt.debug.fat
 
+/root/ioscross/arm64/bin/arm-apple-darwin11-lipo -create bin/libgodot_arkit_module.iphone.opt.arm64.a bin/libgodot_arkit_module.iphone.opt.x86_64.a -output /root/out/libgodot_arkit_module.iphone.opt.fat
+/root/ioscross/arm64/bin/arm-apple-darwin11-lipo -create bin/libgodot_arkit_module.iphone.opt.debug.arm64.a bin/libgodot_arkit_module.iphone.opt.debug.x86_64.a -output /root/out/libgodot_arkit_module.iphone.opt.debug.fat
+
+/root/ioscross/arm64/bin/arm-apple-darwin11-lipo -create bin/libgodot_camera_module.iphone.opt.arm64.a bin/libgodot_camera_module.iphone.opt.x86_64.a -output /root/out/libgodot_camera_module.iphone.opt.fat
+/root/ioscross/arm64/bin/arm-apple-darwin11-lipo -create bin/libgodot_camera_module.iphone.opt.debug.arm64.a bin/libgodot_camera_module.iphone.opt.debug.x86_64.a -output /root/out/libgodot_camera_module.iphone.opt.debug.fat
+
 echo "iOS build successful"

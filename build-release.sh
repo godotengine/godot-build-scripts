@@ -299,7 +299,13 @@ cp -r git/misc/dist/ios_xcode ios_xcode
 cp out/ios/libgodot.iphone.opt.fat ios_xcode/libgodot.iphone.release.fat.a
 cp out/ios/libgodot.iphone.opt.debug.fat ios_xcode/libgodot.iphone.debug.fat.a
 
-chmod +x ios_xcode/libgodot.iphone.*
+cp out/ios/libgodot_arkit_module.iphone.opt.fat ios_xcode/libgodot_arkit_module.iphone.release.fat.a
+cp out/ios/libgodot_arkit_module.iphone.opt.debug.fat ios_xcode/libgodot_arkit_module.iphone.debug.fat.a
+
+cp out/ios/libgodot_camera_module.iphone.opt.fat ios_xcode/libgodot_camera_module.iphone.release.fat.a
+cp out/ios/libgodot_camera_module.iphone.opt.debug.fat ios_xcode/libgodot_camera_module.iphone.debug.fat.a
+
+chmod +x ios_xcode/libgodot*.iphone.*
 cd ios_xcode
 zip -q -9 -r ../templates/iphone.zip *
 cd ..
