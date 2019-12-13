@@ -4,6 +4,8 @@ set -e
 
 OPTIND=1
 
+# Config
+
 # For default registry and number of cores.
 if [ ! -e config.sh ]; then
   echo "No config.sh, copying default values from config.sh.in."
@@ -20,43 +22,61 @@ username=""
 password=""
 godot_version=""
 git_treeish="master"
+build_classical=1
+build_mono=1
 force_download=0
 skip_download=0
 skip_git_checkout=0
 
-while getopts "h?r:u:p:v:g:fsc" opt; do
-    case "$opt" in
-    h|\?)
-        echo "Usage: $0 [OPTIONS...]"
-        echo
-        echo "  -r registry"
-        echo "  -u username"
-        echo "  -p password"
-        echo "  -v godot version (e.g: 3.1-alpha5) [mandatory]"
-        echo "  -g git treeish (e.g: master)"
-        echo "  -f force redownload of all images"
-        echo "  -s skip downloading"
-        echo "  -c skip checkout"
-        echo
-        exit 1
-        ;;
-    r)  registry=$OPTARG
-        ;;
-    u)  username=$OPTARG
-        ;;
-    p)  password=$OPTARG
-        ;;
-    v)  godot_version=$OPTARG
-        ;;
-    g)  git_treeish=$OPTARG
-        ;;
-    f)  force_download=1
-        ;;
-    s)  skip_download=1
-        ;;
-    c)  skip_git_checkout=1
-        ;;
-    esac
+while getopts "h?r:u:p:v:g:b:fsc" opt; do
+  case "$opt" in
+  h|\?)
+    echo "Usage: $0 [OPTIONS...]"
+    echo
+    echo "  -r registry"
+    echo "  -u username"
+    echo "  -p password"
+    echo "  -v godot version (e.g. 3.1-alpha5) [mandatory]"
+    echo "  -g git treeish (e.g. master)"
+    echo "  -b all|classical|mono (default: all)"
+    echo "  -f force redownload of all images"
+    echo "  -s skip downloading"
+    echo "  -c skip checkout"
+    echo
+    exit 1
+    ;;
+  r)
+    registry=$OPTARG
+    ;;
+  u)
+    username=$OPTARG
+    ;;
+  p)
+    password=$OPTARG
+    ;;
+  v)
+    godot_version=$OPTARG
+    ;;
+  g)
+    git_treeish=$OPTARG
+    ;;
+  b)
+    if [ "$OPTARG" == "classical" ]; then
+      build_mono=0
+    elif [ "$OPTARG" == "mono" ]; then
+      build_classical=0
+    fi
+    ;;
+  f)
+    force_download=1
+    ;;
+  s)
+    skip_download=1
+    ;;
+  c)
+    skip_git_checkout=1
+    ;;
+  esac
 done
 
 export podman=none
@@ -127,7 +147,7 @@ export basedir="$(pwd)"
 mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
-export podman_run="${podman} run -it --rm --env NUM_CORES -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+export podman_run="${podman} run -it --rm --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 
 mkdir -p ${basedir}/mono-glue
 ${podman_run} -v ${basedir}/build-mono-glue:/root/build ${registry}/godot/mono-glue:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue

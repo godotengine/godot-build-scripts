@@ -2,25 +2,68 @@
 
 set -e
 
-if [ -z "$1" ] || [ -z "$2" ]; then
-  echo "usage: $0 <version> <file version>"
-  echo "  like : $0 3.0.3.rc1 3.0.3-rc1"
+godot_version=""
+templates_version=""
+build_classical=1
+build_mono=1
+
+while getopts "h?v:t:b" opt; do
+  case "$opt" in
+  h|\?)
+    echo "Usage: $0 [OPTIONS...]"
+    echo
+    echo "  -v public version (e.g. 3.2-stable) [mandatory]"
+    echo "  -t templates version (e.g. 3.2.stable) [mandatory]"
+    echo "  -b all|classical|mono (default: all)"
+    echo
+    exit 1
+    ;;
+  v)
+    godot_version=$OPTARG
+    ;;
+  t)
+    templates_version=$OPTARG
+    ;;
+  b)
+    if [ "$OPTARG" == "classical" ]; then
+      build_mono=0
+    elif [ "$OPTARG" == "mono" ]; then
+      build_classical=0
+    fi
+    ;;
+  esac
+done
+
+if [ -z "${godot_version}" -o -z "${templates_version}" ]; then
+  echo "Mandatory argument -v or -t missing."
   exit 1
 fi
 
-VERSION=$1
-FILE_VERSION=$2
-MONO_VERSION=$3
+export basedir=$(pwd)
+export reldir="${basedir}/releases/${godot_version}"
+export reldir_mono="${reldir}/mono"
+export tmpdir="${basedir}/tmp"
+export templatesdir="${tmpdir}/templates"
+export templatesdir_mono="${templatesdir}-mono"
 
-echo "$VERSION" > templates/version.txt
+export godot_basename="Godot_v${godot_version}"
 
-mkdir -p release-${FILE_VERSION}
-rm -f release-${FILE_VERSION}/*templates.tpz
-zip -q -9 -r -D release-${FILE_VERSION}/Godot_v${FILE_VERSION}_export_templates.tpz templates
+# Classical
 
-mkdir -p mono/release-${FILE_VERSION}
-rm -f mono/release-${FILE_VERSION}/*templates.tpz
-cd mono
-echo "$VERSION".mono > templates/version.txt
-zip -q -9 -r -D release-${FILE_VERSION}/Godot_v${FILE_VERSION}_mono_export_templates.tpz templates
-cd ..
+if [ "${build_classical}" == "1" ]; then
+  echo "${templates_version}" > ${templatesdir}/version.txt
+
+  mkdir -p ${reldir}
+  zip -q -9 -r -D "${reldir}/${godot_basename}_export_templates.tpz" ${templatesdir}
+fi
+
+# Mono
+
+if [ "${build_mono}" == "1" ]; then
+  echo "${templates_version}.mono" > ${templatesdir_mono}/version.txt
+
+  mkdir -p ${reldir_mono}
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" ${templatesdir_mono}
+fi
+
+echo "Templates archives generated successfully"
