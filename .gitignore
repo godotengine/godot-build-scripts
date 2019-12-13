@@ -9,7 +9,6 @@ mono-glue/
 godot.tar.gz
 
 # Output
-mono/
 out/
-release-*/
-templates/
+releases/
+tmp/
