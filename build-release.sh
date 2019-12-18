@@ -54,7 +54,7 @@ export reldir="${basedir}/releases/${godot_version}"
 export reldir_mono="${reldir}/mono"
 export tmpdir="${basedir}/tmp"
 export templatesdir="${tmpdir}/templates"
-export templatesdir_mono="${templatesdir}-mono"
+export templatesdir_mono="${tmpdir}/mono/templates"
 
 export godot_basename="Godot_v${godot_version}"
 

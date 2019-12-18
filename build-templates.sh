@@ -44,7 +44,7 @@ export reldir="${basedir}/releases/${godot_version}"
 export reldir_mono="${reldir}/mono"
 export tmpdir="${basedir}/tmp"
 export templatesdir="${tmpdir}/templates"
-export templatesdir_mono="${templatesdir}-mono"
+export templatesdir_mono="${tmpdir}/mono/templates"
 
 export godot_basename="Godot_v${godot_version}"
 
@@ -54,7 +54,9 @@ if [ "${build_classical}" == "1" ]; then
   echo "${templates_version}" > ${templatesdir}/version.txt
 
   mkdir -p ${reldir}
-  zip -q -9 -r -D "${reldir}/${godot_basename}_export_templates.tpz" ${templatesdir}
+  pushd ${templatesdir}/..
+  zip -q -9 -r -D "${reldir}/${godot_basename}_export_templates.tpz" templates/*
+  popd
 fi
 
 # Mono
@@ -63,7 +65,9 @@ if [ "${build_mono}" == "1" ]; then
   echo "${templates_version}.mono" > ${templatesdir_mono}/version.txt
 
   mkdir -p ${reldir_mono}
-  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" ${templatesdir_mono}
+  pushd ${templatesdir_mono}/..
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" templates/*
+  popd
 fi
 
 echo "Templates archives generated successfully"
