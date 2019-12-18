@@ -364,6 +364,7 @@ if [ "${build_mono}" == "1" ]; then
   cp out/android/templates-mono/android_source.zip ${templatesdir_mono}/
 
   mkdir -p ${templatesdir_mono}/bcl
+  cp -r out/android/templates-mono/bcl/godot_android_ext ${templatesdir_mono}/bcl/
   cp -r out/android/templates-mono/bcl/monodroid ${templatesdir_mono}/bcl/
 
   ## iOS (Mono) ##

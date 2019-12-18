@@ -71,8 +71,8 @@ if [ "${MONO}" == "1" ]; then
   cp bin/android_debug.apk /root/out/templates-mono/android_debug.apk
   cp bin/android_release.apk /root/out/templates-mono/android_release.apk
 
-  mkdir /root/out/templates-mono/bcl
-  cp -r /root/mono-installs/android-bcl/monodroid /root/out/templates-mono/bcl/
+  mkdir -p /root/out/templates-mono/bcl
+  cp -r /root/mono-installs/android-bcl/* /root/out/templates-mono/bcl/
 fi
 
 echo "Android build successful"
