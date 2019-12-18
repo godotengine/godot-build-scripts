@@ -7,7 +7,7 @@ templates_version=""
 build_classical=1
 build_mono=1
 
-while getopts "h?v:t:b" opt; do
+while getopts "h?v:t:b:" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
