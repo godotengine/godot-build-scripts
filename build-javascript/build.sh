@@ -34,7 +34,8 @@ if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for JavaScript..."
 
   cp /root/mono-glue/*.cpp modules/mono/glue/
-  cp -r /root/mono-glue/Managed/Generated modules/mono/glue/Managed/
+  cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
+  cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
   $SCONS platform=javascript ${OPTIONS} ${OPTIONS_MONO} target=release_debug tools=no
   $SCONS platform=javascript ${OPTIONS} ${OPTIONS_MONO} target=release tools=no

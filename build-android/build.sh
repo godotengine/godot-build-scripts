@@ -48,7 +48,8 @@ if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for Android..."
 
   cp /root/mono-glue/*.cpp modules/mono/glue/
-  cp -r /root/mono-glue/Managed/Generated modules/mono/glue/Managed/
+  cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
+  cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
   $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-armeabi-v7a-release tools=no target=release_debug
   $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-armeabi-v7a-release tools=no target=release

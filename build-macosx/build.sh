@@ -40,7 +40,8 @@ if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for macOS..."
 
   cp /root/mono-glue/*.cpp modules/mono/glue/
-  cp -r /root/mono-glue/Managed/Generated modules/mono/glue/Managed/
+  cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
+  cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
   $SCONS platform=osx $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes
 

@@ -263,6 +263,9 @@ if [ "${build_mono}" == "1" ]; then
   cp out/linux/x86/templates-mono/godot.x11.opt.debug.32.mono ${templatesdir_mono}/linux_x11_32_debug
   cp out/linux/x86/templates-mono/godot.x11.opt.32.mono ${templatesdir_mono}/linux_x11_32_release
 
+  mkdir -p ${templatesdir_mono}/bcl
+  cp -r out/linux/x64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x
+
   ## Windows (Mono) ##
 
   # Editor
@@ -298,6 +301,9 @@ if [ "${build_mono}" == "1" ]; then
   sign ${templatesdir_mono}/windows_64_release.exe
   sign ${templatesdir_mono}/windows_32_debug.exe
   sign ${templatesdir_mono}/windows_32_release.exe
+
+  mkdir -p ${templatesdir_mono}/bcl
+  cp -r out/windows/x64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x_win
 
   ## OSX (Mono) ##
 

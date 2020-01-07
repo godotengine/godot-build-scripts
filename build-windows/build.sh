@@ -51,7 +51,8 @@ if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for Windows..."
 
   cp /root/mono-glue/*.cpp modules/mono/glue/
-  cp -r /root/mono-glue/Managed/Generated modules/mono/glue/Managed/
+  cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
+  cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
   $SCONS platform=windows bits=64 $OPTIONS $OPTIONS_MONO mono_prefix=$MONO64_PREFIX tools=yes target=release_debug copy_mono_root=yes
   mkdir -p /root/out/x64/tools-mono
