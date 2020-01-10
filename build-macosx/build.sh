@@ -55,8 +55,6 @@ if [ "${MONO}" == "1" ]; then
   mkdir -p /root/out/templates-mono
   cp -rvp bin/* /root/out/templates-mono
   rm -rf bin
-
-  find /root/out -name config -exec cp /root/dependencies/mono/etc/config {} \;
 fi
 
 echo "macOS build successful"
