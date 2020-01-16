@@ -6,11 +6,15 @@ set -e
 
 export BUILD_NAME=official
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="debug_symbols=no use_static_cpp=yes use_lto=yes"
+export OPTIONS="debug_symbols=no use_lto=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export TERM=xterm
 export CC="gcc-8"
 export CXX="g++-8"
+
+if [ "$(getconf LONG_BIT)" == "64" ]; then
+  export OPTIONS="${OPTIONS} use_static_cpp=yes"
+fi
 
 rm -rf godot
 mkdir godot
