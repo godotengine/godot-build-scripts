@@ -123,11 +123,6 @@ if [ "${build_classical}" == "1" ]; then
 
   strip ${templatesdir}/windows*.exe
 
-  sign ${templatesdir}/windows_64_release.exe
-  sign ${templatesdir}/windows_64_debug.exe
-  sign ${templatesdir}/windows_32_release.exe
-  sign ${templatesdir}/windows_32_debug.exe
-
   ## OSX (Classical) ##
 
   # Editor
@@ -210,24 +205,18 @@ if [ "${build_classical}" == "1" ]; then
 
   cp out/uwp/arm/godot.uwp.opt.32.arm.exe uwp_template_ARM/godot.uwp.exe
   cp out/uwp/arm/godot.uwp.opt.debug.32.arm.exe uwp_template_ARM_debug/godot.uwp.exe
-  sign uwp_template_ARM/godot.uwp.exe
-  sign uwp_template_ARM_debug/godot.uwp.exe
   cd uwp_template_ARM && zip -q -9 -r "${templatesdir}/uwp_arm_release.zip" * && cd ..
   cd uwp_template_ARM_debug && zip -q -9 -r "${templatesdir}/uwp_arm_debug.zip" * && cd ..
   rm -rf uwp_template_ARM*
 
   cp out/uwp/x86/godot.uwp.opt.32.x86.exe uwp_template_Win32/godot.uwp.exe
   cp out/uwp/x86/godot.uwp.opt.debug.32.x86.exe uwp_template_Win32_debug/godot.uwp.exe
-  sign uwp_template_Win32/godot.uwp.exe
-  sign uwp_template_Win32_debug/godot.uwp.exe
   cd uwp_template_Win32 && zip -q -9 -r "${templatesdir}/uwp_x86_release.zip" * && cd ..
   cd uwp_template_Win32_debug && zip -q -9 -r "${templatesdir}/uwp_x86_debug.zip" * && cd ..
   rm -rf uwp_template_Win32*
 
   cp out/uwp/x64/godot.uwp.opt.64.x64.exe uwp_template_x64/godot.uwp.exe
   cp out/uwp/x64/godot.uwp.opt.debug.64.x64.exe uwp_template_x64_debug/godot.uwp.exe
-  sign uwp_template_x64/godot.uwp.exe
-  sign uwp_template_x64_debug/godot.uwp.exe
   cd uwp_template_x64 && zip -q -9 -r "${templatesdir}/uwp_x64_release.zip" * && cd ..
   cd uwp_template_x64_debug && zip -q -9 -r "${templatesdir}/uwp_x64_debug.zip" * && cd ..
   rm -rf uwp_template_x64*
@@ -296,11 +285,6 @@ if [ "${build_mono}" == "1" ]; then
   cp out/windows/x86/templates-mono/godot.windows.opt.32.mono.exe ${templatesdir_mono}/windows_32_release.exe
 
   strip ${templatesdir_mono}/windows*.exe
-
-  sign ${templatesdir_mono}/windows_64_debug.exe
-  sign ${templatesdir_mono}/windows_64_release.exe
-  sign ${templatesdir_mono}/windows_32_debug.exe
-  sign ${templatesdir_mono}/windows_32_release.exe
 
   mkdir -p ${templatesdir_mono}/bcl
   cp -r out/windows/x64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x_win
