@@ -177,8 +177,8 @@ if [ "${build_classical}" == "1" ]; then
   rm -rf ios_xcode
   cp -r git/misc/dist/ios_xcode ios_xcode
   for suffix in "" "_arkit_module" "_camera_module"; do
-    cp out/ios/libgodot${suffix}.iphone.opt.fat ios_xcode/libgodot${suffix}.iphone.release.fat.a
-    cp out/ios/libgodot${suffix}.iphone.opt.debug.fat ios_xcode/libgodot${suffix}.iphone.debug.fat.a
+    cp out/ios/templates/libgodot${suffix}.iphone.opt.fat ios_xcode/libgodot${suffix}.iphone.release.fat.a
+    cp out/ios/templates/libgodot${suffix}.iphone.opt.debug.fat ios_xcode/libgodot${suffix}.iphone.debug.fat.a
   done
   chmod +x ios_xcode/libgodot*.iphone.*
   cd ios_xcode
@@ -234,6 +234,7 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p ${binbasename}_64
   cp out/linux/x64/tools-mono/godot.x11.opt.tools.64.mono ${binbasename}_64/${binbasename}.64
   cp -rp out/linux/x64/tools-mono/GodotSharp ${binbasename}_64/
+  cp -rp out/aot-compilers ${binbasename}_64/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_64.zip" ${binbasename}_64
   rm -rf ${binbasename}_64
 
@@ -241,6 +242,7 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p ${binbasename}_32
   cp out/linux/x86/tools-mono/godot.x11.opt.tools.32.mono ${binbasename}_32/${binbasename}.32
   cp -rp out/linux/x86/tools-mono/GodotSharp/ ${binbasename}_32/
+  cp -rp out/aot-compilers ${binbasename}_32/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_32.zip" ${binbasename}_32
   rm -rf ${binbasename}_32
 
@@ -264,6 +266,7 @@ if [ "${build_mono}" == "1" ]; then
   strip ${binname}/${binname}.exe
   sign ${binname}/${binname}.exe
   cp -rp out/windows/x64/tools-mono/GodotSharp ${binname}/
+  cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
@@ -273,6 +276,7 @@ if [ "${build_mono}" == "1" ]; then
   strip ${binname}/${binname}.exe
   sign ${binname}/${binname}.exe
   cp -rp out/windows/x86/tools-mono/GodotSharp ${binname}/
+  cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
@@ -304,6 +308,7 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/macosx/x64/tools-mono/GodotSharp/Mono/lib Godot_mono.app/Contents/Frameworks/GodotSharp/Mono
   cp -rp out/macosx/x64/tools-mono/GodotSharp/Tools Godot_mono.app/Contents/Frameworks/GodotSharp
   cp -rp out/macosx/x64/tools-mono/GodotSharp/Mono/etc Godot_mono.app/Contents/Resources/GodotSharp/Mono
+  cp -rp out/aot-compilers Godot_mono.app/Contents/Frameworks/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
@@ -327,6 +332,7 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p ${binbasename}_64
   cp out/server/x64/tools-mono/godot_server.x11.opt.tools.64.mono ${binbasename}_64/${binbasename}.64
   cp -rp out/server/x64/tools-mono/GodotSharp ${binbasename}_64/
+  cp -rp out/aot-compilers ${binbasename}_64/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_64.zip" ${binbasename}_64
   rm -rf ${binbasename}_64
 
@@ -359,7 +365,22 @@ if [ "${build_mono}" == "1" ]; then
 
   ## iOS (Mono) ##
 
-  # Not supported yet.
+  rm -rf ios_xcode
+  cp -r git/misc/dist/ios_xcode ios_xcode
+  for suffix in "" "_arkit_module" "_camera_module"; do
+    cp out/ios/templates-mono/libgodot${suffix}.iphone.opt.fat ios_xcode/libgodot${suffix}.iphone.release.fat.a
+    cp out/ios/templates-mono/libgodot${suffix}.iphone.opt.debug.fat ios_xcode/libgodot${suffix}.iphone.debug.fat.a
+  done
+  chmod +x ios_xcode/libgodot*.iphone.*
+  cd ios_xcode
+  zip -q -9 -r "${templatesdir_mono}/iphone.zip" *
+  cd ..
+  rm -rf ios_xcode
+
+  mkdir -p ${templatesdir_mono}/bcl
+  cp -r out/ios/templates-mono/bcl/monotouch* ${templatesdir_mono}/bcl/
+
+  cp -r out/ios/templates-mono/iphone-mono-libs ${templatesdir_mono}/
 
   ## UWP (Mono) ##
 
