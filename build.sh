@@ -148,33 +148,34 @@ mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
 export podman_run="${podman} run -it --rm --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+export img_version=3.2-mono-6.6.0.166
 
 mkdir -p ${basedir}/mono-glue
-${podman_run} -v ${basedir}/build-mono-glue:/root/build ${registry}/godot/mono-glue:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
+${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-mono-glue:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
 mkdir -p ${basedir}/out/windows
-${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out ${registry}/godot/windows:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
+${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
 mkdir -p ${basedir}/out/linux/x64
-${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x64:/root/out ${registry}/godot/ubuntu-64:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux64
+${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x64:/root/out localhost/godot-ubuntu-64:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux64
 
 mkdir -p ${basedir}/out/linux/x86
-${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x86:/root/out ${registry}/godot/ubuntu-32:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux32
+${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x86:/root/out localhost/godot-ubuntu-32:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux32
 
 mkdir -p ${basedir}/out/javascript
-${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out ${registry}/godot/javascript:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
+${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
 
 mkdir -p ${basedir}/out/macosx/x64
-${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx/x64:/root/out ${registry}/godot-private/macosx:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
+${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx/x64:/root/out localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
 
 mkdir -p ${basedir}/out/android
-${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out ${registry}/godot-private/android:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
+${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
 
 mkdir -p ${basedir}/out/ios
-${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out ${registry}/godot-private/ios:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
+${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-ios:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
 
 mkdir -p ${basedir}/out/server/x64
-${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server/x64:/root/out ${registry}/godot/ubuntu-64:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
+${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server/x64:/root/out localhost/godot-ubuntu-64:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
 
 mkdir -p ${basedir}/out/uwp
 ${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
