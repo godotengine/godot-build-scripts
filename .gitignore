@@ -11,4 +11,5 @@ godot.tar.gz
 # Output
 out/
 releases/
+sha512sums/
 tmp/

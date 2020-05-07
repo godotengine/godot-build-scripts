@@ -238,6 +238,14 @@ if [ "${build_classical}" == "1" ]; then
   zip -q -9 -r -D "${reldir}/${godot_basename}_export_templates.tpz" templates/*
   popd
 
+  ## SHA-512 sums (Classical) ##
+
+  pushd ${reldir}
+  sha512sum [Gg]* > SHA512-SUMS.txt
+  mkdir -p ${basedir}/sha512sums/${godot_version}
+  cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/
+  popd
+
 fi
 
 # Mono
@@ -408,6 +416,14 @@ if [ "${build_mono}" == "1" ]; then
   echo "${templates_version}.mono" > ${templatesdir_mono}/version.txt
   pushd ${templatesdir_mono}/..
   zip -q -9 -r -D "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" templates/*
+  popd
+
+  ## SHA-512 sums (Mono) ##
+
+  pushd ${reldir_mono}
+  sha512sum [Gg]* >> SHA512-SUMS.txt
+  mkdir -p ${basedir}/sha512sums/${godot_version}/mono
+  cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/mono/
   popd
 
 fi
