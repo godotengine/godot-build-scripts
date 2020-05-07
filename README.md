@@ -21,14 +21,11 @@ this in a simple and user-friendly interface.
   containers.
 - Build with `build.sh` (check `--help` for usage).
 - Package binaries with `build-release.sh` (check `--help` for usage).
-- Build templates .tpz with `build-templates.sh` (check `--help` for
-  usage).
 
 Example that builds Godot 3.2-stable Classical (not Mono):
 ```
 ./build.sh -v 3.2-stable -g 3.2-stable -b classical
-./build-release.sh -v 3.2-stable -b classical
-./build-templates.sh -v 3.2-stable -t 3.2.stable -b classical
+./build-release.sh -v 3.2-stable -t 3.2.stable -b classical
 ```
 
 Again, this is intended for release managers and usability is not the
