@@ -23,21 +23,26 @@ function sign {
 }
 
 godot_version=""
+templates_version=""
 build_classical=1
 build_mono=1
 
-while getopts "h?v:b:" opt; do
+while getopts "h?v:t:b:" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
     echo
-    echo "  -v godot version (e.g: 3.1-alpha5) [mandatory]"
+    echo "  -v godot version (e.g: 3.2-stable) [mandatory]"
+    echo "  -t templates version (e.g. 3.2.stable) [mandatory]"
     echo "  -b all|classical|mono (default: all)"
     echo
     exit 1
     ;;
   v)
     godot_version=$OPTARG
+    ;;
+  t)
+    templates_version=$OPTARG
     ;;
   b)
     if [ "$OPTARG" == "classical" ]; then
@@ -48,6 +53,11 @@ while getopts "h?v:b:" opt; do
     ;;
   esac
 done
+
+if [ -z "${godot_version}" -o -z "${templates_version}" ]; then
+  echo "Mandatory argument -v or -t missing."
+  exit 1
+fi
 
 export basedir=$(pwd)
 export reldir="${basedir}/releases/${godot_version}"
@@ -221,6 +231,13 @@ if [ "${build_classical}" == "1" ]; then
   cd uwp_template_x64_debug && zip -q -9 -r "${templatesdir}/uwp_x64_debug.zip" * && cd ..
   rm -rf uwp_template_x64*
 
+  ## Templates TPZ (Classical) ##
+
+  echo "${templates_version}" > ${templatesdir}/version.txt
+  pushd ${templatesdir}/..
+  zip -q -9 -r -D "${reldir}/${godot_basename}_export_templates.tpz" templates/*
+  popd
+
 fi
 
 # Mono
@@ -385,6 +402,13 @@ if [ "${build_mono}" == "1" ]; then
   ## UWP (Mono) ##
 
   # Not supported yet.
+
+  ## Templates TPZ (Mono) ##
+
+  echo "${templates_version}.mono" > ${templatesdir_mono}/version.txt
+  pushd ${templatesdir_mono}/..
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" templates/*
+  popd
 
 fi
 
