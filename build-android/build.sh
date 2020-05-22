@@ -40,6 +40,7 @@ if [ "${CLASSICAL}" == "1" ]; then
   cp bin/android_source.zip /root/out/templates
   cp bin/android_debug.apk /root/out/templates/android_debug.apk
   cp bin/android_release.apk /root/out/templates/android_release.apk
+  cp bin/godot-lib.release.aar /root/out/templates/godot-lib.release.aar
 fi
 
 # Mono
@@ -71,6 +72,7 @@ if [ "${MONO}" == "1" ]; then
   cp bin/android_source.zip /root/out/templates-mono
   cp bin/android_debug.apk /root/out/templates-mono/android_debug.apk
   cp bin/android_release.apk /root/out/templates-mono/android_release.apk
+  cp bin/godot-lib.release.aar /root/out/templates-mono/godot-lib.release.aar
 
   mkdir -p /root/out/templates-mono/bcl
   cp -r /root/mono-installs/android-bcl/* /root/out/templates-mono/bcl/
