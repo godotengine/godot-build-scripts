@@ -48,7 +48,11 @@ if [ "${MONO}" == "1" ]; then
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
   export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig/
 
-  $SCONS platform=x11 CC=$CC CXX=$CXX $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes
+  # Workaround for MSBuild segfault on Ubuntu containers, we build the CIL on Fedora and copy here.
+  mkdir -p bin
+  cp -r /root/mono-glue/cil/GodotSharp bin/
+
+  $SCONS platform=x11 CC=$CC CXX=$CXX $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes build_cil=no
   mkdir -p /root/out/tools-mono
   cp -rvp bin/* /root/out/tools-mono
   rm -rf bin
