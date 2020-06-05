@@ -67,7 +67,6 @@ export templatesdir="${tmpdir}/templates"
 export templatesdir_mono="${tmpdir}/mono/templates"
 
 export godot_basename="Godot_v${godot_version}"
-export godot_version_number=$(echo ${godot_basename} | grep -Po '\d+\.\d+(\.\d+)?')
 
 # Cleanup and setup
 
@@ -180,7 +179,7 @@ if [ "${build_classical}" == "1" ]; then
   ## Android (Classical) ##
 
   # Lib for direct download
-  cp out/android/templates/godot-lib.release.aar ${reldir}/godot-lib.${godot_version_number}.release.aar
+  cp out/android/templates/godot-lib.release.aar ${reldir}/godot-lib.${templates_version}.release.aar
 
   # Templates
   cp out/android/templates/*.apk ${templatesdir}/
@@ -385,7 +384,7 @@ if [ "${build_mono}" == "1" ]; then
   ## Android (Mono) ##
 
   # Lib for direct download
-  cp out/android/templates-mono/godot-lib.release.aar ${reldir_mono}/godot-lib.${godot_version_number}.release.aar
+  cp out/android/templates-mono/godot-lib.release.aar ${reldir_mono}/godot-lib.${templates_version}.release.aar
 
   # Templates
   cp out/android/templates-mono/*.apk ${templatesdir_mono}/
