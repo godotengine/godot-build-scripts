@@ -384,7 +384,7 @@ if [ "${build_mono}" == "1" ]; then
   ## Android (Mono) ##
 
   # Lib for direct download
-  cp out/android/templates-mono/godot-lib.release.aar ${reldir_mono}/godot-lib.${templates_version}.release.aar
+  cp out/android/templates-mono/godot-lib.release.aar ${reldir_mono}/godot-lib.${templates_version}.mono.release.aar
 
   # Templates
   cp out/android/templates-mono/*.apk ${templatesdir_mono}/
