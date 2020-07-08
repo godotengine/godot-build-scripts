@@ -136,11 +136,11 @@ if [ "${build_classical}" == "1" ]; then
   ## OSX (Classical) ##
 
   # Editor
-  binname="${godot_basename}_osx.64"
+  binname="${godot_basename}_osx.universal"
   rm -rf Godot.app
   cp -r git/misc/dist/osx_tools.app Godot.app
   mkdir -p Godot.app/Contents/MacOS
-  cp out/macosx/x64/tools/godot.osx.opt.tools.64 Godot.app/Contents/MacOS/Godot
+  cp out/macosx/tools/godot.osx.opt.tools.universal Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
@@ -150,8 +150,8 @@ if [ "${build_classical}" == "1" ]; then
   cp -r git/misc/dist/osx_template.app .
   mkdir -p osx_template.app/Contents/MacOS
 
-  cp out/macosx/x64/templates/godot.osx.opt.64 osx_template.app/Contents/MacOS/godot_osx_release.64
-  cp out/macosx/x64/templates/godot.osx.opt.debug.64 osx_template.app/Contents/MacOS/godot_osx_debug.64
+  cp out/macosx/templates/godot.osx.opt.universal osx_template.app/Contents/MacOS/godot_osx_release.64
+  cp out/macosx/templates/godot.osx.opt.debug.universal osx_template.app/Contents/MacOS/godot_osx_debug.64
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
   zip -q -9 -r "${templatesdir}/osx.zip" osx_template.app
   rm -rf osx_template.app
@@ -324,18 +324,18 @@ if [ "${build_mono}" == "1" ]; then
   ## OSX (Mono) ##
 
   # Editor
-  binname="${godot_basename}_mono_osx.64"
+  binname="${godot_basename}_mono_osx.universal"
   rm -rf Godot_mono.app
   cp -r git/misc/dist/osx_tools.app Godot_mono.app
   mkdir -p Godot_mono.app/Contents/MacOS
-  cp out/macosx/x64/tools-mono/godot.osx.opt.tools.64.mono Godot_mono.app/Contents/MacOS/Godot
+  cp out/macosx/tools-mono/godot.osx.opt.tools.universal.mono Godot_mono.app/Contents/MacOS/Godot
   mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}
   mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp
   mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp/Mono
-  cp -rp out/macosx/x64/tools-mono/GodotSharp/Api Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/x64/tools-mono/GodotSharp/Mono/lib Godot_mono.app/Contents/Frameworks/GodotSharp/Mono
-  cp -rp out/macosx/x64/tools-mono/GodotSharp/Tools Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/x64/tools-mono/GodotSharp/Mono/etc Godot_mono.app/Contents/Resources/GodotSharp/Mono
+  cp -rp out/macosx/tools-mono/GodotSharp/Api Godot_mono.app/Contents/Frameworks/GodotSharp
+  cp -rp out/macosx/tools-mono/GodotSharp/Mono/lib Godot_mono.app/Contents/Frameworks/GodotSharp/Mono
+  cp -rp out/macosx/tools-mono/GodotSharp/Tools Godot_mono.app/Contents/Frameworks/GodotSharp
+  cp -rp out/macosx/tools-mono/GodotSharp/Mono/etc Godot_mono.app/Contents/Resources/GodotSharp/Mono
   cp -rp out/aot-compilers Godot_mono.app/Contents/Frameworks/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
@@ -346,9 +346,9 @@ if [ "${build_mono}" == "1" ]; then
   cp -r git/misc/dist/osx_template.app .
   mkdir -p osx_template.app/Contents/MacOS
 
-  cp out/macosx/x64/templates-mono/godot.osx.opt.debug.64.mono osx_template.app/Contents/MacOS/godot_osx_debug.64
-  cp out/macosx/x64/templates-mono/godot.osx.opt.64.mono osx_template.app/Contents/MacOS/godot_osx_release.64
-  cp -rp out/macosx/x64/templates-mono/data.mono.osx.64.* osx_template.app/Contents/MacOS/
+  cp out/macosx/templates-mono/godot.osx.opt.debug.universal.mono osx_template.app/Contents/MacOS/godot_osx_debug.64
+  cp out/macosx/templates-mono/godot.osx.opt.universal.mono osx_template.app/Contents/MacOS/godot_osx_release.64
+  cp -rp out/macosx/templates-mono/data.mono.osx.universal.* osx_template.app/Contents/MacOS/
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
   zip -q -9 -r "${templatesdir_mono}/osx.zip" osx_template.app
   rm -rf osx_template.app
