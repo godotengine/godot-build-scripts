@@ -5,7 +5,7 @@ set -e
 # Config
 
 export BUILD_NAME=official
-export SCONS="call scons -j4 verbose=yes warnings=no progress=no"
+export SCONS="call scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="debug_symbols=no"
 export BUILD_ARCHES="x86 x64 arm"
 export ANGLE_SRC_PATH='c:\angle'
