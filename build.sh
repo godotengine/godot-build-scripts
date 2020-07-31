@@ -139,6 +139,21 @@ if [ "${skip_git_checkout}" == 0 ]; then
   git clean -fdx
   git pull origin ${git_treeish} || /bin/true
 
+  # Validate version
+  correct_version=$(python3 << EOF
+import version;
+if hasattr(version, "patch"):
+  git_version = f"{version.major}.{version.minor}.{version.patch}-{version.status}"
+else:
+  git_version = f"{version.major}.{version.minor}-{version.status}"
+print(git_version == "${godot_version}")
+EOF
+  )
+  if [[ "$correct_version" != "True" ]]; then
+    echo "Version in version.py doesn't match the passed ${godot_version}."
+    exit 0
+  fi
+
   git archive --format=tar $git_treeish --prefix=godot-${godot_version}/ | gzip > ../godot.tar.gz
   popd
 fi
