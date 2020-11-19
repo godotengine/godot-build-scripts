@@ -6,7 +6,7 @@ set -e
 
 export BUILD_NAME=official
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="osxcross_sdk=darwin18 debug_symbols=no"
+export OPTIONS="osxcross_sdk=darwin19 debug_symbols=no"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/dependencies/mono"
 export TERM=xterm
 

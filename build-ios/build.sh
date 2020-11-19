@@ -10,7 +10,7 @@ export OPTIONS="debug_symbols=no"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export TERM=xterm
 
-export IOS_SDK="12.4"
+export IOS_SDK="14.0"
 export IOS_LIPO="/root/ioscross/arm64/bin/arm-apple-darwin11-lipo"
 
 export IOS_GODOT_LIBS="libgodot libgodot_arkit_module libgodot_camera_module"
@@ -26,14 +26,14 @@ if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for iOS..."
 
   $SCONS platform=iphone $OPTIONS arch=arm64 tools=no target=release_debug \
-    osxcross_sdk=darwin18 IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
+    IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
   $SCONS platform=iphone $OPTIONS arch=arm64 tools=no target=release \
-    osxcross_sdk=darwin18 IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
+    IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
 
   $SCONS platform=iphone $OPTIONS arch=x86_64 tools=no target=release_debug \
-    osxcross_sdk=darwin18 IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
+    IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
   $SCONS platform=iphone $OPTIONS arch=x86_64 tools=no target=release \
-    osxcross_sdk=darwin18 IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
+    IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
 
   mkdir -p /root/out/templates
   for lib in $IOS_GODOT_LIBS; do
@@ -52,14 +52,14 @@ if [ "${MONO}" == "1" ]; then
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
   $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=arm64 mono_prefix=/root/mono-installs/ios-arm64-release tools=no target=release_debug \
-    osxcross_sdk=darwin18 IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
+    IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
   $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=arm64 mono_prefix=/root/mono-installs/ios-arm64-release tools=no target=release \
-    osxcross_sdk=darwin18 IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
+    IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
 
   $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=x86_64 mono_prefix=/root/mono-installs/ios-x86_64-release tools=no target=release_debug \
-    osxcross_sdk=darwin18 IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
+    IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
   $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=x86_64 mono_prefix=/root/mono-installs/ios-x86_64-release tools=no target=release \
-    osxcross_sdk=darwin18 IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
+    IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
 
   mkdir -p /root/out/templates-mono
   for lib in $IOS_GODOT_LIBS; do
