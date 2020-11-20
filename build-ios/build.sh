@@ -10,7 +10,7 @@ export OPTIONS="debug_symbols=no"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export TERM=xterm
 
-export IOS_SDK="14.0"
+export IOS_SDK="14.2"
 export IOS_LIPO="/root/ioscross/arm64/bin/arm-apple-darwin11-lipo"
 
 export IOS_GODOT_LIBS="libgodot libgodot_arkit_module libgodot_camera_module"
