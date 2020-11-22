@@ -331,10 +331,9 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macosx/tools-mono/godot.osx.opt.tools.universal.mono Godot_mono.app/Contents/MacOS/Godot
   mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}
   mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp
-  mkdir -p Godot_mono.app/Contents/Resources/GodotSharp/Mono
   cp -rp out/macosx/tools-mono/GodotSharp/Api Godot_mono.app/Contents/Frameworks/GodotSharp
   cp -rp out/macosx/tools-mono/GodotSharp/Tools Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/tools-mono/GodotSharp/Mono Godot_mono.app/Contents/Resources/GodotSharp/Mono
+  cp -rp out/macosx/tools-mono/GodotSharp/Mono Godot_mono.app/Contents/Resources/GodotSharp
 
   cp -rp out/aot-compilers Godot_mono.app/Contents/Frameworks/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
