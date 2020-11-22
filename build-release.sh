@@ -331,11 +331,11 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macosx/tools-mono/godot.osx.opt.tools.universal.mono Godot_mono.app/Contents/MacOS/Godot
   mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}
   mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp
-  mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp/Mono
+  mkdir -p Godot_mono.app/Contents/Resources/GodotSharp/Mono
   cp -rp out/macosx/tools-mono/GodotSharp/Api Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/tools-mono/GodotSharp/Mono/lib Godot_mono.app/Contents/Frameworks/GodotSharp/Mono
   cp -rp out/macosx/tools-mono/GodotSharp/Tools Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/tools-mono/GodotSharp/Mono/etc Godot_mono.app/Contents/Resources/GodotSharp/Mono
+  cp -rp out/macosx/tools-mono/GodotSharp/Mono Godot_mono.app/Contents/Resources/GodotSharp/Mono
+
   cp -rp out/aot-compilers Godot_mono.app/Contents/Frameworks/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
@@ -348,7 +348,7 @@ if [ "${build_mono}" == "1" ]; then
 
   cp out/macosx/templates-mono/godot.osx.opt.debug.universal.mono osx_template.app/Contents/MacOS/godot_osx_debug.64
   cp out/macosx/templates-mono/godot.osx.opt.universal.mono osx_template.app/Contents/MacOS/godot_osx_release.64
-  cp -rp out/macosx/templates-mono/data.mono.osx.universal.* osx_template.app/Contents/MacOS/
+  cp -rp out/macosx/templates-mono/data.mono.osx.universal.* osx_template.app/Contents/Resources/
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
   zip -q -9 -r "${templatesdir_mono}/osx.zip" osx_template.app
   rm -rf osx_template.app
