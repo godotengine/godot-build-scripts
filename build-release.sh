@@ -335,7 +335,7 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/macosx/tools-mono/GodotSharp Godot_mono.app/Contents/Resources
   mv Godot_mono.app/Contents/Resources/GodotSharp/Mono/lib/*.dylib Godot_mono.app/Contents/Frameworks/Mono
   # cp /usr/local/lib/libMoltenVK.dylib Godot_mono.app/Contents/Frameworks
-  sed -i '' -e 's/$mono_libdir/$mono_libdir\/..\/..\/..\/..\/Frameworks\/Mono/g' Godot_mono.app/Contents/Resources/GodotSharp/Mono/etc/mono/config
+  sed -i -e 's/$mono_libdir/$mono_libdir\/..\/..\/..\/..\/Frameworks\/Mono/g' Godot_mono.app/Contents/Resources/GodotSharp/Mono/etc/mono/config
 
   cp -rp out/aot-compilers Godot_mono.app/Contents/Frameworks/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
