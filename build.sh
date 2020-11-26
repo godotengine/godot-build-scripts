@@ -25,7 +25,7 @@ git_treeish="master"
 build_classical=1
 build_mono=1
 force_download=0
-skip_download=0
+skip_download=1
 skip_git_checkout=0
 
 while getopts "h?r:u:p:v:g:b:fsc" opt; do
