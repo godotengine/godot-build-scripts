@@ -9,8 +9,8 @@ export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="debug_symbols=no use_static_cpp=yes use_lto=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export TERM=xterm
-export CC="gcc-8"
-export CXX="g++-8"
+export CC="gcc-9"
+export CXX="g++-9"
 
 rm -rf godot
 mkdir godot
