@@ -330,10 +330,12 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p Godot_mono.app/Contents/MacOS
   cp out/macosx/tools-mono/godot.osx.opt.tools.universal.mono Godot_mono.app/Contents/MacOS/Godot
   mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}
-  mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp
-  cp -rp out/macosx/tools-mono/GodotSharp/Api Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/tools-mono/GodotSharp/Tools Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/tools-mono/GodotSharp/Mono Godot_mono.app/Contents/Resources/GodotSharp
+  mkdir -p Godot_mono.app/Contents/Resources/GodotSharp
+  mkdir -p Godot_mono.app/Contents/Frameworks/Mono
+  cp -rp out/macosx/tools-mono/GodotSharp Godot_mono.app/Contents/Resources
+  mv Godot_mono.app/Contents/Resources/GodotSharp/Mono/lib/*.dylib Godot_mono.app/Contents/Frameworks/Mono
+  # cp /usr/local/lib/libMoltenVK.dylib Godot_mono.app/Contents/Frameworks
+  sed -i '' -e 's/$mono_libdir/$mono_libdir\/..\/..\/..\/..\/Frameworks\/Mono/g' Godot_mono.app/Contents/Resources/GodotSharp/Mono/etc/mono/config
 
   cp -rp out/aot-compilers Godot_mono.app/Contents/Frameworks/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
@@ -347,7 +349,15 @@ if [ "${build_mono}" == "1" ]; then
 
   cp out/macosx/templates-mono/godot.osx.opt.debug.universal.mono osx_template.app/Contents/MacOS/godot_osx_debug.64
   cp out/macosx/templates-mono/godot.osx.opt.universal.mono osx_template.app/Contents/MacOS/godot_osx_release.64
-  cp -rp out/macosx/templates-mono/data.mono.osx.universal.* osx_template.app/Contents/Resources/
+
+  mkdir -p osx_template.app/Contents/Frameworks/data.mono.osx.64.frameworks.{release,release_debug}/lib
+  mkdir -p osx_template.app/Contents/Resources/data.mono.osx.64.resources.{release,release_debug}
+  cp -rp out/templates-mono/data.mono.osx.64.release/Mono/lib osx_template.app/Contents/Frameworks/data.mono.osx.64.frameworks.release
+  cp -rp out/templates-mono/data.mono.osx.64.release_debug/Mono/lib osx_template.app/Contents/Frameworks/data.mono.osx.64.frameworks.release_debug
+  cp -rp out/templates-mono/data.mono.osx.64.release/Mono/etc osx_template.app/Contents/Resources/data.mono.osx.64.resources.release
+  cp -rp out/templates-mono/data.mono.osx.64.release_debug/Mono/etc osx_template.app/Contents/Resources/data.mono.osx.64.resources.release_debug
+  # cp /usr/local/lib/libMoltenVK.dylib osx_template.app/Contents/Frameworks
+
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
   zip -q -9 -r "${templatesdir_mono}/osx.zip" osx_template.app
   rm -rf osx_template.app
