@@ -6,8 +6,8 @@ set -e
 
 export BUILD_NAME=official
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="debug_symbols=no use_lto=no"
-export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/mono-installs/wasm-runtime-release"
+export OPTIONS="debug_symbols=no use_lto=yes"
+export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/mono-installs/wasm-runtime-release use_lto=no"
 export TERM=xterm
 
 rm -rf godot
