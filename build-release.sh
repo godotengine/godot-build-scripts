@@ -176,6 +176,12 @@ if [ "${build_classical}" == "1" ]; then
   cp out/javascript/templates/godot.javascript.opt.zip ${templatesdir}/webassembly_release.zip
   cp out/javascript/templates/godot.javascript.opt.debug.zip ${templatesdir}/webassembly_debug.zip
 
+  cp out/javascript/templates/godot.javascript.opt.threads.zip ${templatesdir}/webassembly_threads_release.zip
+  cp out/javascript/templates/godot.javascript.opt.debug.threads.zip ${templatesdir}/webassembly_threads_debug.zip
+
+  cp out/javascript/templates/godot.javascript.opt.gdnative.zip ${templatesdir}/webassembly_gdnative_release.zip
+  cp out/javascript/templates/godot.javascript.opt.debug.gdnative.zip ${templatesdir}/webassembly_gdnative_debug.zip
+
   ## Android (Classical) ##
 
   # Lib for direct download
