@@ -283,9 +283,10 @@ if [ "${build_classical}" == "1" ]; then
 
   rm -rf ios_xcode
   cp -r git/misc/dist/ios_xcode ios_xcode
-  cp out/ios/templates/libgodot.iphone.opt.fat ios_xcode/libgodot.iphone.release.fat.a
-  cp out/ios/templates/libgodot.iphone.opt.debug.fat ios_xcode/libgodot.iphone.debug.fat.a
-  chmod +x ios_xcode/libgodot.iphone.*
+  cp out/ios/templates/libgodot.iphone.simulator.a ios_xcode/libgodot.iphone.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates/libgodot.iphone.debug.simulator.a ios_xcode/libgodot.iphone.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates/libgodot.iphone.a ios_xcode/libgodot.iphone.release.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates/libgodot.iphone.debug.a ios_xcode/libgodot.iphone.debug.xcframework/ios-arm64/libgodot.a
   cd ios_xcode
   zip -q -9 -r "${templatesdir}/iphone.zip" *
   cd ..
@@ -489,9 +490,10 @@ if [ "${build_mono}" == "1" ]; then
 
   rm -rf ios_xcode
   cp -r git/misc/dist/ios_xcode ios_xcode
-  cp out/ios/templates-mono/libgodot.iphone.opt.fat ios_xcode/libgodot.iphone.release.fat.a
-  cp out/ios/templates-mono/libgodot.iphone.opt.debug.fat ios_xcode/libgodot.iphone.debug.fat.a
-  chmod +x ios_xcode/libgodot.iphone.*
+  cp out/ios/templates-mono/libgodot.iphone.simulator.a ios_xcode/libgodot.iphone.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates-mono/libgodot.iphone.debug.simulator.a ios_xcode/libgodot.iphone.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates-mono/libgodot.iphone.a ios_xcode/libgodot.iphone.release.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates-mono/libgodot.iphone.debug.a ios_xcode/libgodot.iphone.debug.xcframework/ios-arm64/libgodot.a
   cd ios_xcode
   zip -q -9 -r "${templatesdir_mono}/iphone.zip" *
   cd ..
@@ -499,8 +501,7 @@ if [ "${build_mono}" == "1" ]; then
 
   mkdir -p ${templatesdir_mono}/bcl
   cp -r out/ios/templates-mono/bcl/monotouch* ${templatesdir_mono}/bcl/
-
-  cp -r out/ios/templates-mono/iphone-mono-libs ${templatesdir_mono}/
+  cp -r out/ios/templates-mono/iphone-mono-libs ${templatesdir_mono}
 
   ## UWP (Mono) ##
 
