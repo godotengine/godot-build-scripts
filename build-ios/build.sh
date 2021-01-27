@@ -13,8 +13,6 @@ export TERM=xterm
 export IOS_SDK="14.2"
 export IOS_LIPO="/root/ioscross/arm64/bin/arm-apple-darwin11-lipo"
 
-export IOS_GODOT_LIBS="libgodot libgodot_arkit_module libgodot_camera_module"
-
 rm -rf godot
 mkdir godot
 cd godot
@@ -36,10 +34,8 @@ if [ "${CLASSICAL}" == "1" ]; then
     IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
 
   mkdir -p /root/out/templates
-  for lib in $IOS_GODOT_LIBS; do
-    $IOS_LIPO -create bin/${lib}.iphone.opt.arm64.a bin/${lib}.iphone.opt.x86_64.a -output /root/out/templates/${lib}.iphone.opt.fat
-    $IOS_LIPO -create bin/${lib}.iphone.opt.debug.arm64.a bin/${lib}.iphone.opt.debug.x86_64.a -output /root/out/templates/${lib}.iphone.opt.debug.fat
-  done
+  $IOS_LIPO -create bin/libgodot.iphone.opt.arm64.a bin/libgodot.iphone.opt.x86_64.a -output /root/out/templates/libgodot.iphone.opt.fat
+  $IOS_LIPO -create bin/libgodot.iphone.opt.debug.arm64.a bin/libgodot.iphone.opt.debug.x86_64.a -output /root/out/templates/libgodot.iphone.opt.debug.fat
 fi
 
 # Mono
@@ -62,13 +58,10 @@ if [ "${MONO}" == "1" ]; then
     IPHONESDK="/root/ioscross/x86_64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64/" ios_triple="x86_64-apple-darwin11-"
 
   mkdir -p /root/out/templates-mono
-  for lib in $IOS_GODOT_LIBS; do
-    $IOS_LIPO -create bin/${lib}.iphone.opt.arm64.a bin/${lib}.iphone.opt.x86_64.a -output /root/out/templates-mono/${lib}.iphone.opt.fat
-    $IOS_LIPO -create bin/${lib}.iphone.opt.debug.arm64.a bin/${lib}.iphone.opt.debug.x86_64.a -output /root/out/templates-mono/${lib}.iphone.opt.debug.fat
-  done
+  $IOS_LIPO -create bin/libgodot.iphone.opt.arm64.a bin/libgodot.iphone.opt.x86_64.a -output /root/out/templates-mono/libgodot.iphone.opt.fat
+  $IOS_LIPO -create bin/libgodot.iphone.opt.debug.arm64.a bin/libgodot.iphone.opt.debug.x86_64.a -output /root/out/templates-mono/libgodot.iphone.opt.debug.fat
 
   mkdir -p /root/out/templates-mono/iphone-mono-libs
-
   $IOS_LIPO -create bin/libmonosgen-2.0.iphone.arm64.a bin/libmonosgen-2.0.iphone.x86_64.a -output /root/out/templates-mono/iphone-mono-libs/libmonosgen-2.0.iphone.fat.a
   $IOS_LIPO -create bin/libmono-native.iphone.arm64.a bin/libmono-native.iphone.x86_64.a -output /root/out/templates-mono/iphone-mono-libs/libmono-native.iphone.fat.a
   $IOS_LIPO -create bin/libmono-profiler-log.iphone.arm64.a bin/libmono-profiler-log.iphone.x86_64.a -output /root/out/templates-mono/iphone-mono-libs/libmono-profiler-log.iphone.fat.a

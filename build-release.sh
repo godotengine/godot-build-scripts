@@ -195,11 +195,9 @@ if [ "${build_classical}" == "1" ]; then
 
   rm -rf ios_xcode
   cp -r git/misc/dist/ios_xcode ios_xcode
-  for suffix in "" "_arkit_module" "_camera_module"; do
-    cp out/ios/templates/libgodot${suffix}.iphone.opt.fat ios_xcode/libgodot${suffix}.iphone.release.fat.a
-    cp out/ios/templates/libgodot${suffix}.iphone.opt.debug.fat ios_xcode/libgodot${suffix}.iphone.debug.fat.a
-  done
-  chmod +x ios_xcode/libgodot*.iphone.*
+  cp out/ios/templates/libgodot.iphone.opt.fat ios_xcode/libgodot.iphone.release.fat.a
+  cp out/ios/templates/libgodot.iphone.opt.debug.fat ios_xcode/libgodot.iphone.debug.fat.a
+  chmod +x ios_xcode/libgodot.iphone.*
   cd ios_xcode
   zip -q -9 -r "${templatesdir}/iphone.zip" *
   cd ..
@@ -404,11 +402,9 @@ if [ "${build_mono}" == "1" ]; then
 
   rm -rf ios_xcode
   cp -r git/misc/dist/ios_xcode ios_xcode
-  for suffix in "" "_arkit_module" "_camera_module"; do
-    cp out/ios/templates-mono/libgodot${suffix}.iphone.opt.fat ios_xcode/libgodot${suffix}.iphone.release.fat.a
-    cp out/ios/templates-mono/libgodot${suffix}.iphone.opt.debug.fat ios_xcode/libgodot${suffix}.iphone.debug.fat.a
-  done
-  chmod +x ios_xcode/libgodot*.iphone.*
+  cp out/ios/templates-mono/libgodot.iphone.opt.fat ios_xcode/libgodot.iphone.release.fat.a
+  cp out/ios/templates-mono/libgodot.iphone.opt.debug.fat ios_xcode/libgodot.iphone.debug.fat.a
+  chmod +x ios_xcode/libgodot.iphone.*
   cd ios_xcode
   zip -q -9 -r "${templatesdir_mono}/iphone.zip" *
   cd ..
