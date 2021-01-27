@@ -9,8 +9,6 @@ export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="debug_symbols=no use_lto=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/mono-installs/wasm-runtime-release use_lto=no"
 export TERM=xterm
-export EMSDK_CLASSICAL=2.0.10
-export EMSDK_MONO=1.39.9
 
 rm -rf godot
 mkdir godot
