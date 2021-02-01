@@ -9,11 +9,18 @@ export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="debug_symbols=no use_lto=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export TERM=xterm
-export CC="gcc-9"
-export CXX="g++-9"
 
+# i386 doesn't play nice with -static-libstdc++, so we should link dynamically
+# against an old enough GCC for compatibility with newer distros - so we only
+# use a recent GCC for x86_64. See godotengine/godot#31743.
+# Without defining CC/CXX, we use the default GCC 4.8.
 if [ "$(getconf LONG_BIT)" == "64" ]; then
-  export OPTIONS="${OPTIONS} use_static_cpp=yes"
+  export CC="gcc-9"
+  export CXX="g++-9"
+else
+  export OPTIONS="$OPTIONS use_static_cpp=no"
+  export CC="gcc"
+  export CXX="g++"
 fi
 
 rm -rf godot
