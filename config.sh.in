@@ -27,3 +27,15 @@ export SIGN_PASSWORD=""
 # Use your own when making a thirdparty build.
 export SIGN_NAME=""
 export SIGN_URL=""
+
+# Hostname or IP address of an OSX host (Needed for signing)
+# eg "user@10.1.0.10"
+export OSX_HOST=""
+# ID of the Apple certificate used to sign
+export OSX_KEY_ID=""
+# Bundle id for the signed app
+export OSX_BUNDLE_ID=""
+# Username/password for Apple's signing APIs (used for atltool)
+export APPLE_ID=""
+export APPLE_ID_PASSWORD=""
+

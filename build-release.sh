@@ -145,6 +145,33 @@ if [ "${build_classical}" == "1" ]; then
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
 
+  if [ ! -z "${OSX_HOST}" ]; then
+    osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
+    
+    scp "${reldir}/${binname}.zip" "${OSX_HOST}:${osx_tmpdir}"
+    ssh "${OSX_HOST}" "
+              cd ${osx_tmpdir} && \
+              unzip ${binname}.zip &&\
+              codesign --timestamp --options=runtime -s ${OSX_KEY_ID} -v Godot.app/Contents/MacOS/Godot && \
+              zip -r ${binname}_signed.zip Godot.app"
+    
+    request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${osx_tmpdir}/${binname}_signed.zip")
+    request_uuid=$(echo ${request_uuid} | sed -e 's/.*RequestUUID = //')
+    ssh "${OSX_HOST}" "while xcrun altool --notarization-history 0 -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q ${request_uuid}.*in\ progress; do echo Waiting on Apple signature; sleep 30s; done"
+    if ! ssh "${OSX_HOST}" "xcrun altool --notarization-history 0 -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q ${request_uuid}.*success"; then
+      echo "Signing failed?"
+      ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
+      exit 1
+    else
+      ssh "${OSX_HOST}" "
+              cd ${osx_tmpdir} && \
+              xcrun stapler staple Godot.app && \
+              zip -r ${binname}_stapled.zip Godot.app"
+      scp "${OSX_HOST}:${osx_tmpdir}/${binname}_stapled.zip" ${reldir}/${binname}.zip
+      ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
+    fi
+  fi
+
   # Templates
   rm -rf osx_template.app
   cp -r git/misc/dist/osx_template.app .
