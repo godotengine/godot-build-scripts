@@ -60,6 +60,7 @@ if [ -z "${godot_version}" -o -z "${templates_version}" ]; then
 fi
 
 export basedir=$(pwd)
+export webdir="${basedir}/web/${godot_version}"
 export reldir="${basedir}/releases/${godot_version}"
 export reldir_mono="${reldir}/mono"
 export tmpdir="${basedir}/tmp"
@@ -70,9 +71,11 @@ export godot_basename="Godot_v${godot_version}"
 
 # Cleanup and setup
 
+rm -rf ${webdir}
 rm -rf ${reldir}
 rm -rf ${tmpdir}
 
+mkdir -p ${webdir}
 mkdir -p ${reldir}
 mkdir -p ${reldir_mono}
 mkdir -p ${templatesdir}
@@ -171,6 +174,10 @@ if [ "${build_classical}" == "1" ]; then
   rm ${binname}
 
   ## Javascript (Classical) ##
+
+  # Editor
+  unzip out/javascript/tools/godot.javascript.opt.tools.threads.zip -d ${webdir}/
+  brotli --keep --force --quality=11 ${webdir}/*
 
   # Templates
   cp out/javascript/templates/godot.javascript.opt.zip ${templatesdir}/webassembly_release.zip
