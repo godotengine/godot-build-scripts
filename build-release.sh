@@ -258,6 +258,19 @@ if [ "${build_classical}" == "1" ]; then
   cd ..
   rm -rf ios_xcode
 
+
+  ## tvOS (Classical) ##
+
+  rm -rf tvos_xcode
+  cp -r git/misc/dist/tvos_xcode tvos_xcode
+  cp out/tvos/templates/libgodot.tvos.opt.fat tvos_xcode/libgodot.tvos.release.fat.a
+  cp out/tvos/templates/libgodot.tvos.opt.debug.fat tvos_xcode/libgodot.tvos.debug.fat.a
+  chmod +x tvos_xcode/libgodot.tvos.*
+  cd tvos_xcode
+  zip -q -9 -r "${templatesdir}/tvos.zip" *
+  cd ..
+  rm -rf tvos_xcode
+
   ## UWP (Classical) ##
 
   if [ ! -d "angle" ]; then
