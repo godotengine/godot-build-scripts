@@ -6,7 +6,9 @@ set -e
 
 export BUILD_NAME=official
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="debug_symbols=no"
+# Keep LTO disabled for iOS - it works but it makes linking apps on deploy very slow,
+# which is seen as a regression in the current workflow.
+export OPTIONS="production=yes use_lto=no"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export TERM=xterm
 

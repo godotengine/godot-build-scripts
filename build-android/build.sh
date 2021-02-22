@@ -6,7 +6,7 @@ set -e
 
 export BUILD_NAME=official
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="debug_symbols=no"
+export OPTIONS="production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=no"
 export TERM=xterm
 
