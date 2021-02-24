@@ -201,5 +201,5 @@ mkdir -p ${basedir}/out/uwp
 ${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
 
 if [ ! -z "$SUDO_UID" ]; then
-  chown -R "${SUDO_UID}":"${SUDO_GID}" ${basedir}/out
+  chown -R "${SUDO_UID}":"${SUDO_GID}" ${basedir}/out ${basedir}/mono-glue ${basedir}/godot.tar.gz
 fi
