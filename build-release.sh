@@ -152,10 +152,11 @@ if [ "${build_classical}" == "1" ]; then
     osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
     
     scp "${reldir}/${binname}.zip" "${OSX_HOST}:${osx_tmpdir}"
+    scp "${basedir}/build-macosx/editor.entitlements" "${OSX_HOST}:${osx_tmpdir}"
     ssh "${OSX_HOST}" "
               cd ${osx_tmpdir} && \
               unzip ${binname}.zip &&\
-              codesign --timestamp --options=runtime -s ${OSX_KEY_ID} -v Godot.app/Contents/MacOS/Godot && \
+              codesign --timestamp --options=runtime --entitlements editor.entitlements -s ${OSX_KEY_ID} -v Godot.app/Contents/MacOS/Godot && \
               zip -r ${binname}_signed.zip Godot.app"
     
     request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${osx_tmpdir}/${binname}_signed.zip")
