@@ -366,16 +366,10 @@ if [ "${build_mono}" == "1" ]; then
   binname="${godot_basename}_mono_osx.64"
   rm -rf Godot_mono.app
   cp -r git/misc/dist/osx_tools.app Godot_mono.app
-  mkdir -p Godot_mono.app/Contents/MacOS
+  mkdir -p Godot_mono.app/Contents/{MacOS,Resources}
   cp out/macosx/tools-mono/godot.osx.opt.tools.x86_64.mono Godot_mono.app/Contents/MacOS/Godot
-  mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}
-  mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp
-  mkdir -p Godot_mono.app/Contents/{Frameworks,Resources}/GodotSharp/Mono
-  cp -rp out/macosx/tools-mono/GodotSharp/Api Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/tools-mono/GodotSharp/Mono/lib Godot_mono.app/Contents/Frameworks/GodotSharp/Mono
-  cp -rp out/macosx/tools-mono/GodotSharp/Tools Godot_mono.app/Contents/Frameworks/GodotSharp
-  cp -rp out/macosx/tools-mono/GodotSharp/Mono/etc Godot_mono.app/Contents/Resources/GodotSharp/Mono
-  cp -rp out/aot-compilers Godot_mono.app/Contents/Frameworks/GodotSharp/Tools/
+  cp -rp out/macosx/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
+  cp -rp out/aot-compilers Godot_mono.app/Contents/Resources/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
@@ -383,11 +377,10 @@ if [ "${build_mono}" == "1" ]; then
   # Templates
   rm -rf osx_template.app
   cp -r git/misc/dist/osx_template.app .
-  mkdir -p osx_template.app/Contents/MacOS
-
+  mkdir -p osx_template.app/Contents/{MacOS,Resources}
   cp out/macosx/templates-mono/godot.osx.opt.debug.x86_64.mono osx_template.app/Contents/MacOS/godot_osx_debug.64
   cp out/macosx/templates-mono/godot.osx.opt.x86_64.mono osx_template.app/Contents/MacOS/godot_osx_release.64
-  cp -rp out/macosx/templates-mono/data.mono.osx.64.* osx_template.app/Contents/MacOS/
+  cp -rp out/macosx/templates-mono/data.mono.osx.64.* osx_template.app/Contents/Resources/
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
   zip -q -9 -r "${templatesdir_mono}/osx.zip" osx_template.app
   rm -rf osx_template.app
