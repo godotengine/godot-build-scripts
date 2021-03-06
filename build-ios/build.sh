@@ -4,7 +4,6 @@ set -e
 
 # Config
 
-export BUILD_NAME=official
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 # Keep LTO disabled for iOS - it works but it makes linking apps on deploy very slow,
 # which is seen as a regression in the current workflow.

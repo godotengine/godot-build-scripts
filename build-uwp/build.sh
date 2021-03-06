@@ -4,7 +4,6 @@ set -e
 
 # Config
 
-export BUILD_NAME=official
 export SCONS="call scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="production=yes"
 export BUILD_ARCHES="x86 x64 arm"
