@@ -13,6 +13,10 @@ if [ ! -e config.sh ]; then
 fi
 source ./config.sh
 
+if [ -z "${BUILD_NAME}" ]; then
+  export BUILD_NAME="custom_build"
+fi
+
 if [ -z "${NUM_CORES}" ]; then
   export NUM_CORES=16
 fi
@@ -162,7 +166,7 @@ export basedir="$(pwd)"
 mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
-export podman_run="${podman} run -it --rm --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+export podman_run="${podman} run -it --rm --env BUILD_NAME --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=3.2-mono-6.12.0.114
 
 # Get AOT compilers from their containers.

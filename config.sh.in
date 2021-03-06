@@ -11,6 +11,9 @@
 # https://github.com/godotengine/build-containers
 export REGISTRY="registry.prehensile-tales.com"
 
+# Default build name used to distinguish between official and custom builds.
+export BUILD_NAME="custom_build"
+
 # Default number of parallel cores for each build.
 export NUM_CORES=16
 
