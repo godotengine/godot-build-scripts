@@ -226,6 +226,8 @@ if [ "${build_classical}" == "1" ]; then
   # Editor
   unzip out/javascript/tools/godot.javascript.opt.tools.threads.zip -d ${webdir}/
   brotli --keep --force --quality=11 ${webdir}/*
+  binname="${godot_basename}_web_editor.zip"
+  cp out/javascript/tools/godot.javascript.opt.tools.threads.zip ${reldir}/${binname}
 
   # Templates
   cp out/javascript/templates/godot.javascript.opt.zip ${templatesdir}/webassembly_release.zip
