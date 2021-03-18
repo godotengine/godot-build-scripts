@@ -51,8 +51,8 @@ sign_macos() {
 
     request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${osx_tmpdir}/${binname}_signed.zip")
     request_uuid=$(echo ${request_uuid} | sed -e 's/.*RequestUUID = //')
-    ssh "${OSX_HOST}" "while xcrun altool --notarization-history 0 -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q ${request_uuid}.*in\ progress; do echo Waiting on Apple notarization...; sleep 30s; done"
-    if ! ssh "${OSX_HOST}" "xcrun altool --notarization-history 0 -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q ${request_uuid}.*success"; then
+    ssh "${OSX_HOST}" "while xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ in\ progress; do echo Waiting on Apple notarization...; sleep 30s; done"
+    if ! ssh "${OSX_HOST}" "xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ success"; then
       echo "Notarization failed."
       notarization_log=$(ssh "${OSX_HOST}" "xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\"")
       echo "${notarization_log}"
