@@ -144,11 +144,13 @@ if [ "${build_classical}" == "1" ]; then
   # Editor
   binname="${godot_basename}_x11.64"
   cp out/linux/x64/tools/godot.x11.opt.tools.64 ${binname}
+  strip ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_x11.32"
   cp out/linux/x86/tools/godot.x11.opt.tools.32 ${binname}
+  strip ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
@@ -157,6 +159,7 @@ if [ "${build_classical}" == "1" ]; then
   cp out/linux/x64/templates/godot.x11.opt.debug.64 ${templatesdir}/linux_x11_64_debug
   cp out/linux/x86/templates/godot.x11.opt.32 ${templatesdir}/linux_x11_32_release
   cp out/linux/x86/templates/godot.x11.opt.debug.32 ${templatesdir}/linux_x11_32_debug
+  strip ${templatesdir}/linux_x11_*
 
   ## Windows (Classical) ##
 
@@ -180,7 +183,6 @@ if [ "${build_classical}" == "1" ]; then
   cp out/windows/x64/templates/godot.windows.opt.debug.64.exe ${templatesdir}/windows_64_debug.exe
   cp out/windows/x86/templates/godot.windows.opt.32.exe ${templatesdir}/windows_32_release.exe
   cp out/windows/x86/templates/godot.windows.opt.debug.32.exe ${templatesdir}/windows_32_debug.exe
-
   strip ${templatesdir}/windows*.exe
 
   ## OSX (Classical) ##
@@ -212,12 +214,14 @@ if [ "${build_classical}" == "1" ]; then
   # Headless (editor)
   binname="${godot_basename}_linux_headless.64"
   cp out/server/x64/tools/godot_server.x11.opt.tools.64 ${binname}
+  strip ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   # Server (template)
   binname="${godot_basename}_linux_server.64"
   cp out/server/x64/templates/godot_server.x11.opt.64 ${binname}
+  strip ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
@@ -322,6 +326,7 @@ if [ "${build_mono}" == "1" ]; then
   binbasename="${godot_basename}_mono_x11"
   mkdir -p ${binbasename}_64
   cp out/linux/x64/tools-mono/godot.x11.opt.tools.64.mono ${binbasename}_64/${binbasename}.64
+  strip ${binbasename}_64/${binbasename}.64
   cp -rp out/linux/x64/tools-mono/GodotSharp ${binbasename}_64/
   cp -rp out/aot-compilers ${binbasename}_64/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_64.zip" ${binbasename}_64
@@ -330,6 +335,7 @@ if [ "${build_mono}" == "1" ]; then
   binbasename="${godot_basename}_mono_x11"
   mkdir -p ${binbasename}_32
   cp out/linux/x86/tools-mono/godot.x11.opt.tools.32.mono ${binbasename}_32/${binbasename}.32
+  strip ${binbasename}_32/${binbasename}.32
   cp -rp out/linux/x86/tools-mono/GodotSharp/ ${binbasename}_32/
   cp -rp out/aot-compilers ${binbasename}_32/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_32.zip" ${binbasename}_32
@@ -342,6 +348,7 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/linux/x86/templates-mono/data.mono.x11.32.* ${templatesdir_mono}/
   cp out/linux/x86/templates-mono/godot.x11.opt.debug.32.mono ${templatesdir_mono}/linux_x11_32_debug
   cp out/linux/x86/templates-mono/godot.x11.opt.32.mono ${templatesdir_mono}/linux_x11_32_release
+  strip ${templatesdir_mono}/linux_x11*
 
   mkdir -p ${templatesdir_mono}/bcl
   cp -r out/linux/x64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x
@@ -376,7 +383,6 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/windows/x86/templates-mono/data.mono.windows.32.* ${templatesdir_mono}/
   cp out/windows/x86/templates-mono/godot.windows.opt.debug.32.mono.exe ${templatesdir_mono}/windows_32_debug.exe
   cp out/windows/x86/templates-mono/godot.windows.opt.32.mono.exe ${templatesdir_mono}/windows_32_release.exe
-
   strip ${templatesdir_mono}/windows*.exe
 
   mkdir -p ${templatesdir_mono}/bcl
@@ -414,6 +420,7 @@ if [ "${build_mono}" == "1" ]; then
   binbasename="${godot_basename}_mono_linux_headless"
   mkdir -p ${binbasename}_64
   cp out/server/x64/tools-mono/godot_server.x11.opt.tools.64.mono ${binbasename}_64/${binbasename}.64
+  strip ${binbasename}_64/${binbasename}.64
   cp -rp out/server/x64/tools-mono/GodotSharp ${binbasename}_64/
   cp -rp out/aot-compilers ${binbasename}_64/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_64.zip" ${binbasename}_64
@@ -423,6 +430,7 @@ if [ "${build_mono}" == "1" ]; then
   binbasename="${godot_basename}_mono_linux_server"
   mkdir -p ${binbasename}_64
   cp out/server/x64/templates-mono/godot_server.x11.opt.64.mono ${binbasename}_64/${binbasename}.64
+  strip ${binbasename}_64/${binbasename}.64
   cp -rp out/server/x64/templates-mono/data.mono.server.64.release ${binbasename}_64/data_${binbasename}_64
   zip -r -q -9 "${reldir_mono}/${binbasename}_64.zip" ${binbasename}_64
   rm -rf ${binbasename}_64
