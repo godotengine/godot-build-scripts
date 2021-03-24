@@ -146,7 +146,7 @@ if [ "${skip_git_checkout}" == 0 ]; then
   # Validate version
   correct_version=$(python3 << EOF
 import version;
-if hasattr(version, "patch"):
+if hasattr(version, "patch") and version.patch != 0:
   git_version = f"{version.major}.{version.minor}.{version.patch}-{version.status}"
 else:
   git_version = f"{version.major}.{version.minor}-{version.status}"

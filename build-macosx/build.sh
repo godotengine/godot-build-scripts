@@ -8,7 +8,9 @@ export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="osxcross_sdk=darwin20 production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/dependencies/mono"
 export TERM=xterm
-export STRIP="x86_64-apple-${osxcross_sdk}-strip -u -r"
+export STRIP="x86_64-apple-darwin20-strip -u -r"
+# Disable fake-signing of arm binaries.
+export NO_LDID=1
 
 rm -rf godot
 mkdir godot
