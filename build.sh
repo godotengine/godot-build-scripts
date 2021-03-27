@@ -167,7 +167,7 @@ mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
 export podman_run="${podman} run -it --rm --env BUILD_NAME --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
-export img_version=3.2-mono-6.12.0.114
+export img_version=3.x-mono-6.12.0.122
 
 # Get AOT compilers from their containers.
 mkdir -p ${basedir}/out/aot-compilers
