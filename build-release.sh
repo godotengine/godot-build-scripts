@@ -70,6 +70,31 @@ sign_macos() {
   fi
 }
 
+sign_macos_template() {
+  if [ -z "${OSX_HOST}" ]; then
+    return
+  fi
+  osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
+  reldir="$1"
+  is_mono="$2"
+
+  if [[ "${is_mono}" == "1" ]]; then
+    extra_files="osx_template.app/Contents/Resources/data.mono.*/Mono/lib/*.dylib"
+  fi
+
+  scp "${reldir}/osx.zip" "${OSX_HOST}:${osx_tmpdir}"
+  ssh "${OSX_HOST}" "
+            cd ${osx_tmpdir} && \
+            unzip osx.zip && \
+            codesign --force -s - \
+              --options=linker-signed \
+              -v ${extra_files} osx_template.app/Contents/MacOS/* && \
+            zip -r osx_signed.zip osx_template.app"
+
+  scp "${OSX_HOST}:${osx_tmpdir}/osx_signed.zip" ${reldir}/osx.zip
+  ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
+}
+
 godot_version=""
 templates_version=""
 build_classical=1
@@ -209,6 +234,7 @@ if [ "${build_classical}" == "1" ]; then
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
   zip -q -9 -r "${templatesdir}/osx.zip" osx_template.app
   rm -rf osx_template.app
+  sign_macos_template ${templatesdir} 0
 
   ## Server (Classical) ##
 
@@ -414,6 +440,7 @@ if [ "${build_mono}" == "1" ]; then
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
   zip -q -9 -r "${templatesdir_mono}/osx.zip" osx_template.app
   rm -rf osx_template.app
+  sign_macos_template ${templatesdir_mono} 1
 
   ## Server (Mono) ##
 
