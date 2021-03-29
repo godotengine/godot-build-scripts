@@ -23,49 +23,50 @@ sign_windows() {
 }
 
 sign_macos() {
-  if [ ! -z "${OSX_HOST}" ]; then
-    osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
-    reldir="$1"
-    binname="$2"
-    is_mono="$3"
+  if [ -z "${OSX_HOST}" ]; then
+    return
+  fi
+  osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
+  reldir="$1"
+  binname="$2"
+  is_mono="$3"
 
-    if [[ "${is_mono}" == "1" ]]; then
-      appname="Godot_mono.app"
-      entitlements=editor_mono.entitlements
-      sharpdir="${appname}/Contents/Resources/GodotSharp"
-      extra_files="${sharpdir}/Mono/lib/*.dylib ${sharpdir}/Tools/aot-compilers/*/*"
-    else
-      appname="Godot.app"
-      entitlements=editor.entitlements
-    fi
+  if [[ "${is_mono}" == "1" ]]; then
+    appname="Godot_mono.app"
+    entitlements=editor_mono.entitlements
+    sharpdir="${appname}/Contents/Resources/GodotSharp"
+    extra_files="${sharpdir}/Mono/lib/*.dylib ${sharpdir}/Tools/aot-compilers/*/*"
+  else
+    appname="Godot.app"
+    entitlements=editor.entitlements
+  fi
 
-    scp "${reldir}/${binname}.zip" "${OSX_HOST}:${osx_tmpdir}"
-    scp "${basedir}/build-macosx/${entitlements}" "${OSX_HOST}:${osx_tmpdir}"
+  scp "${reldir}/${binname}.zip" "${OSX_HOST}:${osx_tmpdir}"
+  scp "${basedir}/build-macosx/${entitlements}" "${OSX_HOST}:${osx_tmpdir}"
+  ssh "${OSX_HOST}" "
+            cd ${osx_tmpdir} && \
+            unzip ${binname}.zip && \
+            codesign --force --timestamp \
+              --options=runtime --entitlements ${entitlements} \
+              -s ${OSX_KEY_ID} -v ${extra_files} ${appname} && \
+            zip -r ${binname}_signed.zip ${appname}"
+
+  request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${osx_tmpdir}/${binname}_signed.zip")
+  request_uuid=$(echo ${request_uuid} | sed -e 's/.*RequestUUID = //')
+  ssh "${OSX_HOST}" "while xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ in\ progress; do echo Waiting on Apple notarization...; sleep 30s; done"
+  if ! ssh "${OSX_HOST}" "xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ success"; then
+    echo "Notarization failed."
+    notarization_log=$(ssh "${OSX_HOST}" "xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\"")
+    echo "${notarization_log}"
+    ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
+    exit 1
+  else
     ssh "${OSX_HOST}" "
-              cd ${osx_tmpdir} && \
-              unzip ${binname}.zip && \
-              codesign --force --timestamp \
-                --options=runtime --entitlements ${entitlements} \
-                -s ${OSX_KEY_ID} -v ${extra_files} ${appname} && \
-              zip -r ${binname}_signed.zip ${appname}"
-
-    request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${osx_tmpdir}/${binname}_signed.zip")
-    request_uuid=$(echo ${request_uuid} | sed -e 's/.*RequestUUID = //')
-    ssh "${OSX_HOST}" "while xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ in\ progress; do echo Waiting on Apple notarization...; sleep 30s; done"
-    if ! ssh "${OSX_HOST}" "xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ success"; then
-      echo "Notarization failed."
-      notarization_log=$(ssh "${OSX_HOST}" "xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\"")
-      echo "${notarization_log}"
-      ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
-      exit 1
-    else
-      ssh "${OSX_HOST}" "
-              cd ${osx_tmpdir} && \
-              xcrun stapler staple ${appname} && \
-              zip -r ${binname}_stapled.zip ${appname}"
-      scp "${OSX_HOST}:${osx_tmpdir}/${binname}_stapled.zip" ${reldir}/${binname}.zip
-      ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
-    fi
+            cd ${osx_tmpdir} && \
+            xcrun stapler staple ${appname} && \
+            zip -r ${binname}_stapled.zip ${appname}"
+    scp "${OSX_HOST}:${osx_tmpdir}/${binname}_stapled.zip" ${reldir}/${binname}.zip
+    ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
   fi
 }
 
