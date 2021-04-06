@@ -26,47 +26,47 @@ sign_macos() {
   if [ -z "${OSX_HOST}" ]; then
     return
   fi
-  osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
-  reldir="$1"
-  binname="$2"
-  is_mono="$3"
+  _osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
+  _reldir="$1"
+  _binname="$2"
+  _is_mono="$3"
 
-  if [[ "${is_mono}" == "1" ]]; then
-    appname="Godot_mono.app"
-    entitlements=editor_mono.entitlements
-    sharpdir="${appname}/Contents/Resources/GodotSharp"
-    extra_files="${sharpdir}/Mono/lib/*.dylib ${sharpdir}/Tools/aot-compilers/*/*"
+  if [[ "${_is_mono}" == "1" ]]; then
+    _appname="Godot_mono.app"
+    _entitlements=editor_mono.entitlements
+    _sharpdir="${_appname}/Contents/Resources/GodotSharp"
+    _extra_files="${_sharpdir}/Mono/lib/*.dylib ${_sharpdir}/Tools/aot-compilers/*/*"
   else
-    appname="Godot.app"
-    entitlements=editor.entitlements
+    _appname="Godot.app"
+    _entitlements=editor.entitlements
   fi
 
-  scp "${reldir}/${binname}.zip" "${OSX_HOST}:${osx_tmpdir}"
-  scp "${basedir}/build-macosx/${entitlements}" "${OSX_HOST}:${osx_tmpdir}"
+  scp "${_reldir}/${_binname}.zip" "${OSX_HOST}:${_osx_tmpdir}"
+  scp "${basedir}/build-macosx/${_entitlements}" "${OSX_HOST}:${_osx_tmpdir}"
   ssh "${OSX_HOST}" "
-            cd ${osx_tmpdir} && \
-            unzip ${binname}.zip && \
+            cd ${_osx_tmpdir} && \
+            unzip ${_binname}.zip && \
             codesign --force --timestamp \
-              --options=runtime --entitlements ${entitlements} \
-              -s ${OSX_KEY_ID} -v ${extra_files} ${appname} && \
-            zip -r ${binname}_signed.zip ${appname}"
+              --options=runtime --entitlements ${_entitlements} \
+              -s ${OSX_KEY_ID} -v ${_extra_files} ${_appname} && \
+            zip -r ${_binname}_signed.zip ${_appname}"
 
-  request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${osx_tmpdir}/${binname}_signed.zip")
-  request_uuid=$(echo ${request_uuid} | sed -e 's/.*RequestUUID = //')
-  ssh "${OSX_HOST}" "while xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ in\ progress; do echo Waiting on Apple notarization...; sleep 30s; done"
-  if ! ssh "${OSX_HOST}" "xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ success"; then
+  _request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${_osx_tmpdir}/${_binname}_signed.zip")
+  _request_uuid=$(echo ${_request_uuid} | sed -e 's/.*RequestUUID = //')
+  ssh "${OSX_HOST}" "while xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ in\ progress; do echo Waiting on Apple notarization...; sleep 30s; done"
+  if ! ssh "${OSX_HOST}" "xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ success"; then
     echo "Notarization failed."
-    notarization_log=$(ssh "${OSX_HOST}" "xcrun altool --notarization-info ${request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\"")
-    echo "${notarization_log}"
-    ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
+    _notarization_log=$(ssh "${OSX_HOST}" "xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\"")
+    echo "${_notarization_log}"
+    ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
     exit 1
   else
     ssh "${OSX_HOST}" "
-            cd ${osx_tmpdir} && \
-            xcrun stapler staple ${appname} && \
-            zip -r ${binname}_stapled.zip ${appname}"
-    scp "${OSX_HOST}:${osx_tmpdir}/${binname}_stapled.zip" ${reldir}/${binname}.zip
-    ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
+            cd ${_osx_tmpdir} && \
+            xcrun stapler staple ${_appname} && \
+            zip -r ${_binname}_stapled.zip ${_appname}"
+    scp "${OSX_HOST}:${_osx_tmpdir}/${_binname}_stapled.zip" "${_reldir}/${_binname}.zip"
+    ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
   fi
 }
 
@@ -74,25 +74,25 @@ sign_macos_template() {
   if [ -z "${OSX_HOST}" ]; then
     return
   fi
-  osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
-  reldir="$1"
-  is_mono="$2"
+  _osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
+  _reldir="$1"
+  _is_mono="$2"
 
-  if [[ "${is_mono}" == "1" ]]; then
-    extra_files="osx_template.app/Contents/Resources/data.mono.*/Mono/lib/*.dylib"
+  if [[ "${_is_mono}" == "1" ]]; then
+    _extra_files="osx_template.app/Contents/Resources/data.mono.*/Mono/lib/*.dylib"
   fi
 
-  scp "${reldir}/osx.zip" "${OSX_HOST}:${osx_tmpdir}"
+  scp "${_reldir}/osx.zip" "${OSX_HOST}:${_osx_tmpdir}"
   ssh "${OSX_HOST}" "
-            cd ${osx_tmpdir} && \
+            cd ${_osx_tmpdir} && \
             unzip osx.zip && \
             codesign --force -s - \
               --options=linker-signed \
-              -v ${extra_files} osx_template.app/Contents/MacOS/* && \
+              -v ${_extra_files} osx_template.app/Contents/MacOS/* && \
             zip -r osx_signed.zip osx_template.app"
 
-  scp "${OSX_HOST}:${osx_tmpdir}/osx_signed.zip" ${reldir}/osx.zip
-  ssh "${OSX_HOST}" "rm -rf ${osx_tmpdir}"
+  scp "${OSX_HOST}:${_osx_tmpdir}/osx_signed.zip" "${_reldir}/osx.zip"
+  ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
 }
 
 godot_version=""
