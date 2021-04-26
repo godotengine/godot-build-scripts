@@ -9,17 +9,12 @@ export OPTIONS="production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export TERM=xterm
 
-# i386 doesn't play nice with -static-libstdc++, so we should link dynamically
-# against an old enough GCC for compatibility with newer distros - so we only
-# use a recent GCC for x86_64. See godotengine/godot#31743.
-# Without defining CC/CXX, we use the default GCC 4.8.
-if [ "$(getconf LONG_BIT)" == "64" ]; then
-  export CC="gcc-9"
-  export CXX="g++-9"
-else
-  export OPTIONS="$OPTIONS use_static_cpp=no"
-  export CC="gcc"
-  export CXX="g++"
+# For i386 we're still using an old GCC 5 version from Ubuntu 16.04 as
+# upgrading the compiler seems to introduce weird issues.
+# Since that GCC version is fairly old, let's avoid LTO which wasn't so
+# mature at the time.
+if [ "$(getconf LONG_BIT)" == "32" ]; then
+  export OPTIONS="$OPTIONS use_lto=no"
 fi
 
 rm -rf godot
@@ -32,13 +27,13 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Linux..."
 
-  $SCONS platform=x11 CC=$CC CXX=$CXX $OPTIONS tools=yes target=release_debug
+  $SCONS platform=x11 $OPTIONS tools=yes target=release_debug
   mkdir -p /root/out/tools
   cp -rvp bin/* /root/out/tools
   rm -rf bin
 
-  $SCONS platform=x11 CC=$CC CXX=$CXX $OPTIONS tools=no target=release_debug
-  $SCONS platform=x11 CC=$CC CXX=$CXX $OPTIONS tools=no target=release
+  $SCONS platform=x11 $OPTIONS tools=no target=release_debug
+  $SCONS platform=x11 $OPTIONS tools=no target=release
   mkdir -p /root/out/templates
   cp -rvp bin/* /root/out/templates
   rm -rf bin
@@ -58,13 +53,13 @@ if [ "${MONO}" == "1" ]; then
   mkdir -p bin
   cp -r /root/mono-glue/cil/GodotSharp bin/
 
-  $SCONS platform=x11 CC=$CC CXX=$CXX $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes build_cil=no
+  $SCONS platform=x11 $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes build_cil=no
   mkdir -p /root/out/tools-mono
   cp -rvp bin/* /root/out/tools-mono
   rm -rf bin
 
-  $SCONS platform=x11 CC=$CC CXX=$CXX $OPTIONS $OPTIONS_MONO tools=no target=release_debug
-  $SCONS platform=x11 CC=$CC CXX=$CXX $OPTIONS $OPTIONS_MONO tools=no target=release
+  $SCONS platform=x11 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
+  $SCONS platform=x11 $OPTIONS $OPTIONS_MONO tools=no target=release
   mkdir -p /root/out/templates-mono
   cp -rvp bin/* /root/out/templates-mono
   rm -rf bin
