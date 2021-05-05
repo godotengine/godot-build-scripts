@@ -32,6 +32,7 @@ if [ "${CLASSICAL}" == "1" ]; then
   $SCONS platform=android android_arch=x86_64 $OPTIONS tools=no target=release
 
   pushd platform/android/java
+  chmod +x gradlew
   ./gradlew generateGodotTemplates
   popd
 
@@ -64,6 +65,7 @@ if [ "${MONO}" == "1" ]; then
   $SCONS platform=android android_arch=x86_64 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-x86_64-release tools=no target=release
 
   pushd platform/android/java
+  chmod +x gradlew
   ./gradlew generateGodotTemplates
   popd
 
