@@ -7,6 +7,7 @@ set -e
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="debug_symbols=no use_static_cpp=no"
 export TERM=xterm
+export DISPLAY=:0
 
 rm -rf godot
 mkdir godot
