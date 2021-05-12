@@ -6,10 +6,9 @@ set -e
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="production=yes"
-export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
+export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/mono-installs/desktop-linux-x86_64-release"
 export TERM=xterm
-export CC="gcc-9"
-export CXX="g++-9"
+export PATH="${GODOT_SDK_X86_64}/bin:${BASE_PATH}"
 
 rm -rf godot
 mkdir godot
@@ -21,15 +20,14 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Server..."
 
-  $SCONS platform=server CC=$CC CXX=$CXX $OPTIONS tools=yes target=release_debug
-  mkdir -p /root/out/tools
-  cp -rvp bin/* /root/out/tools
+  $SCONS platform=server $OPTIONS tools=yes target=release_debug
+  mkdir -p /root/out/x64/tools
+  cp -rvp bin/* /root/out/x64/tools
   rm -rf bin
 
-  #$SCONS platform=server CC=$CC CXX=$CXX $OPTIONS tools=no target=release_debug
-  $SCONS platform=server CC=$CC CXX=$CXX $OPTIONS tools=no target=release
-  mkdir -p /root/out/templates
-  cp -rvp bin/* /root/out/templates
+  $SCONS platform=server $OPTIONS tools=no target=release
+  mkdir -p /root/out/x64/templates
+  cp -rvp bin/* /root/out/x64/templates
   rm -rf bin
 fi
 
@@ -42,19 +40,14 @@ if [ "${MONO}" == "1" ]; then
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
-  # Workaround for MSBuild segfault on Ubuntu containers, we build the CIL on Fedora and copy here.
-  mkdir -p bin
-  cp -r /root/mono-glue/cil/GodotSharp bin/
-
-  $SCONS platform=server CC=$CC CXX=$CXX $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes build_cil=no
-  mkdir -p /root/out/tools-mono
-  cp -rvp bin/* /root/out/tools-mono
+  $SCONS platform=server $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes
+  mkdir -p /root/out/x64/tools-mono
+  cp -rvp bin/* /root/out/x64/tools-mono
   rm -rf bin
 
-  #$SCONS platform=server CC=$CC CXX=$CXX $OPTIONS $OPTIONS_MONO tools=no target=release_debug
-  $SCONS platform=server CC=$CC CXX=$CXX $OPTIONS $OPTIONS_MONO tools=no target=release
-  mkdir -p /root/out/templates-mono
-  cp -rvp bin/* /root/out/templates-mono
+  $SCONS platform=server $OPTIONS $OPTIONS_MONO tools=no target=release
+  mkdir -p /root/out/x64/templates-mono
+  cp -rvp bin/* /root/out/x64/templates-mono
   rm -rf bin
 fi
 

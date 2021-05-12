@@ -9,14 +9,6 @@ export OPTIONS="production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export TERM=xterm
 
-# For i386 we're still using an old GCC 5 version from Ubuntu 16.04 as
-# upgrading the compiler seems to introduce weird issues.
-# Since that GCC version is fairly old, let's avoid LTO which wasn't so
-# mature at the time.
-if [ "$(getconf LONG_BIT)" == "32" ]; then
-  export OPTIONS="$OPTIONS use_lto=no"
-fi
-
 rm -rf godot
 mkdir godot
 cd godot
@@ -27,15 +19,30 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Linux..."
 
+  export PATH="${GODOT_SDK_X86_64}/bin:${BASE_PATH}"
+
   $SCONS platform=x11 $OPTIONS tools=yes target=release_debug
-  mkdir -p /root/out/tools
-  cp -rvp bin/* /root/out/tools
+  mkdir -p /root/out/x64/tools
+  cp -rvp bin/* /root/out/x64/tools
   rm -rf bin
 
   $SCONS platform=x11 $OPTIONS tools=no target=release_debug
   $SCONS platform=x11 $OPTIONS tools=no target=release
-  mkdir -p /root/out/templates
-  cp -rvp bin/* /root/out/templates
+  mkdir -p /root/out/x64/templates
+  cp -rvp bin/* /root/out/x64/templates
+  rm -rf bin
+
+  export PATH="${GODOT_SDK_I686}/bin:${BASE_PATH}"
+
+  $SCONS platform=x11 $OPTIONS tools=yes target=release_debug bits=32
+  mkdir -p /root/out/x86/tools
+  cp -rvp bin/* /root/out/x86/tools
+  rm -rf bin
+
+  $SCONS platform=x11 $OPTIONS tools=no target=release_debug bits=32
+  $SCONS platform=x11 $OPTIONS tools=no target=release bits=32
+  mkdir -p /root/out/x86/templates
+  cp -rvp bin/* /root/out/x86/templates
   rm -rf bin
 fi
 
@@ -47,21 +54,33 @@ if [ "${MONO}" == "1" ]; then
   cp /root/mono-glue/*.cpp modules/mono/glue/
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
-  export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig/
 
-  # Workaround for MSBuild segfault on Ubuntu containers, we build the CIL on Fedora and copy here.
-  mkdir -p bin
-  cp -r /root/mono-glue/cil/GodotSharp bin/
+  export PATH="${GODOT_SDK_X86_64}/bin:${BASE_PATH}"
+  export OPTIONS_MONO_PREFIX="${OPTIONS} ${OPTIONS_MONO} mono_prefix=/root/mono-installs/desktop-linux-x86_64-release"
 
-  $SCONS platform=x11 $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes build_cil=no
-  mkdir -p /root/out/tools-mono
-  cp -rvp bin/* /root/out/tools-mono
+  $SCONS platform=x11 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes
+  mkdir -p /root/out/x64/tools-mono
+  cp -rvp bin/* /root/out/x64/tools-mono
   rm -rf bin
 
-  $SCONS platform=x11 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
-  $SCONS platform=x11 $OPTIONS $OPTIONS_MONO tools=no target=release
-  mkdir -p /root/out/templates-mono
-  cp -rvp bin/* /root/out/templates-mono
+  $SCONS platform=x11 $OPTIONS_MONO_PREFIX tools=no target=release_debug
+  $SCONS platform=x11 $OPTIONS_MONO_PREFIX tools=no target=release
+  mkdir -p /root/out/x64/templates-mono
+  cp -rvp bin/* /root/out/x64/templates-mono
+  rm -rf bin
+
+  export PATH="${GODOT_SDK_I686}/bin:${BASE_PATH}"
+  export OPTIONS_MONO_PREFIX="${OPTIONS} ${OPTIONS_MONO} mono_prefix=/root/mono-installs/desktop-linux-x86-release"
+
+  $SCONS platform=x11 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes bits=32
+  mkdir -p /root/out/x86/tools-mono
+  cp -rvp bin/* /root/out/x86/tools-mono
+  rm -rf bin
+
+  $SCONS platform=x11 $OPTIONS_MONO_PREFIX tools=no target=release_debug bits=32
+  $SCONS platform=x11 $OPTIONS_MONO_PREFIX tools=no target=release bits=32
+  mkdir -p /root/out/x86/templates-mono
+  cp -rvp bin/* /root/out/x86/templates-mono
   rm -rf bin
 fi
 
