@@ -19,7 +19,7 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for JavaScript..."
 
-  source /root/emsdk_${EMSDK_CLASSICAL}/emsdk_env.sh
+  source /root/emsdk_${EMSCRIPTEN_CLASSICAL}/emsdk_env.sh
 
   $SCONS platform=javascript ${OPTIONS} target=release_debug tools=no
   $SCONS platform=javascript ${OPTIONS} target=release tools=no
@@ -47,7 +47,7 @@ fi
 if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for JavaScript..."
 
-  source /root/emsdk_${EMSDK_MONO}/emsdk_env.sh
+  source /root/emsdk_${EMSCRIPTEN_MONO}/emsdk_env.sh
 
   cp /root/mono-glue/*.cpp modules/mono/glue/
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
