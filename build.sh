@@ -198,6 +198,9 @@ ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-ios:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
 
+mkdir -p ${basedir}/out/tvos
+${podman_run} -v ${basedir}/build-tvos:/root/build -v ${basedir}/out/tvos:/root/out localhost/godot-tvos:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/tvos
+
 mkdir -p ${basedir}/out/server/x64
 ${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server/x64:/root/out localhost/godot-ubuntu-64:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
 
