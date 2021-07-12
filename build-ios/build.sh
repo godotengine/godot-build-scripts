@@ -24,19 +24,21 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for iOS..."
 
-  #iOS arm64 device
+  # arm64 device
   $SCONS platform=iphone $OPTIONS arch=arm64 tools=no ios_simulator=no target=release_debug \
     IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
   $SCONS platform=iphone $OPTIONS arch=arm64 tools=no ios_simulator=no target=release \
     IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
 
-  #iOS arm64 simulator
-  $SCONS platform=iphone $OPTIONS arch=arm64 tools=no ios_simulator=yes target=release_debug \
-    IPHONESDK="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
-  $SCONS platform=iphone $OPTIONS arch=arm64 tools=no ios_simulator=no target=release \
-    IPHONESDK="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
+  # arm64 simulator
+  # Disabled for now as it doesn't work with cctools-port and current LLVM.
+  # See https://github.com/godotengine/build-containers/pull/85.
+  #$SCONS platform=iphone $OPTIONS arch=arm64 tools=no ios_simulator=yes target=release_debug \
+  #  IPHONESDK="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
+  #$SCONS platform=iphone $OPTIONS arch=arm64 tools=no ios_simulator=no target=release \
+  #  IPHONESDK="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
 
-  #iOS x86_64 simulator
+  # x86_64 simulator
   $SCONS platform=iphone $OPTIONS arch=x86_64 tools=no ios_simulator=yes target=release_debug \
     IPHONESDK="/root/ioscross/x86_64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
   $SCONS platform=iphone $OPTIONS arch=x86_64 tools=no ios_simulator=yes target=release \
@@ -58,19 +60,21 @@ if [ "${MONO}" == "1" ]; then
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
-  #iOS arm64 device
+  # arm64 device
   $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=arm64 ios_simulator=no mono_prefix=/root/mono-installs/ios-arm64-release tools=no target=release_debug \
     IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
   $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=arm64 ios_simulator=no mono_prefix=/root/mono-installs/ios-arm64-release tools=no target=release \
     IPHONESDK="/root/ioscross/arm64/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64/" ios_triple="arm-apple-darwin11-"
 
-  #iOS arm64 simulator
-  $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=arm64 ios_simulator=yes mono_prefix=/root/mono-installs/ios-arm64-sim-release tools=no target=release_debug \
-    IPHONESDK="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
-  $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=arm64 ios_simulator=yes mono_prefix=/root/mono-installs/ios-arm64-sim-releasetools=no target=release \
-    IPHONESDK="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
+  # arm64 simulator
+  # Disabled for now as it doesn't work with cctools-port and current LLVM.
+  # See https://github.com/godotengine/build-containers/pull/85.
+  #$SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=arm64 ios_simulator=yes mono_prefix=/root/mono-installs/ios-arm64-sim-release tools=no target=release_debug \
+  #  IPHONESDK="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
+  #$SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=arm64 ios_simulator=yes mono_prefix=/root/mono-installs/ios-arm64-sim-release tools=no target=release \
+  #  IPHONESDK="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
 
-  #iOS x86_64 simulator
+  # x86_64 simulator
   $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=x86_64 ios_simulator=yes mono_prefix=/root/mono-installs/ios-x86_64-release tools=no target=release_debug \
     IPHONESDK="/root/ioscross/x86_64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IPHONEPATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
   $SCONS platform=iphone $OPTIONS $OPTIONS_MONO arch=x86_64 ios_simulator=yes mono_prefix=/root/mono-installs/ios-x86_64-release tools=no target=release \
