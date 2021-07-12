@@ -7,9 +7,9 @@ set -e
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
+export MONO_PREFIX_X86_64="/root/mono-installs/desktop-windows-x86_64-release"
+export MONO_PREFIX_X86="/root/mono-installs/desktop-windows-x86-release"
 export TERM=xterm
-export MONO32_PREFIX=/root/dependencies/mono-32
-export MONO64_PREFIX=/root/dependencies/mono-64
 
 rm -rf godot
 mkdir godot
@@ -53,24 +53,28 @@ if [ "${MONO}" == "1" ]; then
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
-  $SCONS platform=windows bits=64 $OPTIONS $OPTIONS_MONO mono_prefix=$MONO64_PREFIX tools=yes target=release_debug copy_mono_root=yes
+  export OPTIONS_MONO_PREFIX="${OPTIONS} ${OPTIONS_MONO} mono_prefix=${MONO_PREFIX_X86_64}"
+
+  $SCONS platform=windows bits=64 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes
   mkdir -p /root/out/x64/tools-mono
   cp -rvp bin/* /root/out/x64/tools-mono
   rm -rf bin
 
-  $SCONS platform=windows bits=64 $OPTIONS $OPTIONS_MONO mono_prefix=$MONO64_PREFIX tools=no target=release_debug
-  $SCONS platform=windows bits=64 $OPTIONS $OPTIONS_MONO mono_prefix=$MONO64_PREFIX tools=no target=release
+  $SCONS platform=windows bits=64 $OPTIONS_MONO_PREFIX tools=no target=release_debug
+  $SCONS platform=windows bits=64 $OPTIONS_MONO_PREFIX tools=no target=release
   mkdir -p /root/out/x64/templates-mono
   cp -rvp bin/* /root/out/x64/templates-mono
   rm -rf bin
 
-  $SCONS platform=windows bits=32 $OPTIONS $OPTIONS_MONO mono_prefix=$MONO32_PREFIX tools=yes target=release_debug copy_mono_root=yes
+  export OPTIONS_MONO_PREFIX="${OPTIONS} ${OPTIONS_MONO} mono_prefix=${MONO_PREFIX_X86}"
+
+  $SCONS platform=windows bits=32 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes
   mkdir -p /root/out/x86/tools-mono
   cp -rvp bin/* /root/out/x86/tools-mono
   rm -rf bin
 
-  $SCONS platform=windows bits=32 $OPTIONS $OPTIONS_MONO mono_prefix=$MONO32_PREFIX tools=no target=release_debug
-  $SCONS platform=windows bits=32 $OPTIONS $OPTIONS_MONO mono_prefix=$MONO32_PREFIX tools=no target=release
+  $SCONS platform=windows bits=32 $OPTIONS_MONO_PREFIX tools=no target=release_debug
+  $SCONS platform=windows bits=32 $OPTIONS_MONO_PREFIX tools=no target=release
   mkdir -p /root/out/x86/templates-mono
   cp -rvp bin/* /root/out/x86/templates-mono
   rm -rf bin
