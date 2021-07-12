@@ -193,8 +193,8 @@ ${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:
 mkdir -p ${basedir}/out/linux
 ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
 
-mkdir -p ${basedir}/out/javascript
-${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
+#mkdir -p ${basedir}/out/javascript
+#${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
 
 mkdir -p ${basedir}/out/macosx
 ${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx:/root/out localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
@@ -205,11 +205,8 @@ ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-ios:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
 
-mkdir -p ${basedir}/out/server
-${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
-
-mkdir -p ${basedir}/out/uwp
-${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
+#mkdir -p ${basedir}/out/uwp
+#${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
 
 if [ ! -z "$SUDO_UID" ]; then
   chown -R "${SUDO_UID}":"${SUDO_GID}" ${basedir}/git ${basedir}/out ${basedir}/mono-glue ${basedir}/godot*.tar.gz
