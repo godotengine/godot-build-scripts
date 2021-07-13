@@ -112,7 +112,7 @@ fi
 
 if [ $skip_download == 0 ]; then
   echo "Fetching images"
-  for image in mono-glue windows ubuntu-64 ubuntu-32 javascript; do
+  for image in mono-glue windows linux javascript; do
     if [ ${force_download} == 1 ] || ! ${podman} image exists godot/$image; then
       if ! ${podman} pull ${registry}/godot/${image}; then
         echo "ERROR: image $image does not exist and can't be downloaded"
@@ -167,7 +167,7 @@ mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
 export podman_run="${podman} run -it --rm --env BUILD_NAME --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
-export img_version=3.x-mono-6.12.0.122
+export img_version=3.x-mono-6.12.0.147
 
 # Get AOT compilers from their containers.
 mkdir -p ${basedir}/out/aot-compilers
@@ -180,11 +180,8 @@ ${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-mono-glu
 mkdir -p ${basedir}/out/windows
 ${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
-mkdir -p ${basedir}/out/linux/x64
-${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x64:/root/out localhost/godot-ubuntu-64:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux64
-
-mkdir -p ${basedir}/out/linux/x86
-${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux/x86:/root/out localhost/godot-ubuntu-32:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux32
+mkdir -p ${basedir}/out/linux
+${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
 
 mkdir -p ${basedir}/out/javascript
 ${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
@@ -198,8 +195,8 @@ ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-ios:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
 
-mkdir -p ${basedir}/out/server/x64
-${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server/x64:/root/out localhost/godot-ubuntu-64:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
+mkdir -p ${basedir}/out/server
+${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
 
 mkdir -p ${basedir}/out/uwp
 ${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
