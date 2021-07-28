@@ -145,6 +145,11 @@ if [ $skip_download == 0 ]; then
   fi
 fi
 
+# macOS and iOS need the Vulkan SDK
+if [ ! -d "deps/vulkansdk-macos" ]; then
+  echo "Missing Vulkan SDK for macOS, we're going to run into issues!"
+fi
+
 if [ "${skip_git_checkout}" == 0 ]; then
   git clone https://github.com/godotengine/godot git || /bin/true
   pushd git
@@ -197,7 +202,7 @@ ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/roo
 #${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
 
 mkdir -p ${basedir}/out/macosx
-${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx:/root/out localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
+${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx:/root/out -v ${basedir}/deps/vulkansdk-macos:/root/vulkansdk localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
 
 mkdir -p ${basedir}/out/android
 ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
