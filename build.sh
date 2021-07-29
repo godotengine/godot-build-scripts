@@ -104,6 +104,16 @@ if [ -z "${godot_version}" ]; then
   exit 1
 fi
 
+IFS=- read version status <<< "$godot_version"
+echo "Building Godot ${version} ${status} from commit or branch ${git_treeish}."
+read -p "Is this correct (y/n)? " choice
+case "$choice" in
+  y|Y ) echo "yes";;
+  n|N ) echo "No, aborting."; exit 0;;
+  * ) echo "Invalid choice, aborting."; exit 1;;
+esac
+export GODOT_VERSION_STATUS="${status}"
+
 if [ ! -z "${username}" ] && [ ! -z "${password}" ]; then
   if ${podman} login ${registry} -u "${username}" -p "${password}"; then
     export logged_in=true
@@ -147,18 +157,18 @@ if [ "${skip_git_checkout}" == 0 ]; then
   correct_version=$(python3 << EOF
 import version;
 if hasattr(version, "patch") and version.patch != 0:
-  git_version = f"{version.major}.{version.minor}.{version.patch}-{version.status}"
+  git_version = f"{version.major}.{version.minor}.{version.patch}"
 else:
-  git_version = f"{version.major}.{version.minor}-{version.status}"
-print(git_version == "${godot_version}")
+  git_version = f"{version.major}.{version.minor}"
+print(git_version == "${version}")
 EOF
   )
   if [[ "$correct_version" != "True" ]]; then
-    echo "Version in version.py doesn't match the passed ${godot_version}."
-    exit 0
+    echo "Version in version.py doesn't match the passed ${version}."
+    exit 1
   fi
 
-  git archive --format=tar $git_treeish --prefix=godot-${godot_version}/ | gzip > ../godot.tar.gz
+  sh misc/scripts/make_tarball.sh -s -g ${git_treeish}
   popd
 fi
 
@@ -166,7 +176,7 @@ export basedir="$(pwd)"
 mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
-export podman_run="${podman} run -it --rm --env BUILD_NAME --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+export podman_run="${podman} run -it --rm --env BUILD_NAME --env GODOT_VERSION_STATUS --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=3.x-mono-6.12.0.147
 
 # Get AOT compilers from their containers.
