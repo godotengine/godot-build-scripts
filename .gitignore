@@ -7,7 +7,7 @@ angle/
 deps/
 git/
 mono-glue/
-godot.tar.gz
+godot*.tar.gz
 angle.7z
 
 # Output

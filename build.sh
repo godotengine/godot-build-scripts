@@ -168,7 +168,7 @@ EOF
     exit 1
   fi
 
-  sh misc/scripts/make_tarball.sh -s -g ${git_treeish}
+  sh misc/scripts/make_tarball.sh -v ${godot_version} -g ${git_treeish}
   popd
 fi
 
@@ -176,7 +176,7 @@ export basedir="$(pwd)"
 mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
-export podman_run="${podman} run -it --rm --env BUILD_NAME --env GODOT_VERSION_STATUS --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+export podman_run="${podman} run -it --rm --env BUILD_NAME --env GODOT_VERSION_STATUS --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=3.x-mono-6.12.0.122
 
 # Get AOT compilers from their containers.

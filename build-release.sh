@@ -156,7 +156,7 @@ mkdir -p ${templatesdir_mono}
 
 # Tarball
 
-zcat godot.tar.gz | xz -c > ${reldir}/godot-${godot_version}.tar.xz
+zcat godot-${godot_version}.tar.gz | xz -c > ${reldir}/godot-${godot_version}.tar.xz
 pushd ${reldir}
 sha256sum godot-${godot_version}.tar.xz > godot-${godot_version}.tar.xz.sha256
 popd
