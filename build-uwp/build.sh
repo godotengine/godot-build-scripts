@@ -17,7 +17,7 @@ tar xf /root/godot.tar.gz --strip-components=1
 # Classical
 
 if [ "${CLASSICAL}" == "1" ]; then
-  echo "Starting classical build for Server..."
+  echo "Starting classical build for UWP..."
 
   for arch in ${BUILD_ARCHES}; do
     for release in release release_debug; do
