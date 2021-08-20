@@ -9,6 +9,8 @@ export OPTIONS="production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=no"
 export TERM=xterm
 
+${ANDROID_SDK_ROOT}/cmdline-tools/bin/sdkmanager --sdk_root="${ANDROID_SDK_ROOT}" 'platforms;android-30'
+
 rm -rf godot
 mkdir godot
 cd godot
