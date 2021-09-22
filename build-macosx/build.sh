@@ -5,7 +5,7 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="osxcross_sdk=darwin21.4 production=yes use_static_mvk=yes VULKAN_SDK_PATH=/root/vulkansdk"
+export OPTIONS="osxcross_sdk=darwin21.4 production=yes use_volk=no VULKAN_SDK_PATH=/root/vulkansdk"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export MONO_PREFIX_X86_64="/root/mono-installs/desktop-osx-x86_64-release"
 export MONO_PREFIX_ARM64="/root/mono-installs/desktop-osx-arm64-release"
