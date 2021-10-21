@@ -33,21 +33,19 @@ sign_macos() {
 
   if [[ "${_is_mono}" == "1" ]]; then
     _appname="Godot_mono.app"
-    _entitlements=editor_mono.entitlements
     _sharpdir="${_appname}/Contents/Resources/GodotSharp"
     _extra_files="${_sharpdir}/Mono/lib/*.dylib ${_sharpdir}/Tools/aot-compilers/*/*"
   else
     _appname="Godot.app"
-    _entitlements=editor.entitlements
   fi
 
   scp "${_reldir}/${_binname}.zip" "${OSX_HOST}:${_osx_tmpdir}"
-  scp "${basedir}/build-macosx/${_entitlements}" "${OSX_HOST}:${_osx_tmpdir}"
+  scp "${basedir}/git/misc/dist/osx/editor.entitlements" "${OSX_HOST}:${_osx_tmpdir}"
   ssh "${OSX_HOST}" "
             cd ${_osx_tmpdir} && \
             unzip ${_binname}.zip && \
             codesign --force --timestamp \
-              --options=runtime --entitlements ${_entitlements} \
+              --options=runtime --entitlements editor.entitlements \
               -s ${OSX_KEY_ID} -v ${_extra_files} ${_appname} && \
             zip -r ${_binname}_signed.zip ${_appname}"
 
