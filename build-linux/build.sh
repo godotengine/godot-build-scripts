@@ -11,10 +11,15 @@ export MONO_PREFIX_X86_64="/root/mono-installs/desktop-linux-x86_64-release"
 export MONO_PREFIX_X86="/root/mono-installs/desktop-linux-x86-release"
 export TERM=xterm
 
-rm -rf godot
-mkdir godot
-cd godot
-tar xf /root/godot.tar.gz --strip-components=1
+if [ ! -z "${PRESET_GODOT_DIR}" ]; then
+  cd $PRESET_GODOT_DIR
+  rm -rf bin
+else
+  rm -rf godot
+  mkdir godot
+  cd godot
+  tar xf /root/godot.tar.gz --strip-components=1
+fi
 
 # Classical
 
