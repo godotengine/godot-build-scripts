@@ -189,17 +189,25 @@ if [ "${build_classical}" == "1" ]; then
 
   # Editor
   binname="${godot_basename}_win64.exe"
+  batname="${godot_basename}_win64_console.cmd"
   cp out/windows/x64/tools/godot.windows.opt.tools.64.exe ${binname}
   strip ${binname}
   sign_windows ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  echo "@echo off" > ${batname}
+  echo ${binname} >> ${batname}
+  echo "pause > nul" >> ${batname}
+  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${batname}
   rm ${binname}
 
   binname="${godot_basename}_win32.exe"
+  batname="${godot_basename}_win32_console.cmd"
   cp out/windows/x86/tools/godot.windows.opt.tools.32.exe ${binname}
   strip ${binname}
   sign_windows ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  echo "@echo off" > ${batname}
+  echo ${binname} >> ${batname}
+  echo "pause > nul" >> ${batname}
+  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${batname}
   rm ${binname}
 
   # Templates
