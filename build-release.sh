@@ -197,7 +197,7 @@ if [ "${build_classical}" == "1" ]; then
   echo ${binname} >> ${batname}
   echo "pause > nul" >> ${batname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${batname}
-  rm ${binname}
+  rm ${binname} ${batname}
 
   binname="${godot_basename}_win32.exe"
   batname="${godot_basename}_win32_console.cmd"
@@ -208,7 +208,7 @@ if [ "${build_classical}" == "1" ]; then
   echo ${binname} >> ${batname}
   echo "pause > nul" >> ${batname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${batname}
-  rm ${binname}
+  rm ${binname} ${batname}
 
   # Templates
   cp out/windows/x64/templates/godot.windows.opt.64.exe ${templatesdir}/windows_64_release.exe
