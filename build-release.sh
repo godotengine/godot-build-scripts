@@ -128,10 +128,13 @@ done
 if [ -z "${godot_version}" -o -z "${templates_version}" ]; then
   echo "Mandatory argument -v or -t missing."
   exit 1
+elif [[ "{$templates_version}" == *"-"* ]]; then
+  echo "Templates version (-t) shouldn't contain '-'. It should use a dot to separate version from status."
+  exit 1
 fi
 
 export basedir=$(pwd)
-export webdir="${basedir}/web/${godot_version}"
+export webdir="${basedir}/web/${templates_version}"
 export reldir="${basedir}/releases/${godot_version}"
 export reldir_mono="${reldir}/mono"
 export tmpdir="${basedir}/tmp"
