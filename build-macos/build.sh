@@ -89,8 +89,8 @@ if [ "${MONO}" == "1" ]; then
   lipo -create bin/godot.macos.opt.x86_64.mono bin/godot.macos.opt.arm64.mono -output bin/godot.macos.opt.universal.mono
   $STRIP bin/godot.macos.opt.universal.mono
 
-  cp -f tmp-lib/*.dylib bin/data.mono.macos.64.release/Mono/lib/
-  cp -f tmp-lib/*.dylib bin/data.mono.macos.64.release_debug/Mono/lib/
+  cp -f tmp-lib/*.dylib bin/data.mono.macos.release.universal/Mono/lib/
+  cp -f tmp-lib/*.dylib bin/data.mono.macos.release_debug.universal/Mono/lib/
 
   mkdir -p /root/out/templates-mono
   cp -rvp bin/* /root/out/templates-mono

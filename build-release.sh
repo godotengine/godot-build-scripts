@@ -182,11 +182,11 @@ if [ "${build_classical}" == "1" ]; then
   rm ${binname}
 
   # Templates
-  cp out/linux/x86_64/templates/godot.linuxbsd.opt.64 ${templatesdir}/linux_x11_64_release
-  cp out/linux/x86_64/templates/godot.linuxbsd.opt.debug.64 ${templatesdir}/linux_x11_64_debug
-  cp out/linux/x86_32/templates/godot.linuxbsd.opt.32 ${templatesdir}/linux_x11_32_release
-  cp out/linux/x86_32/templates/godot.linuxbsd.opt.debug.32 ${templatesdir}/linux_x11_32_debug
-  strip ${templatesdir}/linux_x11*
+  cp out/linux/x86_64/templates/godot.linuxbsd.opt.64 ${templatesdir}/linux_release.x86_64
+  cp out/linux/x86_64/templates/godot.linuxbsd.opt.debug.64 ${templatesdir}/linux_debug.x86_64
+  cp out/linux/x86_32/templates/godot.linuxbsd.opt.32 ${templatesdir}/linux_release.x86_32
+  cp out/linux/x86_32/templates/godot.linuxbsd.opt.debug.32 ${templatesdir}/linux_debug.x86_32
+  strip ${templatesdir}/linux*
 
   ## Windows (Classical) ##
 
@@ -214,10 +214,10 @@ if [ "${build_classical}" == "1" ]; then
   rm ${binname} ${batname}
 
   # Templates
-  cp out/windows/x86_64/templates/godot.windows.opt.64.exe ${templatesdir}/windows_64_release.exe
-  cp out/windows/x86_64/templates/godot.windows.opt.debug.64.exe ${templatesdir}/windows_64_debug.exe
-  cp out/windows/x86_32/templates/godot.windows.opt.32.exe ${templatesdir}/windows_32_release.exe
-  cp out/windows/x86_32/templates/godot.windows.opt.debug.32.exe ${templatesdir}/windows_32_debug.exe
+  cp out/windows/x86_64/templates/godot.windows.opt.64.exe ${templatesdir}/windows_release_x86_64.exe
+  cp out/windows/x86_64/templates/godot.windows.opt.debug.64.exe ${templatesdir}/windows_debug_x86_64.exe
+  cp out/windows/x86_32/templates/godot.windows.opt.32.exe ${templatesdir}/windows_release_x86_32.exe
+  cp out/windows/x86_32/templates/godot.windows.opt.debug.32.exe ${templatesdir}/windows_debug_x86_32.exe
   strip ${templatesdir}/windows*.exe
 
   ## macOS (Classical) ##
@@ -238,8 +238,8 @@ if [ "${build_classical}" == "1" ]; then
   cp -r git/misc/dist/macos_template.app .
   mkdir -p macos_template.app/Contents/MacOS
 
-  cp out/macos/templates/godot.macos.opt.universal macos_template.app/Contents/MacOS/godot_macos_release.64
-  cp out/macos/templates/godot.macos.opt.debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.64
+  cp out/macos/templates/godot.macos.opt.universal macos_template.app/Contents/MacOS/godot_macos_release.universal
+  cp out/macos/templates/godot.macos.opt.debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.universal
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
   rm -rf macos_template.app
@@ -372,12 +372,12 @@ if [ "${build_mono}" == "1" ]; then
 
   # Templates
   cp -rp out/linux/x86_64/templates-mono/data.mono.linuxbsd.64.* ${templatesdir_mono}/
-  cp out/linux/x86_64/templates-mono/godot.linuxbsd.opt.debug.64.mono ${templatesdir_mono}/linux_x11_64_debug
-  cp out/linux/x86_64/templates-mono/godot.linuxbsd.opt.64.mono ${templatesdir_mono}/linux_x11_64_release
+  cp out/linux/x86_64/templates-mono/godot.linuxbsd.opt.debug.64.mono ${templatesdir_mono}/linux_debug.x86_64
+  cp out/linux/x86_64/templates-mono/godot.linuxbsd.opt.64.mono ${templatesdir_mono}/linux_release.x86_64
   cp -rp out/linux/x86_32/templates-mono/data.mono.linuxbsd.32.* ${templatesdir_mono}/
-  cp out/linux/x86_32/templates-mono/godot.linuxbsd.opt.debug.32.mono ${templatesdir_mono}/linux_x11_32_debug
-  cp out/linux/x86_32/templates-mono/godot.linuxbsd.opt.32.mono ${templatesdir_mono}/linux_x11_32_release
-  strip ${templatesdir_mono}/linux_x11*
+  cp out/linux/x86_32/templates-mono/godot.linuxbsd.opt.debug.32.mono ${templatesdir_mono}/linux_debug.x86_32
+  cp out/linux/x86_32/templates-mono/godot.linuxbsd.opt.32.mono ${templatesdir_mono}/linux_release.x86_32
+  strip ${templatesdir_mono}/linux*
 
   mkdir -p ${templatesdir_mono}/bcl
   cp -r out/linux/x86_64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x
@@ -417,11 +417,11 @@ if [ "${build_mono}" == "1" ]; then
 
   # Templates
   cp -rp out/windows/x86_64/templates-mono/data.mono.windows.64.* ${templatesdir_mono}/
-  cp out/windows/x86_64/templates-mono/godot.windows.opt.debug.64.mono.exe ${templatesdir_mono}/windows_64_debug.exe
-  cp out/windows/x86_64/templates-mono/godot.windows.opt.64.mono.exe ${templatesdir_mono}/windows_64_release.exe
+  cp out/windows/x86_64/templates-mono/godot.windows.opt.debug.64.mono.exe ${templatesdir_mono}/windows_debug_x86_64.exe
+  cp out/windows/x86_64/templates-mono/godot.windows.opt.64.mono.exe ${templatesdir_mono}/windows_release_x86_64.exe
   cp -rp out/windows/x86_32/templates-mono/data.mono.windows.32.* ${templatesdir_mono}/
-  cp out/windows/x86_32/templates-mono/godot.windows.opt.debug.32.mono.exe ${templatesdir_mono}/windows_32_debug.exe
-  cp out/windows/x86_32/templates-mono/godot.windows.opt.32.mono.exe ${templatesdir_mono}/windows_32_release.exe
+  cp out/windows/x86_32/templates-mono/godot.windows.opt.debug.32.mono.exe ${templatesdir_mono}/windows_debug_x86_32.exe
+  cp out/windows/x86_32/templates-mono/godot.windows.opt.32.mono.exe ${templatesdir_mono}/windows_release_x86_32.exe
   strip ${templatesdir_mono}/windows*.exe
 
   mkdir -p ${templatesdir_mono}/bcl
@@ -446,9 +446,9 @@ if [ "${build_mono}" == "1" ]; then
   rm -rf macos_template.app
   cp -r git/misc/dist/macos_template.app .
   mkdir -p macos_template.app/Contents/{MacOS,Resources}
-  cp out/macos/templates-mono/godot.macos.opt.debug.universal.mono macos_template.app/Contents/MacOS/godot_macos_debug.64
-  cp out/macos/templates-mono/godot.macos.opt.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.64
-  cp -rp out/macos/templates-mono/data.mono.macos.64.* macos_template.app/Contents/Resources/
+  cp out/macos/templates-mono/godot.macos.opt.debug.universal.mono macos_template.app/Contents/MacOS/godot_macos_debug.universal
+  cp out/macos/templates-mono/godot.macos.opt.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.universal
+  cp -rp out/macos/templates-mono/data.mono.macos.* macos_template.app/Contents/Resources/
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
   rm -rf macos_template.app
