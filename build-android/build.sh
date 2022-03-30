@@ -22,6 +22,16 @@ java --version
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Android..."
 
+  $SCONS platform=android android_arch=arm64v8 $OPTIONS tools=yes target=release_debug
+  $SCONS platform=android android_arch=x86_64 $OPTIONS tools=yes target=release_debug
+
+  pushd platform/android/java
+  ./gradlew generateGodotEditor
+  popd
+
+  mkdir -p /root/out/tools
+  cp bin/android_editor.apk /root/out/tools/
+
   $SCONS platform=android android_arch=armv7 $OPTIONS tools=no target=release_debug
   $SCONS platform=android android_arch=armv7 $OPTIONS tools=no target=release
 
@@ -39,10 +49,10 @@ if [ "${CLASSICAL}" == "1" ]; then
   popd
 
   mkdir -p /root/out/templates
-  cp bin/android_source.zip /root/out/templates
-  cp bin/android_debug.apk /root/out/templates/android_debug.apk
-  cp bin/android_release.apk /root/out/templates/android_release.apk
-  cp bin/godot-lib.release.aar /root/out/templates/godot-lib.release.aar
+  cp bin/android_source.zip /root/out/templates/
+  cp bin/android_debug.apk /root/out/templates/
+  cp bin/android_release.apk /root/out/templates/
+  cp bin/godot-lib.release.aar /root/out/templates/
 fi
 
 # Mono
@@ -53,6 +63,16 @@ if [ "${MONO}" == "1" ]; then
   cp /root/mono-glue/*.cpp modules/mono/glue/
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
+
+  #$SCONS platform=android android_arch=arm64v8 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-arm64-v8a-release tools=yes target=release_debug
+  #$SCONS platform=android android_arch=x86_64 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-x86_64-release tools=yes target=release_debug
+
+  #pushd platform/android/java
+  #./gradlew generateGodotEditor
+  #popd
+
+  #mkdir -p /root/out/tools-mono
+  #cp bin/android_editor.apk /root/out/tools-mono/
 
   $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-armeabi-v7a-release tools=no target=release_debug
   $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-armeabi-v7a-release tools=no target=release
@@ -71,10 +91,10 @@ if [ "${MONO}" == "1" ]; then
   popd
 
   mkdir -p /root/out/templates-mono
-  cp bin/android_source.zip /root/out/templates-mono
-  cp bin/android_debug.apk /root/out/templates-mono/android_debug.apk
-  cp bin/android_release.apk /root/out/templates-mono/android_release.apk
-  cp bin/godot-lib.release.aar /root/out/templates-mono/godot-lib.release.aar
+  cp bin/android_source.zip /root/out/templates-mono/
+  cp bin/android_debug.apk /root/out/templates-mono/
+  cp bin/android_release.apk /root/out/templates-mono/
+  cp bin/godot-lib.release.aar /root/out/templates-mono/
 
   mkdir -p /root/out/templates-mono/bcl
   cp -r /root/mono-installs/android-bcl/* /root/out/templates-mono/bcl/
