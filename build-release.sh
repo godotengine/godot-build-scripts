@@ -284,6 +284,10 @@ if [ "${build_classical}" == "1" ]; then
   # Lib for direct download
   cp out/android/templates/godot-lib.release.aar ${reldir}/godot-lib.${templates_version}.release.aar
 
+  # Editor
+  binname="${godot_basename}_android_editor.apk"
+  cp out/android/tools/android_editor.apk ${reldir}/${binname}
+
   # Templates
   cp out/android/templates/*.apk ${templatesdir}/
   cp out/android/templates/android_source.zip ${templatesdir}/
@@ -488,6 +492,10 @@ if [ "${build_mono}" == "1" ]; then
 
   # Lib for direct download
   cp out/android/templates-mono/godot-lib.release.aar ${reldir_mono}/godot-lib.${templates_version}.mono.release.aar
+
+  # Editor
+  #binname="${godot_basename}_mono_android_editor.apk"
+  #cp out/android/tools-mono/android_editor.apk ${reldir_mono}/${binname}
 
   # Templates
   cp out/android/templates-mono/*.apk ${templatesdir_mono}/
