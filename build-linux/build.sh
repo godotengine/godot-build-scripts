@@ -47,6 +47,19 @@ if [ "${CLASSICAL}" == "1" ]; then
   mkdir -p /root/out/x86_32/templates
   cp -rvp bin/* /root/out/x86_32/templates
   rm -rf bin
+
+  export PATH="${GODOT_SDK_LINUX_ARMHF}/bin:${BASE_PATH}"
+
+  $SCONS platform=linuxbsd arch=arm32 $OPTIONS target=editor
+  mkdir -p /root/out/arm32/tools
+  cp -rvp bin/* /root/out/arm32/tools
+  rm -rf bin
+
+  $SCONS platform=linuxbsd arch=arm32 $OPTIONS target=template_debug
+  $SCONS platform=linuxbsd arch=arm32 $OPTIONS target=template_release
+  mkdir -p /root/out/arm32/templates
+  cp -rvp bin/* /root/out/arm32/templates
+  rm -rf bin
 fi
 
 # Mono
