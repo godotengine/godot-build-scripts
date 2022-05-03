@@ -22,7 +22,9 @@ java --version
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Android..."
 
+  $SCONS platform=android android_arch=armv7 $OPTIONS tools=yes target=release_debug
   $SCONS platform=android android_arch=arm64v8 $OPTIONS tools=yes target=release_debug
+  $SCONS platform=android android_arch=x86 $OPTIONS tools=yes target=release_debug
   $SCONS platform=android android_arch=x86_64 $OPTIONS tools=yes target=release_debug
 
   pushd platform/android/java
