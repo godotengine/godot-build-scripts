@@ -7,18 +7,18 @@ set -e
 # For signing keystore and password.
 source ./config.sh
 
-can_sign=0
-if [ ! -z "${SIGN_KEYSTORE}" ] && [ ! -z "${SIGN_PASSWORD}" ]; then
-  can_sign=1
+can_sign_windows=0
+if [ ! -z "${SIGN_KEYSTORE}" ] && [ ! -z "${SIGN_PASSWORD}" ] && [[ $(type -P "osslsigncode") ]]; then
+  can_sign_windows=1
 else
-  echo "Disabling binary signing as config.sh does not define the required data."
+  echo "Disabling Windows binary signing as config.sh does not define the required data (SIGN_KEYSTORE, SIGN_PASSWORD), or osslsigncode can't be found in PATH."
 fi
 
 sign_windows() {
-  if [ $can_sign == 0 ]; then
+  if [ $can_sign_windows == 0 ]; then
     return
   fi
-  ./osslsigncode -pkcs12 ${SIGN_KEYSTORE} -pass "${SIGN_PASSWORD}" -n "${SIGN_NAME}" -i "${SIGN_URL}" -t http://timestamp.comodoca.com -in $1 -out $1-signed
+  osslsigncode sign -pkcs12 ${SIGN_KEYSTORE} -pass "${SIGN_PASSWORD}" -n "${SIGN_NAME}" -i "${SIGN_URL}" -t http://timestamp.comodoca.com -in $1 -out $1-signed
   mv $1-signed $1
 }
 
