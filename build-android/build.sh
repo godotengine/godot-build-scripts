@@ -14,9 +14,6 @@ mkdir godot
 cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
-dnf install -y java-11-openjdk-devel
-java --version
-
 # Classical
 
 if [ "${CLASSICAL}" == "1" ]; then
