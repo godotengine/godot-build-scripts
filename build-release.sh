@@ -400,22 +400,32 @@ if [ "${build_mono}" == "1" ]; then
 
   # Editor
   binname="${godot_basename}_mono_win64"
+  batname="${godot_basename}_mono_win64_console.cmd"
   mkdir -p ${binname}
   cp out/windows/x64/tools-mono/godot.windows.opt.tools.64.mono.exe ${binname}/${binname}.exe
   strip ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
   cp -rp out/windows/x64/tools-mono/GodotSharp ${binname}/
   cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
+  echo "@echo off" > ${batname}
+  echo ${binname}.exe >> ${batname}
+  echo "pause > nul" >> ${batname}
+  mv ${batname} ${binname}/
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
   binname="${godot_basename}_mono_win32"
+  batname="${godot_basename}_mono_win32_console.cmd"
   mkdir -p ${binname}
   cp out/windows/x86/tools-mono/godot.windows.opt.tools.32.mono.exe ${binname}/${binname}.exe
   strip ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
   cp -rp out/windows/x86/tools-mono/GodotSharp ${binname}/
   cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
+  echo "@echo off" > ${batname}
+  echo ${binname}.exe >> ${batname}
+  echo "pause > nul" >> ${batname}
+  mv ${batname} ${binname}/
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
