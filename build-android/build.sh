@@ -61,23 +61,12 @@ if [ "${MONO}" == "1" ]; then
 
   cp /root/mono-glue/*.cpp modules/mono/glue/
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
-  cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
-  #$SCONS platform=android android_arch=arm64v8 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-arm64-v8a-release tools=yes target=release_debug
-  #$SCONS platform=android android_arch=x86_64 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-x86_64-release tools=yes target=release_debug
+  $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-armv7-release tools=no target=release_debug
+  $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-armv7-release tools=no target=release
 
-  #pushd platform/android/java
-  #./gradlew generateGodotEditor
-  #popd
-
-  #mkdir -p /root/out/tools-mono
-  #cp bin/android_editor.apk /root/out/tools-mono/
-
-  $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-armeabi-v7a-release tools=no target=release_debug
-  $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-armeabi-v7a-release tools=no target=release
-
-  $SCONS platform=android android_arch=arm64v8 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-arm64-v8a-release tools=no target=release_debug
-  $SCONS platform=android android_arch=arm64v8 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-arm64-v8a-release tools=no target=release
+  $SCONS platform=android android_arch=arm64v8 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-arm64v8-release tools=no target=release_debug
+  $SCONS platform=android android_arch=arm64v8 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-arm64v8-release tools=no target=release
 
   $SCONS platform=android android_arch=x86 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-x86-release tools=no target=release_debug
   $SCONS platform=android android_arch=x86 $OPTIONS $OPTIONS_MONO mono_prefix=/root/mono-installs/android-x86-release tools=no target=release
