@@ -26,7 +26,7 @@ sign_macos() {
   if [ -z "${OSX_HOST}" ]; then
     return
   fi
-  _osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
+  _macos_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
   _reldir="$1"
   _binname="$2"
   _is_mono="$3"
@@ -39,32 +39,32 @@ sign_macos() {
     _appname="Godot.app"
   fi
 
-  scp "${_reldir}/${_binname}.zip" "${OSX_HOST}:${_osx_tmpdir}"
-  scp "${basedir}/git/misc/dist/osx/editor.entitlements" "${OSX_HOST}:${_osx_tmpdir}"
+  scp "${_reldir}/${_binname}.zip" "${OSX_HOST}:${_macos_tmpdir}"
+  scp "${basedir}/git/misc/dist/macos/editor.entitlements" "${OSX_HOST}:${_macos_tmpdir}"
   ssh "${OSX_HOST}" "
-            cd ${_osx_tmpdir} && \
+            cd ${_macos_tmpdir} && \
             unzip ${_binname}.zip && \
             codesign --force --timestamp \
               --options=runtime --entitlements editor.entitlements \
               -s ${OSX_KEY_ID} -v ${_extra_files} ${_appname} && \
             zip -r ${_binname}_signed.zip ${_appname}"
 
-  _request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${_osx_tmpdir}/${_binname}_signed.zip")
+  _request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${_macos_tmpdir}/${_binname}_signed.zip")
   _request_uuid=$(echo ${_request_uuid} | sed -e 's/.*RequestUUID = //')
   ssh "${OSX_HOST}" "while xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ in\ progress; do echo Waiting on Apple notarization...; sleep 30s; done"
   if ! ssh "${OSX_HOST}" "xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ success"; then
     echo "Notarization failed."
     _notarization_log=$(ssh "${OSX_HOST}" "xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\"")
     echo "${_notarization_log}"
-    ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
+    ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
     exit 1
   else
     ssh "${OSX_HOST}" "
-            cd ${_osx_tmpdir} && \
+            cd ${_macos_tmpdir} && \
             xcrun stapler staple ${_appname} && \
             zip -r ${_binname}_stapled.zip ${_appname}"
-    scp "${OSX_HOST}:${_osx_tmpdir}/${_binname}_stapled.zip" "${_reldir}/${_binname}.zip"
-    ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
+    scp "${OSX_HOST}:${_macos_tmpdir}/${_binname}_stapled.zip" "${_reldir}/${_binname}.zip"
+    ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
   fi
 }
 
@@ -72,25 +72,25 @@ sign_macos_template() {
   if [ -z "${OSX_HOST}" ]; then
     return
   fi
-  _osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
+  _macos_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
   _reldir="$1"
   _is_mono="$2"
 
   if [[ "${_is_mono}" == "1" ]]; then
-    _extra_files="osx_template.app/Contents/Resources/data.mono.*/Mono/lib/*.dylib"
+    _extra_files="macos_template.app/Contents/Resources/data.mono.*/Mono/lib/*.dylib"
   fi
 
-  scp "${_reldir}/osx.zip" "${OSX_HOST}:${_osx_tmpdir}"
+  scp "${_reldir}/macos.zip" "${OSX_HOST}:${_macos_tmpdir}"
   ssh "${OSX_HOST}" "
-            cd ${_osx_tmpdir} && \
-            unzip osx.zip && \
+            cd ${_macos_tmpdir} && \
+            unzip macos.zip && \
             codesign --force -s - \
               --options=linker-signed \
-              -v ${_extra_files} osx_template.app/Contents/MacOS/* && \
-            zip -r osx_signed.zip osx_template.app"
+              -v ${_extra_files} macos_template.app/Contents/MacOS/* && \
+            zip -r macos_signed.zip macos_template.app"
 
-  scp "${OSX_HOST}:${_osx_tmpdir}/osx_signed.zip" "${_reldir}/osx.zip"
-  ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
+  scp "${OSX_HOST}:${_macos_tmpdir}/macos_signed.zip" "${_reldir}/macos.zip"
+  ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
 }
 
 godot_version=""
@@ -220,29 +220,29 @@ if [ "${build_classical}" == "1" ]; then
   cp out/windows/x86/templates/godot.windows.opt.debug.32.exe ${templatesdir}/windows_32_debug.exe
   strip ${templatesdir}/windows*.exe
 
-  ## OSX (Classical) ##
+  ## macOS (Classical) ##
 
   # Editor
-  binname="${godot_basename}_osx.universal"
+  binname="${godot_basename}_macos.universal"
   rm -rf Godot.app
-  cp -r git/misc/dist/osx_tools.app Godot.app
+  cp -r git/misc/dist/macos_tools.app Godot.app
   mkdir -p Godot.app/Contents/MacOS
-  cp out/macosx/tools/godot.osx.opt.tools.universal Godot.app/Contents/MacOS/Godot
+  cp out/macos/tools/godot.macos.opt.tools.universal Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
   sign_macos ${reldir} ${binname} 0
 
   # Templates
-  rm -rf osx_template.app
-  cp -r git/misc/dist/osx_template.app .
-  mkdir -p osx_template.app/Contents/MacOS
+  rm -rf macos_template.app
+  cp -r git/misc/dist/macos_template.app .
+  mkdir -p macos_template.app/Contents/MacOS
 
-  cp out/macosx/templates/godot.osx.opt.universal osx_template.app/Contents/MacOS/godot_osx_release.64
-  cp out/macosx/templates/godot.osx.opt.debug.universal osx_template.app/Contents/MacOS/godot_osx_debug.64
-  chmod +x osx_template.app/Contents/MacOS/godot_osx*
-  zip -q -9 -r "${templatesdir}/osx.zip" osx_template.app
-  rm -rf osx_template.app
+  cp out/macos/templates/godot.macos.opt.universal macos_template.app/Contents/MacOS/godot_macos_release.64
+  cp out/macos/templates/godot.macos.opt.debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.64
+  chmod +x macos_template.app/Contents/MacOS/godot_macos*
+  zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
+  rm -rf macos_template.app
   sign_macos_template ${templatesdir} 0
 
 #  ## Javascript (Classical) ##
@@ -280,14 +280,14 @@ if [ "${build_classical}" == "1" ]; then
 
   rm -rf ios_xcode
   cp -r git/misc/dist/ios_xcode ios_xcode
-  cp out/ios/templates/libgodot.iphone.simulator.a ios_xcode/libgodot.iphone.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
-  cp out/ios/templates/libgodot.iphone.debug.simulator.a ios_xcode/libgodot.iphone.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
-  cp out/ios/templates/libgodot.iphone.a ios_xcode/libgodot.iphone.release.xcframework/ios-arm64/libgodot.a
-  cp out/ios/templates/libgodot.iphone.debug.a ios_xcode/libgodot.iphone.debug.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
   cp -r deps/vulkansdk-macos/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
-  zip -q -9 -r "${templatesdir}/iphone.zip" *
+  zip -q -9 -r "${templatesdir}/ios.zip" *
   cd ..
   rm -rf ios_xcode
 
@@ -427,15 +427,15 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p ${templatesdir_mono}/bcl
   cp -r out/windows/x64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x_win
 
-  ## OSX (Mono) ##
+  ## macOS (Mono) ##
 
   # Editor
-  binname="${godot_basename}_mono_osx.universal"
+  binname="${godot_basename}_mono_macos.universal"
   rm -rf Godot_mono.app
-  cp -r git/misc/dist/osx_tools.app Godot_mono.app
+  cp -r git/misc/dist/macos_tools.app Godot_mono.app
   mkdir -p Godot_mono.app/Contents/{MacOS,Resources}
-  cp out/macosx/tools-mono/godot.osx.opt.tools.universal.mono Godot_mono.app/Contents/MacOS/Godot
-  cp -rp out/macosx/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
+  cp out/macos/tools-mono/godot.macos.opt.tools.universal.mono Godot_mono.app/Contents/MacOS/Godot
+  cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
   cp -rp out/aot-compilers Godot_mono.app/Contents/Resources/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
@@ -443,15 +443,15 @@ if [ "${build_mono}" == "1" ]; then
   sign_macos ${reldir_mono} ${binname} 1
 
   # Templates
-  rm -rf osx_template.app
-  cp -r git/misc/dist/osx_template.app .
-  mkdir -p osx_template.app/Contents/{MacOS,Resources}
-  cp out/macosx/templates-mono/godot.osx.opt.debug.universal.mono osx_template.app/Contents/MacOS/godot_osx_debug.64
-  cp out/macosx/templates-mono/godot.osx.opt.universal.mono osx_template.app/Contents/MacOS/godot_osx_release.64
-  cp -rp out/macosx/templates-mono/data.mono.osx.64.* osx_template.app/Contents/Resources/
-  chmod +x osx_template.app/Contents/MacOS/godot_osx*
-  zip -q -9 -r "${templatesdir_mono}/osx.zip" osx_template.app
-  rm -rf osx_template.app
+  rm -rf macos_template.app
+  cp -r git/misc/dist/macos_template.app .
+  mkdir -p macos_template.app/Contents/{MacOS,Resources}
+  cp out/macos/templates-mono/godot.macos.opt.debug.universal.mono macos_template.app/Contents/MacOS/godot_macos_debug.64
+  cp out/macos/templates-mono/godot.macos.opt.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.64
+  cp -rp out/macos/templates-mono/data.mono.macos.64.* macos_template.app/Contents/Resources/
+  chmod +x macos_template.app/Contents/MacOS/godot_macos*
+  zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
+  rm -rf macos_template.app
   sign_macos_template ${templatesdir_mono} 1
 
 #  ## Javascript (Mono) ##
@@ -484,20 +484,20 @@ if [ "${build_mono}" == "1" ]; then
 
   rm -rf ios_xcode
   cp -r git/misc/dist/ios_xcode ios_xcode
-  cp out/ios/templates-mono/libgodot.iphone.simulator.a ios_xcode/libgodot.iphone.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
-  cp out/ios/templates-mono/libgodot.iphone.debug.simulator.a ios_xcode/libgodot.iphone.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
-  cp out/ios/templates-mono/libgodot.iphone.a ios_xcode/libgodot.iphone.release.xcframework/ios-arm64/libgodot.a
-  cp out/ios/templates-mono/libgodot.iphone.debug.a ios_xcode/libgodot.iphone.debug.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates-mono/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates-mono/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates-mono/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates-mono/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
   cp -r deps/vulkansdk-macos/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
-  zip -q -9 -r "${templatesdir_mono}/iphone.zip" *
+  zip -q -9 -r "${templatesdir_mono}/ios.zip" *
   cd ..
   rm -rf ios_xcode
 
   mkdir -p ${templatesdir_mono}/bcl
   cp -r out/ios/templates-mono/bcl/monotouch* ${templatesdir_mono}/bcl/
-  cp -r out/ios/templates-mono/iphone-mono-libs ${templatesdir_mono}
+  cp -r out/ios/templates-mono/ios-mono-libs ${templatesdir_mono}
 
 #  ## UWP (Mono) ##
 #

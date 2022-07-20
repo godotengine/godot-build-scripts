@@ -22,23 +22,23 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for macOS..."
 
-  $SCONS platform=osx $OPTIONS arch=x86_64 tools=yes target=release_debug
-  $SCONS platform=osx $OPTIONS arch=arm64 tools=yes target=release_debug
-  lipo -create bin/godot.osx.opt.tools.x86_64 bin/godot.osx.opt.tools.arm64 -output bin/godot.osx.opt.tools.universal
-  $STRIP bin/godot.osx.opt.tools.universal
+  $SCONS platform=macos $OPTIONS arch=x86_64 tools=yes target=release_debug
+  $SCONS platform=macos $OPTIONS arch=arm64 tools=yes target=release_debug
+  lipo -create bin/godot.macos.opt.tools.x86_64 bin/godot.macos.opt.tools.arm64 -output bin/godot.macos.opt.tools.universal
+  $STRIP bin/godot.macos.opt.tools.universal
 
   mkdir -p /root/out/tools
   cp -rvp bin/* /root/out/tools
   rm -rf bin
 
-  $SCONS platform=osx $OPTIONS arch=x86_64 tools=no target=release_debug
-  $SCONS platform=osx $OPTIONS arch=arm64 tools=no target=release_debug
-  lipo -create bin/godot.osx.opt.debug.x86_64 bin/godot.osx.opt.debug.arm64 -output bin/godot.osx.opt.debug.universal
-  $STRIP bin/godot.osx.opt.debug.universal
-  $SCONS platform=osx $OPTIONS arch=x86_64 tools=no target=release
-  $SCONS platform=osx $OPTIONS arch=arm64 tools=no target=release
-  lipo -create bin/godot.osx.opt.x86_64 bin/godot.osx.opt.arm64 -output bin/godot.osx.opt.universal
-  $STRIP bin/godot.osx.opt.universal
+  $SCONS platform=macos $OPTIONS arch=x86_64 tools=no target=release_debug
+  $SCONS platform=macos $OPTIONS arch=arm64 tools=no target=release_debug
+  lipo -create bin/godot.macos.opt.debug.x86_64 bin/godot.macos.opt.debug.arm64 -output bin/godot.macos.opt.debug.universal
+  $STRIP bin/godot.macos.opt.debug.universal
+  $SCONS platform=macos $OPTIONS arch=x86_64 tools=no target=release
+  $SCONS platform=macos $OPTIONS arch=arm64 tools=no target=release
+  lipo -create bin/godot.macos.opt.x86_64 bin/godot.macos.opt.arm64 -output bin/godot.macos.opt.universal
+  $STRIP bin/godot.macos.opt.universal
 
   mkdir -p /root/out/templates
   cp -rvp bin/* /root/out/templates
@@ -61,12 +61,12 @@ if [ "${MONO}" == "1" ]; then
   # libmono-native-compat.dylib).
   mkdir -p tmp-lib/{x86_64,arm64}
 
-  $SCONS platform=osx $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=yes target=release_debug copy_mono_root=yes
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=yes target=release_debug copy_mono_root=yes
   cp bin/GodotSharp/Mono/lib/*.dylib tmp-lib/x86_64/
-  $SCONS platform=osx $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=yes target=release_debug copy_mono_root=yes
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=yes target=release_debug copy_mono_root=yes
   cp bin/GodotSharp/Mono/lib/*.dylib tmp-lib/arm64/
-  lipo -create bin/godot.osx.opt.tools.x86_64.mono bin/godot.osx.opt.tools.arm64.mono -output bin/godot.osx.opt.tools.universal.mono
-  $STRIP bin/godot.osx.opt.tools.universal.mono
+  lipo -create bin/godot.macos.opt.tools.x86_64.mono bin/godot.macos.opt.tools.arm64.mono -output bin/godot.macos.opt.tools.universal.mono
+  $STRIP bin/godot.macos.opt.tools.universal.mono
 
   # Make universal versions of the dylibs we use.
   lipo -create tmp-lib/x86_64/libmono-native-compat.dylib tmp-lib/arm64/libmono-native.dylib -output tmp-lib/libmono-native.dylib
@@ -80,17 +80,17 @@ if [ "${MONO}" == "1" ]; then
   cp -rvp bin/* /root/out/tools-mono
   rm -rf bin
 
-  $SCONS platform=osx $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=no target=release_debug
-  $SCONS platform=osx $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=no target=release_debug
-  lipo -create bin/godot.osx.opt.debug.x86_64.mono bin/godot.osx.opt.debug.arm64.mono -output bin/godot.osx.opt.debug.universal.mono
-  $STRIP bin/godot.osx.opt.debug.universal.mono
-  $SCONS platform=osx $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=no target=release
-  $SCONS platform=osx $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=no target=release
-  lipo -create bin/godot.osx.opt.x86_64.mono bin/godot.osx.opt.arm64.mono -output bin/godot.osx.opt.universal.mono
-  $STRIP bin/godot.osx.opt.universal.mono
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=no target=release_debug
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=no target=release_debug
+  lipo -create bin/godot.macos.opt.debug.x86_64.mono bin/godot.macos.opt.debug.arm64.mono -output bin/godot.macos.opt.debug.universal.mono
+  $STRIP bin/godot.macos.opt.debug.universal.mono
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=no target=release
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=no target=release
+  lipo -create bin/godot.macos.opt.x86_64.mono bin/godot.macos.opt.arm64.mono -output bin/godot.macos.opt.universal.mono
+  $STRIP bin/godot.macos.opt.universal.mono
 
-  cp -f tmp-lib/*.dylib bin/data.mono.osx.64.release/Mono/lib/
-  cp -f tmp-lib/*.dylib bin/data.mono.osx.64.release_debug/Mono/lib/
+  cp -f tmp-lib/*.dylib bin/data.mono.macos.64.release/Mono/lib/
+  cp -f tmp-lib/*.dylib bin/data.mono.macos.64.release_debug/Mono/lib/
 
   mkdir -p /root/out/templates-mono
   cp -rvp bin/* /root/out/templates-mono
