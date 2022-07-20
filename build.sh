@@ -201,8 +201,8 @@ ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/roo
 #mkdir -p ${basedir}/out/javascript
 #${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
 
-mkdir -p ${basedir}/out/macosx
-${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx:/root/out -v ${basedir}/deps/vulkansdk-macos:/root/vulkansdk localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
+mkdir -p ${basedir}/out/macos
+${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/vulkansdk-macos:/root/vulkansdk localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
 
 mkdir -p ${basedir}/out/android
 ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android

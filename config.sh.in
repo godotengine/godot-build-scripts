@@ -31,7 +31,7 @@ export SIGN_PASSWORD=""
 export SIGN_NAME=""
 export SIGN_URL=""
 
-# Hostname or IP address of an OSX host (Needed for signing)
+# Hostname or IP address of an macOS host (Needed for signing)
 # eg "user@10.1.0.10"
 export OSX_HOST=""
 # ID of the Apple certificate used to sign
