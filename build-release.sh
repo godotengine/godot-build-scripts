@@ -170,22 +170,22 @@ if [ "${build_classical}" == "1" ]; then
 
   # Editor
   binname="${godot_basename}_linux.64"
-  cp out/linux/x64/tools/godot.linuxbsd.opt.tools.64 ${binname}
+  cp out/linux/x86_64/tools/godot.linuxbsd.opt.tools.64 ${binname}
   strip ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_linux.32"
-  cp out/linux/x86/tools/godot.linuxbsd.opt.tools.32 ${binname}
+  cp out/linux/x86_32/tools/godot.linuxbsd.opt.tools.32 ${binname}
   strip ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   # Templates
-  cp out/linux/x64/templates/godot.linuxbsd.opt.64 ${templatesdir}/linux_x11_64_release
-  cp out/linux/x64/templates/godot.linuxbsd.opt.debug.64 ${templatesdir}/linux_x11_64_debug
-  cp out/linux/x86/templates/godot.linuxbsd.opt.32 ${templatesdir}/linux_x11_32_release
-  cp out/linux/x86/templates/godot.linuxbsd.opt.debug.32 ${templatesdir}/linux_x11_32_debug
+  cp out/linux/x86_64/templates/godot.linuxbsd.opt.64 ${templatesdir}/linux_x11_64_release
+  cp out/linux/x86_64/templates/godot.linuxbsd.opt.debug.64 ${templatesdir}/linux_x11_64_debug
+  cp out/linux/x86_32/templates/godot.linuxbsd.opt.32 ${templatesdir}/linux_x11_32_release
+  cp out/linux/x86_32/templates/godot.linuxbsd.opt.debug.32 ${templatesdir}/linux_x11_32_debug
   strip ${templatesdir}/linux_x11*
 
   ## Windows (Classical) ##
@@ -193,7 +193,7 @@ if [ "${build_classical}" == "1" ]; then
   # Editor
   binname="${godot_basename}_win64.exe"
   batname="${godot_basename}_win64_console.cmd"
-  cp out/windows/x64/tools/godot.windows.opt.tools.64.exe ${binname}
+  cp out/windows/x86_64/tools/godot.windows.opt.tools.64.exe ${binname}
   strip ${binname}
   sign_windows ${binname}
   echo "@echo off" > ${batname}
@@ -204,7 +204,7 @@ if [ "${build_classical}" == "1" ]; then
 
   binname="${godot_basename}_win32.exe"
   batname="${godot_basename}_win32_console.cmd"
-  cp out/windows/x86/tools/godot.windows.opt.tools.32.exe ${binname}
+  cp out/windows/x86_32/tools/godot.windows.opt.tools.32.exe ${binname}
   strip ${binname}
   sign_windows ${binname}
   echo "@echo off" > ${batname}
@@ -214,10 +214,10 @@ if [ "${build_classical}" == "1" ]; then
   rm ${binname} ${batname}
 
   # Templates
-  cp out/windows/x64/templates/godot.windows.opt.64.exe ${templatesdir}/windows_64_release.exe
-  cp out/windows/x64/templates/godot.windows.opt.debug.64.exe ${templatesdir}/windows_64_debug.exe
-  cp out/windows/x86/templates/godot.windows.opt.32.exe ${templatesdir}/windows_32_release.exe
-  cp out/windows/x86/templates/godot.windows.opt.debug.32.exe ${templatesdir}/windows_32_debug.exe
+  cp out/windows/x86_64/templates/godot.windows.opt.64.exe ${templatesdir}/windows_64_release.exe
+  cp out/windows/x86_64/templates/godot.windows.opt.debug.64.exe ${templatesdir}/windows_64_debug.exe
+  cp out/windows/x86_32/templates/godot.windows.opt.32.exe ${templatesdir}/windows_32_release.exe
+  cp out/windows/x86_32/templates/godot.windows.opt.debug.32.exe ${templatesdir}/windows_32_debug.exe
   strip ${templatesdir}/windows*.exe
 
   ## macOS (Classical) ##
@@ -354,33 +354,33 @@ if [ "${build_mono}" == "1" ]; then
   # Editor
   binbasename="${godot_basename}_mono_linux"
   mkdir -p ${binbasename}_64
-  cp out/linux/x64/tools-mono/godot.linuxbsd.opt.tools.64.mono ${binbasename}_64/${binbasename}.64
+  cp out/linux/x86_64/tools-mono/godot.linuxbsd.opt.tools.64.mono ${binbasename}_64/${binbasename}.64
   strip ${binbasename}_64/${binbasename}.64
-  cp -rp out/linux/x64/tools-mono/GodotSharp ${binbasename}_64/
+  cp -rp out/linux/x86_64/tools-mono/GodotSharp ${binbasename}_64/
   cp -rp out/aot-compilers ${binbasename}_64/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_64.zip" ${binbasename}_64
   rm -rf ${binbasename}_64
 
   binbasename="${godot_basename}_mono_linux"
   mkdir -p ${binbasename}_32
-  cp out/linux/x86/tools-mono/godot.linuxbsd.opt.tools.32.mono ${binbasename}_32/${binbasename}.32
+  cp out/linux/x86_32/tools-mono/godot.linuxbsd.opt.tools.32.mono ${binbasename}_32/${binbasename}.32
   strip ${binbasename}_32/${binbasename}.32
-  cp -rp out/linux/x86/tools-mono/GodotSharp/ ${binbasename}_32/
+  cp -rp out/linux/x86_32/tools-mono/GodotSharp/ ${binbasename}_32/
   cp -rp out/aot-compilers ${binbasename}_32/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_32.zip" ${binbasename}_32
   rm -rf ${binbasename}_32
 
   # Templates
-  cp -rp out/linux/x64/templates-mono/data.mono.linuxbsd.64.* ${templatesdir_mono}/
-  cp out/linux/x64/templates-mono/godot.linuxbsd.opt.debug.64.mono ${templatesdir_mono}/linux_x11_64_debug
-  cp out/linux/x64/templates-mono/godot.linuxbsd.opt.64.mono ${templatesdir_mono}/linux_x11_64_release
-  cp -rp out/linux/x86/templates-mono/data.mono.linuxbsd.32.* ${templatesdir_mono}/
-  cp out/linux/x86/templates-mono/godot.linuxbsd.opt.debug.32.mono ${templatesdir_mono}/linux_x11_32_debug
-  cp out/linux/x86/templates-mono/godot.linuxbsd.opt.32.mono ${templatesdir_mono}/linux_x11_32_release
+  cp -rp out/linux/x86_64/templates-mono/data.mono.linuxbsd.64.* ${templatesdir_mono}/
+  cp out/linux/x86_64/templates-mono/godot.linuxbsd.opt.debug.64.mono ${templatesdir_mono}/linux_x11_64_debug
+  cp out/linux/x86_64/templates-mono/godot.linuxbsd.opt.64.mono ${templatesdir_mono}/linux_x11_64_release
+  cp -rp out/linux/x86_32/templates-mono/data.mono.linuxbsd.32.* ${templatesdir_mono}/
+  cp out/linux/x86_32/templates-mono/godot.linuxbsd.opt.debug.32.mono ${templatesdir_mono}/linux_x11_32_debug
+  cp out/linux/x86_32/templates-mono/godot.linuxbsd.opt.32.mono ${templatesdir_mono}/linux_x11_32_release
   strip ${templatesdir_mono}/linux_x11*
 
   mkdir -p ${templatesdir_mono}/bcl
-  cp -r out/linux/x64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x
+  cp -r out/linux/x86_64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x
 
   ## Windows (Mono) ##
 
@@ -388,10 +388,10 @@ if [ "${build_mono}" == "1" ]; then
   binname="${godot_basename}_mono_win64"
   batname="${godot_basename}_mono_win64_console.cmd"
   mkdir -p ${binname}
-  cp out/windows/x64/tools-mono/godot.windows.opt.tools.64.mono.exe ${binname}/${binname}.exe
+  cp out/windows/x86_64/tools-mono/godot.windows.opt.tools.64.mono.exe ${binname}/${binname}.exe
   strip ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
-  cp -rp out/windows/x64/tools-mono/GodotSharp ${binname}/
+  cp -rp out/windows/x86_64/tools-mono/GodotSharp ${binname}/
   cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
   echo "@echo off" > ${batname}
   echo ${binname}.exe >> ${batname}
@@ -403,10 +403,10 @@ if [ "${build_mono}" == "1" ]; then
   binname="${godot_basename}_mono_win32"
   batname="${godot_basename}_mono_win32_console.cmd"
   mkdir -p ${binname}
-  cp out/windows/x86/tools-mono/godot.windows.opt.tools.32.mono.exe ${binname}/${binname}.exe
+  cp out/windows/x86_32/tools-mono/godot.windows.opt.tools.32.mono.exe ${binname}/${binname}.exe
   strip ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
-  cp -rp out/windows/x86/tools-mono/GodotSharp ${binname}/
+  cp -rp out/windows/x86_32/tools-mono/GodotSharp ${binname}/
   cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
   echo "@echo off" > ${batname}
   echo ${binname}.exe >> ${batname}
@@ -416,16 +416,16 @@ if [ "${build_mono}" == "1" ]; then
   rm -rf ${binname}
 
   # Templates
-  cp -rp out/windows/x64/templates-mono/data.mono.windows.64.* ${templatesdir_mono}/
-  cp out/windows/x64/templates-mono/godot.windows.opt.debug.64.mono.exe ${templatesdir_mono}/windows_64_debug.exe
-  cp out/windows/x64/templates-mono/godot.windows.opt.64.mono.exe ${templatesdir_mono}/windows_64_release.exe
-  cp -rp out/windows/x86/templates-mono/data.mono.windows.32.* ${templatesdir_mono}/
-  cp out/windows/x86/templates-mono/godot.windows.opt.debug.32.mono.exe ${templatesdir_mono}/windows_32_debug.exe
-  cp out/windows/x86/templates-mono/godot.windows.opt.32.mono.exe ${templatesdir_mono}/windows_32_release.exe
+  cp -rp out/windows/x86_64/templates-mono/data.mono.windows.64.* ${templatesdir_mono}/
+  cp out/windows/x86_64/templates-mono/godot.windows.opt.debug.64.mono.exe ${templatesdir_mono}/windows_64_debug.exe
+  cp out/windows/x86_64/templates-mono/godot.windows.opt.64.mono.exe ${templatesdir_mono}/windows_64_release.exe
+  cp -rp out/windows/x86_32/templates-mono/data.mono.windows.32.* ${templatesdir_mono}/
+  cp out/windows/x86_32/templates-mono/godot.windows.opt.debug.32.mono.exe ${templatesdir_mono}/windows_32_debug.exe
+  cp out/windows/x86_32/templates-mono/godot.windows.opt.32.mono.exe ${templatesdir_mono}/windows_32_release.exe
   strip ${templatesdir_mono}/windows*.exe
 
   mkdir -p ${templatesdir_mono}/bcl
-  cp -r out/windows/x64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x_win
+  cp -r out/windows/x86_64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x_win
 
   ## macOS (Mono) ##
 
