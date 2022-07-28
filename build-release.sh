@@ -197,7 +197,8 @@ if [ "${build_classical}" == "1" ]; then
   strip ${binname}
   sign_windows ${binname}
   echo "@echo off" > ${batname}
-  echo ${binname} >> ${batname}
+  echo "title Godot Engine" >> ${batname}
+  echo "powershell -command \"Start-Process -FilePath %~dp0${binname} -ArgumentList \\\" %* \\\" -Wait\"" >> ${batname}
   echo "pause > nul" >> ${batname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${batname}
   rm ${binname} ${batname}
@@ -208,7 +209,8 @@ if [ "${build_classical}" == "1" ]; then
   strip ${binname}
   sign_windows ${binname}
   echo "@echo off" > ${batname}
-  echo ${binname} >> ${batname}
+  echo "title Godot Engine" >> ${batname}
+  echo "powershell -command \"Start-Process -FilePath %~dp0${binname} -ArgumentList \\\" %* \\\" -Wait\"" >> ${batname}
   echo "pause > nul" >> ${batname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${batname}
   rm ${binname} ${batname}
@@ -394,7 +396,8 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/windows/x86_64/tools-mono/GodotSharp ${binname}/
   cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
   echo "@echo off" > ${batname}
-  echo ${binname}.exe >> ${batname}
+  echo "title Godot Engine" >> ${batname}
+  echo "powershell -command \"Start-Process -FilePath %~dp0${binname}.exe -ArgumentList \\\" %* \\\" -Wait\"" >> ${batname}
   echo "pause > nul" >> ${batname}
   mv ${batname} ${binname}/
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
@@ -409,7 +412,8 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/windows/x86_32/tools-mono/GodotSharp ${binname}/
   cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
   echo "@echo off" > ${batname}
-  echo ${binname}.exe >> ${batname}
+  echo "title Godot Engine" >> ${batname}
+  echo "powershell -command \"Start-Process -FilePath %~dp0${binname}.exe -ArgumentList \\\" %* \\\" -Wait\"" >> ${batname}
   echo "pause > nul" >> ${batname}
   mv ${batname} ${binname}/
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
