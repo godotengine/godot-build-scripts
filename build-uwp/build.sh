@@ -9,10 +9,15 @@ export OPTIONS="production=yes"
 export BUILD_ARCHES="x86 x64 arm"
 export ANGLE_SRC_PATH='c:\angle'
 
-rm -rf godot
-mkdir godot
-cd godot
-tar xf /root/godot.tar.gz --strip-components=1
+if [ ! -z "${PRESET_GODOT_DIR}" ]; then
+  cd $PRESET_GODOT_DIR
+  rm -rf bin
+else
+  rm -rf godot
+  mkdir godot
+  cd godot
+  tar xf /root/godot.tar.gz --strip-components=1
+fi
 
 # Classical
 

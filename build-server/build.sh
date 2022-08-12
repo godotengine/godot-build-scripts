@@ -10,10 +10,15 @@ export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/m
 export TERM=xterm
 export PATH="${GODOT_SDK_LINUX_X86_64}/bin:${BASE_PATH}"
 
-rm -rf godot
-mkdir godot
-cd godot
-tar xf /root/godot.tar.gz --strip-components=1
+if [ ! -z "${PRESET_GODOT_DIR}" ]; then
+  cd $PRESET_GODOT_DIR
+  rm -rf bin
+else
+  rm -rf godot
+  mkdir godot
+  cd godot
+  tar xf /root/godot.tar.gz --strip-components=1
+fi
 
 # Classical
 
