@@ -21,26 +21,26 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Windows..."
 
-  $SCONS platform=windows bits=64 $OPTIONS tools=yes target=release_debug
-  mkdir -p /root/out/x64/tools
-  cp -rvp bin/* /root/out/x64/tools
+  $SCONS platform=windows arch=x86_64 $OPTIONS tools=yes target=release_debug
+  mkdir -p /root/out/x86_64/tools
+  cp -rvp bin/* /root/out/x86_64/tools
   rm -rf bin
 
-  $SCONS platform=windows bits=64 $OPTIONS tools=no target=release_debug
-  $SCONS platform=windows bits=64 $OPTIONS tools=no target=release
-  mkdir -p /root/out/x64/templates
-  cp -rvp bin/* /root/out/x64/templates
+  $SCONS platform=windows arch=x86_64 $OPTIONS tools=no target=release_debug
+  $SCONS platform=windows arch=x86_64 $OPTIONS tools=no target=release
+  mkdir -p /root/out/x86_64/templates
+  cp -rvp bin/* /root/out/x86_64/templates
   rm -rf bin
 
-  $SCONS platform=windows bits=32 $OPTIONS tools=yes target=release_debug
-  mkdir -p /root/out/x86/tools
-  cp -rvp bin/* /root/out/x86/tools
+  $SCONS platform=windows arch=x86_32 $OPTIONS tools=yes target=release_debug
+  mkdir -p /root/out/x86_32/tools
+  cp -rvp bin/* /root/out/x86_32/tools
   rm -rf bin
 
-  $SCONS platform=windows bits=32 $OPTIONS tools=no target=release_debug
-  $SCONS platform=windows bits=32 $OPTIONS tools=no target=release
-  mkdir -p /root/out/x86/templates
-  cp -rvp bin/* /root/out/x86/templates
+  $SCONS platform=windows arch=x86_32 $OPTIONS tools=no target=release_debug
+  $SCONS platform=windows arch=x86_32 $OPTIONS tools=no target=release
+  mkdir -p /root/out/x86_32/templates
+  cp -rvp bin/* /root/out/x86_32/templates
   rm -rf bin
 fi
 
@@ -55,28 +55,28 @@ if [ "${MONO}" == "1" ]; then
 
   export OPTIONS_MONO_PREFIX="${OPTIONS} ${OPTIONS_MONO} mono_prefix=${MONO_PREFIX_X86_64}"
 
-  $SCONS platform=windows bits=64 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes
-  mkdir -p /root/out/x64/tools-mono
-  cp -rvp bin/* /root/out/x64/tools-mono
+  $SCONS platform=windows arch=x86_64 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes
+  mkdir -p /root/out/x86_64/tools-mono
+  cp -rvp bin/* /root/out/x86_64/tools-mono
   rm -rf bin
 
-  $SCONS platform=windows bits=64 $OPTIONS_MONO_PREFIX tools=no target=release_debug
-  $SCONS platform=windows bits=64 $OPTIONS_MONO_PREFIX tools=no target=release
-  mkdir -p /root/out/x64/templates-mono
-  cp -rvp bin/* /root/out/x64/templates-mono
+  $SCONS platform=windows arch=x86_64 $OPTIONS_MONO_PREFIX tools=no target=release_debug
+  $SCONS platform=windows arch=x86_64 $OPTIONS_MONO_PREFIX tools=no target=release
+  mkdir -p /root/out/x86_64/templates-mono
+  cp -rvp bin/* /root/out/x86_64/templates-mono
   rm -rf bin
 
   export OPTIONS_MONO_PREFIX="${OPTIONS} ${OPTIONS_MONO} mono_prefix=${MONO_PREFIX_X86}"
 
-  $SCONS platform=windows bits=32 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes
-  mkdir -p /root/out/x86/tools-mono
-  cp -rvp bin/* /root/out/x86/tools-mono
+  $SCONS platform=windows arch=x86_32 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes
+  mkdir -p /root/out/x86_32/tools-mono
+  cp -rvp bin/* /root/out/x86_32/tools-mono
   rm -rf bin
 
-  $SCONS platform=windows bits=32 $OPTIONS_MONO_PREFIX tools=no target=release_debug
-  $SCONS platform=windows bits=32 $OPTIONS_MONO_PREFIX tools=no target=release
-  mkdir -p /root/out/x86/templates-mono
-  cp -rvp bin/* /root/out/x86/templates-mono
+  $SCONS platform=windows arch=x86_32 $OPTIONS_MONO_PREFIX tools=no target=release_debug
+  $SCONS platform=windows arch=x86_32 $OPTIONS_MONO_PREFIX tools=no target=release
+  mkdir -p /root/out/x86_32/templates-mono
+  cp -rvp bin/* /root/out/x86_32/templates-mono
   rm -rf bin
 fi
 
