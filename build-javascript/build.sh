@@ -5,8 +5,8 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="production=yes"
-export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/mono-installs/wasm-runtime-release use_lto=no"
+export OPTIONS="production=yes use_thinlto=yes"
+export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes mono_prefix=/root/mono-installs/wasm-runtime-release use_lto=no use_thinlto=no"
 export TERM=xterm
 
 rm -rf godot
@@ -24,9 +24,6 @@ if [ "${CLASSICAL}" == "1" ]; then
   $SCONS platform=javascript ${OPTIONS} target=release_debug tools=no
   $SCONS platform=javascript ${OPTIONS} target=release tools=no
 
-  $SCONS platform=javascript ${OPTIONS} target=release_debug tools=no threads_enabled=yes
-  $SCONS platform=javascript ${OPTIONS} target=release tools=no threads_enabled=yes
-
   $SCONS platform=javascript ${OPTIONS} target=release_debug tools=no gdnative_enabled=yes
   $SCONS platform=javascript ${OPTIONS} target=release tools=no gdnative_enabled=yes
 
@@ -34,7 +31,7 @@ if [ "${CLASSICAL}" == "1" ]; then
   cp -rvp bin/*.zip /root/out/templates
   rm -f bin/*.zip
 
-  $SCONS platform=javascript ${OPTIONS} target=release_debug tools=yes threads_enabled=yes use_closure_compiler=yes
+  $SCONS platform=javascript ${OPTIONS} target=release_debug tools=yes use_closure_compiler=yes
 
   mkdir -p /root/out/tools
   cp -rvp bin/*.zip /root/out/tools
