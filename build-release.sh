@@ -245,23 +245,20 @@ if [ "${build_classical}" == "1" ]; then
   rm -rf macos_template.app
   sign_macos_template ${templatesdir} 0
 
-#  ## Javascript (Classical) ##
-#
-#  # Editor
-#  unzip out/javascript/tools/godot.javascript.opt.tools.threads.zip -d ${webdir}/
-#  brotli --keep --force --quality=11 ${webdir}/*
-#  binname="${godot_basename}_web_editor.zip"
-#  cp out/javascript/tools/godot.javascript.opt.tools.threads.zip ${reldir}/${binname}
-#
-#  # Templates
-#  cp out/javascript/templates/godot.javascript.opt.zip ${templatesdir}/webassembly_release.zip
-#  cp out/javascript/templates/godot.javascript.opt.debug.zip ${templatesdir}/webassembly_debug.zip
-#
-#  cp out/javascript/templates/godot.javascript.opt.threads.zip ${templatesdir}/webassembly_threads_release.zip
-#  cp out/javascript/templates/godot.javascript.opt.debug.threads.zip ${templatesdir}/webassembly_threads_debug.zip
-#
-#  cp out/javascript/templates/godot.javascript.opt.gdnative.zip ${templatesdir}/webassembly_gdnative_release.zip
-#  cp out/javascript/templates/godot.javascript.opt.debug.gdnative.zip ${templatesdir}/webassembly_gdnative_debug.zip
+  ## Javascript (Classical) ##
+
+  # Editor
+  unzip out/javascript/tools/godot.javascript.opt.tools.threads.zip -d ${webdir}/
+  brotli --keep --force --quality=11 ${webdir}/*
+  binname="${godot_basename}_web_editor.zip"
+  cp out/javascript/tools/godot.javascript.opt.tools.threads.zip ${reldir}/${binname}
+
+  # Templates
+  cp out/javascript/templates/godot.javascript.opt.threads.zip ${templatesdir}/webassembly_threads_release.zip
+  cp out/javascript/templates/godot.javascript.opt.debug.threads.zip ${templatesdir}/webassembly_threads_debug.zip
+
+  cp out/javascript/templates/godot.javascript.opt.gdnative.threads.zip ${templatesdir}/webassembly_gdnative_threads_release.zip
+  cp out/javascript/templates/godot.javascript.opt.debug.gdnative.threads.zip ${templatesdir}/webassembly_gdnative_threads_debug.zip
 
   ## Android (Classical) ##
 
