@@ -122,7 +122,7 @@ fi
 
 if [ $skip_download == 0 ]; then
   echo "Fetching images"
-  for image in mono-glue windows linux javascript; do
+  for image in mono-glue windows linux web; do
     if [ ${force_download} == 1 ] || ! ${podman} image exists godot/$image; then
       if ! ${podman} pull ${registry}/godot/${image}; then
         echo "ERROR: image $image does not exist and can't be downloaded"
@@ -182,7 +182,7 @@ mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
 export podman_run="${podman} run -it --rm --env BUILD_NAME --env GODOT_VERSION_STATUS --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
-export img_version=3.x-f36-mono-6.12.0.182
+export img_version=4.x-f36
 
 # Get AOT compilers from their containers.
 mkdir -p ${basedir}/out/aot-compilers
@@ -198,8 +198,8 @@ ${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:
 mkdir -p ${basedir}/out/linux
 ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
 
-mkdir -p ${basedir}/out/javascript
-${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
+mkdir -p ${basedir}/out/web
+${podman_run} -v ${basedir}/build-web:/root/build -v ${basedir}/out/web:/root/out localhost/godot-web:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/web
 
 mkdir -p ${basedir}/out/macos
 ${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/vulkansdk-macos:/root/vulkansdk localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos

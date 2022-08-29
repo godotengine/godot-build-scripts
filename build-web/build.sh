@@ -17,21 +17,21 @@ tar xf /root/godot.tar.gz --strip-components=1
 # Classical
 
 if [ "${CLASSICAL}" == "1" ]; then
-  echo "Starting classical build for JavaScript..."
+  echo "Starting classical build for Web..."
 
   source /root/emsdk_${EMSCRIPTEN_CLASSICAL}/emsdk_env.sh
 
-  $SCONS platform=javascript ${OPTIONS} target=release_debug tools=no
-  $SCONS platform=javascript ${OPTIONS} target=release tools=no
+  $SCONS platform=web ${OPTIONS} target=release_debug tools=no
+  $SCONS platform=web ${OPTIONS} target=release tools=no
 
-  $SCONS platform=javascript ${OPTIONS} target=release_debug tools=no gdnative_enabled=yes
-  $SCONS platform=javascript ${OPTIONS} target=release tools=no gdnative_enabled=yes
+  $SCONS platform=web ${OPTIONS} target=release_debug tools=no gdnative_enabled=yes
+  $SCONS platform=web ${OPTIONS} target=release tools=no gdnative_enabled=yes
 
   mkdir -p /root/out/templates
   cp -rvp bin/*.zip /root/out/templates
   rm -f bin/*.zip
 
-  $SCONS platform=javascript ${OPTIONS} target=release_debug tools=yes use_closure_compiler=yes
+  $SCONS platform=web ${OPTIONS} target=release_debug tools=yes use_closure_compiler=yes
 
   mkdir -p /root/out/tools
   cp -rvp bin/*.zip /root/out/tools
@@ -42,7 +42,7 @@ fi
 # Mono
 
 if [ "${MONO}" == "1" ]; then
-  echo "Starting Mono build for JavaScript..."
+  echo "Starting Mono build for Web..."
 
   source /root/emsdk_${EMSCRIPTEN_MONO}/emsdk_env.sh
 
@@ -50,8 +50,8 @@ if [ "${MONO}" == "1" ]; then
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
-  $SCONS platform=javascript ${OPTIONS} ${OPTIONS_MONO} target=release_debug tools=no
-  $SCONS platform=javascript ${OPTIONS} ${OPTIONS_MONO} target=release tools=no
+  $SCONS platform=web ${OPTIONS} ${OPTIONS_MONO} target=release_debug tools=no
+  $SCONS platform=web ${OPTIONS} ${OPTIONS_MONO} target=release tools=no
 
   mkdir -p /root/out/templates-mono
   cp -rvp bin/*.zip /root/out/templates-mono
@@ -61,4 +61,4 @@ if [ "${MONO}" == "1" ]; then
   cp -r /root/mono-installs/wasm-bcl/wasm /root/out/templates-mono/bcl/
 fi
 
-echo "JavaScript build successful"
+echo "Web build successful"
