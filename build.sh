@@ -122,7 +122,7 @@ fi
 
 if [ $skip_download == 0 ]; then
   echo "Fetching images"
-  for image in mono-glue windows linux web; do
+  for image in windows linux web; do
     if [ ${force_download} == 1 ] || ! ${podman} image exists godot/$image; then
       if ! ${podman} pull ${registry}/godot/${image}; then
         echo "ERROR: image $image does not exist and can't be downloaded"
@@ -184,13 +184,8 @@ mkdir -p ${basedir}/out/logs
 export podman_run="${podman} run -it --rm --env BUILD_NAME --env GODOT_VERSION_STATUS --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=4.x-f36
 
-# Get AOT compilers from their containers.
-mkdir -p ${basedir}/out/aot-compilers
-${podman} run -it --rm -w /root -v ${basedir}/out/aot-compilers:/root/out localhost/godot-ios:${img_version} bash -c "cp -r /root/aot-compilers/* /root/out"
-chmod +x ${basedir}/out/aot-compilers/*/*
-
 mkdir -p ${basedir}/mono-glue
-${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-mono-glue:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
+${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
 mkdir -p ${basedir}/out/windows
 ${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows

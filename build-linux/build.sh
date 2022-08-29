@@ -6,9 +6,7 @@ set -e
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="production=yes"
-export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
-export MONO_PREFIX_X86_64="/root/mono-installs/desktop-linux-x86_64-release"
-export MONO_PREFIX_X86="/root/mono-installs/desktop-linux-x86-release"
+export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
 rm -rf godot
@@ -56,34 +54,33 @@ fi
 if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for Linux..."
 
-  cp /root/mono-glue/*.cpp modules/mono/glue/
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
   export PATH="${GODOT_SDK_LINUX_X86_64}/bin:${BASE_PATH}"
-  export OPTIONS_MONO_PREFIX="${OPTIONS} ${OPTIONS_MONO} mono_prefix=${MONO_PREFIX_X86_64}"
 
-  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS $OPTIONS_MONO tools=yes target=release_debug copy_mono_root=yes
+  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS $OPTIONS_MONO tools=yes target=release_debug
+  ./modules/mono/build_scripts/build_assemblies.py --godot-output-dir=./bin --godot-platform=linuxbsd
   mkdir -p /root/out/x86_64/tools-mono
   cp -rvp bin/* /root/out/x86_64/tools-mono
   rm -rf bin
 
-  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS_MONO_PREFIX tools=no target=release_debug
-  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS_MONO_PREFIX tools=no target=release
+  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
+  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS $OPTIONS_MONO tools=no target=release
   mkdir -p /root/out/x86_64/templates-mono
   cp -rvp bin/* /root/out/x86_64/templates-mono
   rm -rf bin
 
   export PATH="${GODOT_SDK_LINUX_X86}/bin:${BASE_PATH}"
-  export OPTIONS_MONO_PREFIX="${OPTIONS} ${OPTIONS_MONO} mono_prefix=${MONO_PREFIX_X86}"
 
-  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS_MONO_PREFIX tools=yes target=release_debug copy_mono_root=yes
+  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS $OPTIONS_MONO tools=yes target=release_debug
+  ./modules/mono/build_scripts/build_assemblies.py --godot-output-dir=./bin --godot-platform=linuxbsd
   mkdir -p /root/out/x86_32/tools-mono
   cp -rvp bin/* /root/out/x86_32/tools-mono
   rm -rf bin
 
-  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS_MONO_PREFIX tools=no target=release_debug
-  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS_MONO_PREFIX tools=no target=release
+  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
+  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS $OPTIONS_MONO tools=no target=release
   mkdir -p /root/out/x86_32/templates-mono
   cp -rvp bin/* /root/out/x86_32/templates-mono
   rm -rf bin
