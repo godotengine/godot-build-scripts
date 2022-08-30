@@ -245,20 +245,20 @@ if [ "${build_classical}" == "1" ]; then
   rm -rf macos_template.app
   sign_macos_template ${templatesdir} 0
 
-  ## Javascript (Classical) ##
+  ## Web (Classical) ##
 
   # Editor
-  unzip out/javascript/tools/godot.javascript.opt.tools.threads.zip -d ${webdir}/
+  unzip out/web/tools/godot.web.opt.tools.threads.zip -d ${webdir}/
   brotli --keep --force --quality=11 ${webdir}/*
   binname="${godot_basename}_web_editor.zip"
-  cp out/javascript/tools/godot.javascript.opt.tools.threads.zip ${reldir}/${binname}
+  cp out/web/tools/godot.web.opt.tools.threads.zip ${reldir}/${binname}
 
   # Templates
-  cp out/javascript/templates/godot.javascript.opt.threads.zip ${templatesdir}/webassembly_threads_release.zip
-  cp out/javascript/templates/godot.javascript.opt.debug.threads.zip ${templatesdir}/webassembly_threads_debug.zip
+  cp out/web/templates/godot.web.opt.threads.zip ${templatesdir}/webassembly_threads_release.zip
+  cp out/web/templates/godot.web.opt.debug.threads.zip ${templatesdir}/webassembly_threads_debug.zip
 
-  cp out/javascript/templates/godot.javascript.opt.gdnative.threads.zip ${templatesdir}/webassembly_gdnative_threads_release.zip
-  cp out/javascript/templates/godot.javascript.opt.debug.gdnative.threads.zip ${templatesdir}/webassembly_gdnative_threads_debug.zip
+  cp out/web/templates/godot.web.opt.gdnative.threads.zip ${templatesdir}/webassembly_gdnative_threads_release.zip
+  cp out/web/templates/godot.web.opt.debug.gdnative.threads.zip ${templatesdir}/webassembly_gdnative_threads_debug.zip
 
   ## Android (Classical) ##
 
@@ -451,14 +451,14 @@ if [ "${build_mono}" == "1" ]; then
   rm -rf macos_template.app
   sign_macos_template ${templatesdir_mono} 1
 
-#  ## Javascript (Mono) ##
+#  ## Web (Mono) ##
 #
 #  # Templates
-#  cp out/javascript/templates-mono/godot.javascript.opt.debug.mono.zip ${templatesdir_mono}/webassembly_debug.zip
-#  cp out/javascript/templates-mono/godot.javascript.opt.mono.zip ${templatesdir_mono}/webassembly_release.zip
+#  cp out/web/templates-mono/godot.web.opt.debug.mono.zip ${templatesdir_mono}/webassembly_debug.zip
+#  cp out/web/templates-mono/godot.web.opt.mono.zip ${templatesdir_mono}/webassembly_release.zip
 #
 #  mkdir -p ${templatesdir_mono}/bcl
-#  cp -r out/javascript/templates-mono/bcl/wasm ${templatesdir_mono}/bcl/
+#  cp -r out/web/templates-mono/bcl/wasm ${templatesdir_mono}/bcl/
 
   ## Android (Mono) ##
 
