@@ -19,10 +19,10 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Android..."
 
-  $SCONS platform=android android_arch=armv7 $OPTIONS tools=yes target=release_debug
-  $SCONS platform=android android_arch=arm64v8 $OPTIONS tools=yes target=release_debug
-  $SCONS platform=android android_arch=x86 $OPTIONS tools=yes target=release_debug
-  $SCONS platform=android android_arch=x86_64 $OPTIONS tools=yes target=release_debug
+  $SCONS platform=android arch=arm32 $OPTIONS tools=yes target=release_debug
+  $SCONS platform=android arch=arm64 $OPTIONS tools=yes target=release_debug
+  $SCONS platform=android arch=x86_32 $OPTIONS tools=yes target=release_debug
+  $SCONS platform=android arch=x86_64 $OPTIONS tools=yes target=release_debug
 
   pushd platform/android/java
   ./gradlew generateGodotEditor
@@ -31,17 +31,17 @@ if [ "${CLASSICAL}" == "1" ]; then
   mkdir -p /root/out/tools
   cp bin/android_editor.apk /root/out/tools/
 
-  $SCONS platform=android android_arch=armv7 $OPTIONS tools=no target=release_debug
-  $SCONS platform=android android_arch=armv7 $OPTIONS tools=no target=release
+  $SCONS platform=android arch=arm32 $OPTIONS tools=no target=release_debug
+  $SCONS platform=android arch=arm32 $OPTIONS tools=no target=release
 
-  $SCONS platform=android android_arch=arm64v8 $OPTIONS tools=no target=release_debug
-  $SCONS platform=android android_arch=arm64v8 $OPTIONS tools=no target=release
+  $SCONS platform=android arch=arm64 $OPTIONS tools=no target=release_debug
+  $SCONS platform=android arch=arm64 $OPTIONS tools=no target=release
 
-  $SCONS platform=android android_arch=x86 $OPTIONS tools=no target=release_debug
-  $SCONS platform=android android_arch=x86 $OPTIONS tools=no target=release
+  $SCONS platform=android arch=x86_32 $OPTIONS tools=no target=release_debug
+  $SCONS platform=android arch=x86_32 $OPTIONS tools=no target=release
 
-  $SCONS platform=android android_arch=x86_64 $OPTIONS tools=no target=release_debug
-  $SCONS platform=android android_arch=x86_64 $OPTIONS tools=no target=release
+  $SCONS platform=android arch=x86_64 $OPTIONS tools=no target=release_debug
+  $SCONS platform=android arch=x86_64 $OPTIONS tools=no target=release
 
   pushd platform/android/java
   ./gradlew generateGodotTemplates
@@ -62,17 +62,17 @@ if [ "${MONO}" == "1" ]; then
   cp /root/mono-glue/*.cpp modules/mono/glue/
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
 
-  $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
-  $SCONS platform=android android_arch=armv7 $OPTIONS $OPTIONS_MONO tools=no target=release
+  $SCONS platform=android arch=arm32 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
+  $SCONS platform=android arch=arm32 $OPTIONS $OPTIONS_MONO tools=no target=release
 
-  $SCONS platform=android android_arch=arm64v8 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
-  $SCONS platform=android android_arch=arm64v8 $OPTIONS $OPTIONS_MONO tools=no target=release
+  $SCONS platform=android arch=arm64 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
+  $SCONS platform=android arch=arm64 $OPTIONS $OPTIONS_MONO tools=no target=release
 
-  $SCONS platform=android android_arch=x86 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
-  $SCONS platform=android android_arch=x86 $OPTIONS $OPTIONS_MONO tools=no target=release
+  $SCONS platform=android arch=x86_32 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
+  $SCONS platform=android arch=x86_32 $OPTIONS $OPTIONS_MONO tools=no target=release
 
-  $SCONS platform=android android_arch=x86_64 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
-  $SCONS platform=android android_arch=x86_64 $OPTIONS $OPTIONS_MONO tools=no target=release
+  $SCONS platform=android arch=x86_64 $OPTIONS $OPTIONS_MONO tools=no target=release_debug
+  $SCONS platform=android arch=x86_64 $OPTIONS $OPTIONS_MONO tools=no target=release
 
   pushd platform/android/java
   ./gradlew generateGodotTemplates
