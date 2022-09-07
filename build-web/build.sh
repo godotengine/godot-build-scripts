@@ -4,9 +4,20 @@ set -e
 
 # Config
 
-export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
+# To speed up builds with single-threaded full LTO linking,
+# we run all builds in parallel each from their own folder.
+export NUM_JOBS=5
+declare -a JOBS=(
+  "tools=yes target=release_debug use_closure_compiler=yes"
+  "tools=no target=release_debug"
+  "tools=no target=release"
+  "tools=no target=release_debug dlink_enabled=yes"
+  "tools=no target=release dlink_enabled=yes"
+)
+
+export SCONS="scons -j$(expr ${NUM_CORES} / ${NUM_JOBS}) verbose=yes warnings=no progress=no"
 export OPTIONS="production=yes"
-export OPTIONS_MONO="module_mono_enabled=yes use_lto=no"
+export OPTIONS_MONO="module_mono_enabled=yes -j${NUM_CORES}"
 export TERM=xterm
 
 source /root/emsdk/emsdk_env.sh
@@ -21,21 +32,25 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Web..."
 
-  $SCONS platform=web ${OPTIONS} target=release_debug tools=no
-  $SCONS platform=web ${OPTIONS} target=release tools=no
+  for i in {0..4}; do
+    cp -r /root/godot /root/godot$i
+    cd /root/godot$i
+    echo "$SCONS platform=web ${OPTIONS} ${JOBS[$i]}"
+    $SCONS platform=web ${OPTIONS} ${JOBS[$i]} &
+    pids[$i]=$!
+  done
 
-  $SCONS platform=web ${OPTIONS} target=release_debug tools=no dlink_enabled=yes
-  $SCONS platform=web ${OPTIONS} target=release tools=no dlink_enabled=yes
-
-  mkdir -p /root/out/templates
-  cp -rvp bin/*.zip /root/out/templates
-  rm -f bin/*.zip
-
-  $SCONS platform=web ${OPTIONS} target=release_debug tools=yes use_closure_compiler=yes
+  for pid in ${pids[*]}; do
+    wait $pid
+  done
 
   mkdir -p /root/out/tools
-  cp -rvp bin/*.zip /root/out/tools
-  rm -f bin/*.zip
+  cp -rvp /root/godot0/bin/*tools*.zip /root/out/tools
+
+  mkdir -p /root/out/templates
+  for i in {1..4}; do
+    cp -rvp /root/godot$i/bin/*.zip /root/out/templates
+  done
 fi
 
 # Mono
