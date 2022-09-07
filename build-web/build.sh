@@ -5,8 +5,8 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="production=yes use_thinlto=yes"
-export OPTIONS_MONO="module_mono_enabled=yes"
+export OPTIONS="production=yes"
+export OPTIONS_MONO="module_mono_enabled=yes use_lto=no"
 export TERM=xterm
 
 source /root/emsdk/emsdk_env.sh
@@ -24,8 +24,8 @@ if [ "${CLASSICAL}" == "1" ]; then
   $SCONS platform=web ${OPTIONS} target=release_debug tools=no
   $SCONS platform=web ${OPTIONS} target=release tools=no
 
-  $SCONS platform=web ${OPTIONS} target=release_debug tools=no gdnative_enabled=yes
-  $SCONS platform=web ${OPTIONS} target=release tools=no gdnative_enabled=yes
+  $SCONS platform=web ${OPTIONS} target=release_debug tools=no dlink_enabled=yes
+  $SCONS platform=web ${OPTIONS} target=release tools=no dlink_enabled=yes
 
   mkdir -p /root/out/templates
   cp -rvp bin/*.zip /root/out/templates
