@@ -34,7 +34,6 @@ sign_macos() {
   if [[ "${_is_mono}" == "1" ]]; then
     _appname="Godot_mono.app"
     _sharpdir="${_appname}/Contents/Resources/GodotSharp"
-    _extra_files="${_sharpdir}/Mono/lib/*.dylib ${_sharpdir}/Tools/aot-compilers/*/*"
   else
     _appname="Godot.app"
   fi
@@ -46,7 +45,7 @@ sign_macos() {
             unzip ${_binname}.zip && \
             codesign --force --timestamp \
               --options=runtime --entitlements editor.entitlements \
-              -s ${OSX_KEY_ID} -v ${_extra_files} ${_appname} && \
+              -s ${OSX_KEY_ID} -v ${_appname} && \
             zip -r ${_binname}_signed.zip ${_appname}"
 
   _request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${_macos_tmpdir}/${_binname}_signed.zip")
@@ -76,17 +75,13 @@ sign_macos_template() {
   _reldir="$1"
   _is_mono="$2"
 
-  if [[ "${_is_mono}" == "1" ]]; then
-    _extra_files="macos_template.app/Contents/Resources/data.mono.*/Mono/lib/*.dylib"
-  fi
-
   scp "${_reldir}/macos.zip" "${OSX_HOST}:${_macos_tmpdir}"
   ssh "${OSX_HOST}" "
             cd ${_macos_tmpdir} && \
             unzip macos.zip && \
             codesign --force -s - \
               --options=linker-signed \
-              -v ${_extra_files} macos_template.app/Contents/MacOS/* && \
+              -v macos_template.app/Contents/MacOS/* && \
             zip -r macos_signed.zip macos_template.app"
 
   scp "${OSX_HOST}:${_macos_tmpdir}/macos_signed.zip" "${_reldir}/macos.zip"
@@ -354,7 +349,6 @@ if [ "${build_mono}" == "1" ]; then
   cp out/linux/x86_64/tools-mono/godot.linuxbsd.opt.tools.x86_64.mono ${binbasename}_x86_64/${binbasename}.x86_64
   strip ${binbasename}_x86_64/${binbasename}.x86_64
   cp -rp out/linux/x86_64/tools-mono/GodotSharp ${binbasename}_x86_64/
-  cp -rp out/aot-compilers ${binbasename}_x86_64/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_x86_64.zip" ${binbasename}_x86_64
   rm -rf ${binbasename}_x86_64
 
@@ -363,21 +357,15 @@ if [ "${build_mono}" == "1" ]; then
   cp out/linux/x86_32/tools-mono/godot.linuxbsd.opt.tools.x86_32.mono ${binbasename}_x86_32/${binbasename}.x86_32
   strip ${binbasename}_x86_32/${binbasename}.x86_32
   cp -rp out/linux/x86_32/tools-mono/GodotSharp/ ${binbasename}_x86_32/
-  cp -rp out/aot-compilers ${binbasename}_x86_32/GodotSharp/Tools/
   zip -r -q -9 "${reldir_mono}/${binbasename}_x86_32.zip" ${binbasename}_x86_32
   rm -rf ${binbasename}_x86_32
 
   # Templates
-  cp -rp out/linux/x86_64/templates-mono/data.mono.linuxbsd.x86_64.* ${templatesdir_mono}/
   cp out/linux/x86_64/templates-mono/godot.linuxbsd.opt.debug.x86_64.mono ${templatesdir_mono}/linux_debug.x86_64
   cp out/linux/x86_64/templates-mono/godot.linuxbsd.opt.x86_64.mono ${templatesdir_mono}/linux_release.x86_64
-  cp -rp out/linux/x86_32/templates-mono/data.mono.linuxbsd.x86_32.* ${templatesdir_mono}/
   cp out/linux/x86_32/templates-mono/godot.linuxbsd.opt.debug.x86_32.mono ${templatesdir_mono}/linux_debug.x86_32
   cp out/linux/x86_32/templates-mono/godot.linuxbsd.opt.x86_32.mono ${templatesdir_mono}/linux_release.x86_32
   strip ${templatesdir_mono}/linux*
-
-  mkdir -p ${templatesdir_mono}/bcl
-  cp -r out/linux/x86_64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x
 
   ## Windows (Mono) ##
 
@@ -389,7 +377,6 @@ if [ "${build_mono}" == "1" ]; then
   strip ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
   cp -rp out/windows/x86_64/tools-mono/GodotSharp ${binname}/
-  cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
   echo "@echo off" > ${batname}
   echo ${binname}.exe >> ${batname}
   echo "pause > nul" >> ${batname}
@@ -404,7 +391,6 @@ if [ "${build_mono}" == "1" ]; then
   strip ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
   cp -rp out/windows/x86_32/tools-mono/GodotSharp ${binname}/
-  cp -rp out/aot-compilers ${binname}/GodotSharp/Tools/
   echo "@echo off" > ${batname}
   echo ${binname}.exe >> ${batname}
   echo "pause > nul" >> ${batname}
@@ -413,16 +399,11 @@ if [ "${build_mono}" == "1" ]; then
   rm -rf ${binname}
 
   # Templates
-  cp -rp out/windows/x86_64/templates-mono/data.mono.windows.x86_64.* ${templatesdir_mono}/
   cp out/windows/x86_64/templates-mono/godot.windows.opt.debug.x86_64.mono.exe ${templatesdir_mono}/windows_debug_x86_64.exe
   cp out/windows/x86_64/templates-mono/godot.windows.opt.x86_64.mono.exe ${templatesdir_mono}/windows_release_x86_64.exe
-  cp -rp out/windows/x86_32/templates-mono/data.mono.windows.x86_32.* ${templatesdir_mono}/
   cp out/windows/x86_32/templates-mono/godot.windows.opt.debug.x86_32.mono.exe ${templatesdir_mono}/windows_debug_x86_32.exe
   cp out/windows/x86_32/templates-mono/godot.windows.opt.x86_32.mono.exe ${templatesdir_mono}/windows_release_x86_32.exe
   strip ${templatesdir_mono}/windows*.exe
-
-  mkdir -p ${templatesdir_mono}/bcl
-  cp -r out/windows/x86_64/tools-mono/GodotSharp/Mono/lib/mono/4.5/ ${templatesdir_mono}/bcl/net_4_x_win
 
   ## macOS (Mono) ##
 
@@ -433,7 +414,6 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p Godot_mono.app/Contents/{MacOS,Resources}
   cp out/macos/tools-mono/godot.macos.opt.tools.universal.mono Godot_mono.app/Contents/MacOS/Godot
   cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
-  cp -rp out/aot-compilers Godot_mono.app/Contents/Resources/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
@@ -445,11 +425,14 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p macos_template.app/Contents/{MacOS,Resources}
   cp out/macos/templates-mono/godot.macos.opt.debug.universal.mono macos_template.app/Contents/MacOS/godot_macos_debug.universal
   cp out/macos/templates-mono/godot.macos.opt.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.universal
-  cp -rp out/macos/templates-mono/data.mono.macos.* macos_template.app/Contents/Resources/
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
   rm -rf macos_template.app
   sign_macos_template ${templatesdir_mono} 1
+
+  # No .NET support for those platforms yet.
+
+  if false; then
 
   ## Web (Mono) ##
 
@@ -462,17 +445,9 @@ if [ "${build_mono}" == "1" ]; then
   # Lib for direct download
   cp out/android/templates-mono/godot-lib.release.aar ${reldir_mono}/godot-lib.${templates_version}.mono.release.aar
 
-  # Editor
-  #binname="${godot_basename}_mono_android_editor.apk"
-  #cp out/android/tools-mono/android_editor.apk ${reldir_mono}/${binname}
-
   # Templates
   cp out/android/templates-mono/*.apk ${templatesdir_mono}/
   cp out/android/templates-mono/android_source.zip ${templatesdir_mono}/
-
-  mkdir -p ${templatesdir_mono}/bcl
-  cp -r out/android/templates-mono/bcl/godot_android_ext ${templatesdir_mono}/bcl/
-  cp -r out/android/templates-mono/bcl/monodroid ${templatesdir_mono}/bcl/
 
   ## iOS (Mono) ##
 
@@ -489,13 +464,7 @@ if [ "${build_mono}" == "1" ]; then
   cd ..
   rm -rf ios_xcode
 
-  mkdir -p ${templatesdir_mono}/bcl
-  cp -r out/ios/templates-mono/bcl/monotouch* ${templatesdir_mono}/bcl/
-  cp -r out/ios/templates-mono/ios-mono-libs ${templatesdir_mono}
-
-#  ## UWP (Mono) ##
-#
-#  # Not supported yet.
+  fi
 
   ## Templates TPZ (Mono) ##
 

@@ -55,10 +55,11 @@ fi
 
 # Mono
 
-if [ "${MONO}" == "1" ]; then
+# No Web support with .NET 6 yet.
+#if [ "${MONO}" == "1" ]; then
+if false; then
   echo "Starting Mono build for Web..."
 
-  cp /root/mono-glue/*.cpp modules/mono/glue/
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
 
   $SCONS platform=web ${OPTIONS} ${OPTIONS_MONO} target=release_debug tools=no
