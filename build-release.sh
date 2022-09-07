@@ -248,17 +248,17 @@ if [ "${build_classical}" == "1" ]; then
   ## Web (Classical) ##
 
   # Editor
-  unzip out/web/tools/godot.web.opt.tools.threads.zip -d ${webdir}/
+  unzip out/web/tools/godot.web.opt.tools.wasm32.zip -d ${webdir}/
   brotli --keep --force --quality=11 ${webdir}/*
   binname="${godot_basename}_web_editor.zip"
-  cp out/web/tools/godot.web.opt.tools.threads.zip ${reldir}/${binname}
+  cp out/web/tools/godot.web.opt.tools.wasm32.zip ${reldir}/${binname}
 
   # Templates
-  cp out/web/templates/godot.web.opt.threads.zip ${templatesdir}/webassembly_threads_release.zip
-  cp out/web/templates/godot.web.opt.debug.threads.zip ${templatesdir}/webassembly_threads_debug.zip
+  cp out/web/templates/godot.web.opt.wasm32.zip ${templatesdir}/web_release.zip
+  cp out/web/templates/godot.web.opt.debug.wasm32.zip ${templatesdir}/web_debug.zip
 
-  cp out/web/templates/godot.web.opt.gdnative.threads.zip ${templatesdir}/webassembly_gdnative_threads_release.zip
-  cp out/web/templates/godot.web.opt.debug.gdnative.threads.zip ${templatesdir}/webassembly_gdnative_threads_debug.zip
+  cp out/web/templates/godot.web.opt.wasm32.dlink.zip ${templatesdir}/web_dlink_release.zip
+  cp out/web/templates/godot.web.opt.debug.wasm32.dlink.zip ${templatesdir}/web_dlink_debug.zip
 
   ## Android (Classical) ##
 
@@ -451,14 +451,11 @@ if [ "${build_mono}" == "1" ]; then
   rm -rf macos_template.app
   sign_macos_template ${templatesdir_mono} 1
 
-#  ## Web (Mono) ##
-#
-#  # Templates
-#  cp out/web/templates-mono/godot.web.opt.debug.mono.zip ${templatesdir_mono}/webassembly_debug.zip
-#  cp out/web/templates-mono/godot.web.opt.mono.zip ${templatesdir_mono}/webassembly_release.zip
-#
-#  mkdir -p ${templatesdir_mono}/bcl
-#  cp -r out/web/templates-mono/bcl/wasm ${templatesdir_mono}/bcl/
+  ## Web (Mono) ##
+
+  # Templates
+  cp out/web/templates-mono/godot.web.opt.debug.wasm32.mono.zip ${templatesdir_mono}/web_debug.zip
+  cp out/web/templates-mono/godot.web.opt.wasm32.mono.zip ${templatesdir_mono}/web_release.zip
 
   ## Android (Mono) ##
 
