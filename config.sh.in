@@ -42,3 +42,7 @@ export OSX_BUNDLE_ID=""
 export APPLE_ID=""
 export APPLE_ID_PASSWORD=""
 
+# NuGet source for publishing .NET packages
+export NUGET_SOURCE="nuget.org"
+# API key for publishing NuGet packages to nuget.org
+export NUGET_API_KEY=""
