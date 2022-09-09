@@ -6,9 +6,7 @@ set -e
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="osxcross_sdk=darwin21.4 production=yes use_volk=no vulkan_sdk_path=/root/vulkansdk"
-export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
-export MONO_PREFIX_X86_64="/root/mono-installs/desktop-osx-x86_64-release"
-export MONO_PREFIX_ARM64="/root/mono-installs/desktop-osx-arm64-release"
+export OPTIONS_MONO="module_mono_enabled=yes"
 export STRIP="x86_64-apple-darwin21.4-strip -u -r"
 export TERM=xterm
 
@@ -50,47 +48,27 @@ fi
 if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for macOS..."
 
-  cp /root/mono-glue/*.cpp modules/mono/glue/
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
   cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
 
-  # Note: A bit of dylib wrangling involved as x86_64 and arm64 builds both generate GodotSharp
-  # so the second build overrides the first, but we need to lipo the libs to make them universal.
-  # We also need to ensure that /etc/mono/config has the proper filenames (keep arm64 as the last
-  # build so that we rely on its config, which has libmono-native.dylib instead of
-  # libmono-native-compat.dylib).
-  mkdir -p tmp-lib/{x86_64,arm64}
-
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=yes target=release_debug copy_mono_root=yes
-  cp bin/GodotSharp/Mono/lib/*.dylib tmp-lib/x86_64/
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=yes target=release_debug copy_mono_root=yes
-  cp bin/GodotSharp/Mono/lib/*.dylib tmp-lib/arm64/
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 tools=yes target=release_debug
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 tools=yes target=release_debug
   lipo -create bin/godot.macos.opt.tools.x86_64.mono bin/godot.macos.opt.tools.arm64.mono -output bin/godot.macos.opt.tools.universal.mono
   $STRIP bin/godot.macos.opt.tools.universal.mono
-
-  # Make universal versions of the dylibs we use.
-  lipo -create tmp-lib/x86_64/libmono-native-compat.dylib tmp-lib/arm64/libmono-native.dylib -output tmp-lib/libmono-native.dylib
-  lipo -create tmp-lib/x86_64/libMonoPosixHelper.dylib tmp-lib/arm64/libMonoPosixHelper.dylib -output tmp-lib/libMonoPosixHelper.dylib
-  # Somehow only included in x86_64 build.
-  cp tmp-lib/x86_64/libmono-btls-shared.dylib tmp-lib/
-
-  cp -f tmp-lib/*.dylib bin/GodotSharp/Mono/lib/
+  ./modules/mono/build_scripts/build_assemblies.py --godot-output-dir=./bin --godot-platform=macos
 
   mkdir -p /root/out/tools-mono
   cp -rvp bin/* /root/out/tools-mono
   rm -rf bin
 
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=no target=release_debug
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=no target=release_debug
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 tools=no target=release_debug
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 tools=no target=release_debug
   lipo -create bin/godot.macos.opt.debug.x86_64.mono bin/godot.macos.opt.debug.arm64.mono -output bin/godot.macos.opt.debug.universal.mono
   $STRIP bin/godot.macos.opt.debug.universal.mono
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_X86_64 arch=x86_64 tools=no target=release
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO mono_prefix=$MONO_PREFIX_ARM64 arch=arm64 tools=no target=release
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 tools=no target=release
+  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 tools=no target=release
   lipo -create bin/godot.macos.opt.x86_64.mono bin/godot.macos.opt.arm64.mono -output bin/godot.macos.opt.universal.mono
   $STRIP bin/godot.macos.opt.universal.mono
-
-  cp -f tmp-lib/*.dylib bin/data.mono.macos.release.universal/Mono/lib/
-  cp -f tmp-lib/*.dylib bin/data.mono.macos.release_debug.universal/Mono/lib/
 
   mkdir -p /root/out/templates-mono
   cp -rvp bin/* /root/out/templates-mono
