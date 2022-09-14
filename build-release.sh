@@ -99,7 +99,9 @@ publish_nuget_packages() {
   if [ $can_publish_nuget == 0 ]; then
     return
   fi
-  dotnet nuget push $1 --source "${NUGET_SOURCE}" --api-key "${NUGET_API_KEY}" --skip-duplicate
+  for pkg in "$@"; do
+    dotnet nuget push $pkg --source "${NUGET_SOURCE}" --api-key "${NUGET_API_KEY}" --skip-duplicate
+  done
 }
 
 godot_version=""
