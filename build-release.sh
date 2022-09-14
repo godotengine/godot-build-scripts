@@ -88,12 +88,27 @@ sign_macos_template() {
   ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
 }
 
+can_publish_nuget=0
+if [ ! -z "${NUGET_SOURCE}" ] && [ ! -z "${NUGET_API_KEY}" ] && [[ $(type -P "dotnet") ]]; then
+  can_publish_nuget=1
+else
+  echo "Disabling NuGet package publishing as config.sh does not define the required data (NUGET_SOURCE, NUGET_API_KEY), or dotnet can't be found in PATH."
+fi
+
+publish_nuget_packages() {
+  if [ $can_publish_nuget == 0 ]; then
+    return
+  fi
+  dotnet nuget push $1 --source "${NUGET_SOURCE}" --api-key "${NUGET_API_KEY}" --skip-duplicate
+}
+
 godot_version=""
 templates_version=""
 build_classical=1
 build_mono=1
+publish_nuget=0
 
-while getopts "h?v:t:b:" opt; do
+while getopts "h?v:t:b:-:" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
@@ -101,6 +116,7 @@ while getopts "h?v:t:b:" opt; do
     echo "  -v godot version (e.g: 3.2-stable) [mandatory]"
     echo "  -t templates version (e.g. 3.2.stable) [mandatory]"
     echo "  -b all|classical|mono (default: all)"
+    echo "  --publish-nuget (default: false)"
     echo
     exit 1
     ;;
@@ -116,6 +132,19 @@ while getopts "h?v:t:b:" opt; do
     elif [ "$OPTARG" == "mono" ]; then
       build_classical=0
     fi
+    ;;
+  -)
+    case "${OPTARG}" in
+    publish-nuget)
+      publish_nuget=1
+      ;;
+    *)
+      if [ "$OPTERR" == 1 ] && [ "${optspec:0:1}" != ":" ]; then
+        echo "Unknown option --${OPTARG}."
+        exit 1
+      fi
+      ;;
+    esac
     ;;
   esac
 done
@@ -480,6 +509,12 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p ${basedir}/sha512sums/${godot_version}/mono
   cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/mono/
   popd
+
+  # NuGet packages
+  if [ "${publish_nuget}" == "1" ]; then
+    echo "Publishing NuGet packages..."
+    publish_nuget_packages out/linux/x86_64/tools-mono/GodotSharp/Tools/nupkgs/*.nupkg
+  fi
 
 fi
 
