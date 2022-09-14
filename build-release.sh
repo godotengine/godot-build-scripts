@@ -108,6 +108,7 @@ godot_version=""
 templates_version=""
 build_classical=1
 build_mono=1
+sign_nuget=0
 publish_nuget=0
 
 while getopts "h?v:t:b:-:" opt; do
@@ -139,6 +140,9 @@ while getopts "h?v:t:b:-:" opt; do
     case "${OPTARG}" in
     publish-nuget)
       publish_nuget=1
+      if [ $can_sign_windows == 1 ]; then
+        sign_nuget=1
+      fi
       ;;
     *)
       if [ "$OPTERR" == 1 ] && [ "${optspec:0:1}" != ":" ]; then
@@ -512,8 +516,13 @@ if [ "${build_mono}" == "1" ]; then
   cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/mono/
   popd
 
-  # NuGet packages
-  if [ "${publish_nuget}" == "1" ]; then
+  ## NuGet packages ##
+
+  if [ ${publish_nuget} == 1 ]; then
+    if [ ${sign_nuget} == 1 ]; then
+      echo "Signing NuGet packages..."
+      dotnet nuget sign out/linux/x86_64/tools-mono/GodotSharp/Tools/nupkgs/*.nupkg --certificate-path ${SIGN_KEYSTORE} --timestamper http://timestamp.comodoca.com --certificate-password "${SIGN_PASSWORD}"
+    fi
     echo "Publishing NuGet packages..."
     publish_nuget_packages out/linux/x86_64/tools-mono/GodotSharp/Tools/nupkgs/*.nupkg
   fi
