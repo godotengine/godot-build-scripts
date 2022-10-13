@@ -106,6 +106,8 @@ publish_nuget_packages() {
 
 godot_version=""
 templates_version=""
+do_cleanup=1
+make_tarball=1
 build_classical=1
 build_mono=1
 publish_nuget=0
@@ -117,7 +119,7 @@ while getopts "h?v:t:b:-:" opt; do
     echo
     echo "  -v godot version (e.g: 3.2-stable) [mandatory]"
     echo "  -t templates version (e.g. 3.2.stable) [mandatory]"
-    echo "  -b all|classical|mono (default: all)"
+    echo "  -b all|classical|mono|none (default: all)"
     echo "  --publish-nuget (default: false)"
     echo
     exit 1
@@ -133,10 +135,19 @@ while getopts "h?v:t:b:-:" opt; do
       build_mono=0
     elif [ "$OPTARG" == "mono" ]; then
       build_classical=0
+    elif [ "$OPTARG" == "none" ]; then
+      build_classical=0
+      build_mono=0
     fi
     ;;
   -)
     case "${OPTARG}" in
+    no-cleanup)
+      do_cleanup=0
+      ;;
+    no-tarball)
+      make_tarball=0
+      ;;
     publish-nuget)
       publish_nuget=1
       ;;
@@ -171,22 +182,30 @@ export godot_basename="Godot_v${godot_version}"
 
 # Cleanup and setup
 
-rm -rf ${webdir}
-rm -rf ${reldir}
-rm -rf ${tmpdir}
+if [ "${do_cleanup}" == "1" ]; then
 
-mkdir -p ${webdir}
-mkdir -p ${reldir}
-mkdir -p ${reldir_mono}
-mkdir -p ${templatesdir}
-mkdir -p ${templatesdir_mono}
+  rm -rf ${webdir}
+  rm -rf ${reldir}
+  rm -rf ${tmpdir}
+
+  mkdir -p ${webdir}
+  mkdir -p ${reldir}
+  mkdir -p ${reldir_mono}
+  mkdir -p ${templatesdir}
+  mkdir -p ${templatesdir_mono}
+
+fi
 
 # Tarball
 
-zcat godot-${godot_version}.tar.gz | xz -c > ${reldir}/godot-${godot_version}.tar.xz
-pushd ${reldir}
-sha256sum godot-${godot_version}.tar.xz > godot-${godot_version}.tar.xz.sha256
-popd
+if [ "${make_tarball}" == "1" ]; then
+
+  zcat godot-${godot_version}.tar.gz | xz -c > ${reldir}/godot-${godot_version}.tar.xz
+  pushd ${reldir}
+  sha256sum godot-${godot_version}.tar.xz > godot-${godot_version}.tar.xz.sha256
+  popd
+
+fi
 
 # Classical
 
@@ -512,11 +531,14 @@ if [ "${build_mono}" == "1" ]; then
   cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/mono/
   popd
 
-  # NuGet packages
-  if [ "${publish_nuget}" == "1" ]; then
-    echo "Publishing NuGet packages..."
-    publish_nuget_packages out/linux/x86_64/tools-mono/GodotSharp/Tools/nupkgs/*.nupkg
-  fi
+fi
+
+# NuGet packages
+
+if [ "${publish_nuget}" == "1" ]; then
+
+  echo "Publishing NuGet packages..."
+  publish_nuget_packages out/linux/x86_64/tools-mono/GodotSharp/Tools/nupkgs/*.nupkg
 
 fi
 
