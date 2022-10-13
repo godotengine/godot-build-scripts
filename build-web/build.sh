@@ -8,11 +8,11 @@ set -e
 # we run all builds in parallel each from their own folder.
 export NUM_JOBS=5
 declare -a JOBS=(
-  "tools=yes target=release_debug use_closure_compiler=yes"
-  "tools=no target=release_debug"
-  "tools=no target=release"
-  "tools=no target=release_debug dlink_enabled=yes"
-  "tools=no target=release dlink_enabled=yes"
+  "target=editor use_closure_compiler=yes"
+  "target=template_debug"
+  "target=template_release"
+  "target=template_debug dlink_enabled=yes"
+  "target=template_release dlink_enabled=yes"
 )
 
 export SCONS="scons -j$(expr ${NUM_CORES} / ${NUM_JOBS}) verbose=yes warnings=no progress=no"
@@ -45,7 +45,7 @@ if [ "${CLASSICAL}" == "1" ]; then
   done
 
   mkdir -p /root/out/tools
-  cp -rvp /root/godot0/bin/*tools*.zip /root/out/tools
+  cp -rvp /root/godot0/bin/*.editor*.zip /root/out/tools
 
   mkdir -p /root/out/templates
   for i in {1..4}; do
@@ -62,8 +62,8 @@ if false; then
 
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
 
-  $SCONS platform=web ${OPTIONS} ${OPTIONS_MONO} target=release_debug tools=no
-  $SCONS platform=web ${OPTIONS} ${OPTIONS_MONO} target=release tools=no
+  $SCONS platform=web ${OPTIONS} ${OPTIONS_MONO} target=template_debug
+  $SCONS platform=web ${OPTIONS} ${OPTIONS_MONO} target=template_release
 
   mkdir -p /root/out/templates-mono
   cp -rvp bin/*.zip /root/out/templates-mono
