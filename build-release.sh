@@ -112,15 +112,17 @@ build_classical=1
 build_mono=1
 publish_nuget=0
 
-while getopts "h?v:t:b:-:" opt; do
+while getopts "h?v:t:b:n-:" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
     echo
     echo "  -v godot version (e.g: 3.2-stable) [mandatory]"
     echo "  -t templates version (e.g. 3.2.stable) [mandatory]"
-    echo "  -b all|classical|mono|none (default: all)"
-    echo "  --publish-nuget (default: false)"
+    echo "  -b build target: all|classical|mono|none (default: all)"
+    echo "  -n publish nuget packages (default: false)"
+    echo "  --no-cleanup disable deleting pre-existing output folders (default: false)"
+    echo "  --no-tarball disable generating source tarball (default: false)"
     echo
     exit 1
     ;;
@@ -140,6 +142,9 @@ while getopts "h?v:t:b:-:" opt; do
       build_mono=0
     fi
     ;;
+  n)
+    publish_nuget=1
+    ;;
   -)
     case "${OPTARG}" in
     no-cleanup)
@@ -147,9 +152,6 @@ while getopts "h?v:t:b:-:" opt; do
       ;;
     no-tarball)
       make_tarball=0
-      ;;
-    publish-nuget)
-      publish_nuget=1
       ;;
     *)
       if [ "$OPTERR" == 1 ] && [ "${optspec:0:1}" != ":" ]; then
