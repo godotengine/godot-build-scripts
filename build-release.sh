@@ -49,12 +49,11 @@ sign_macos() {
               -s ${OSX_KEY_ID} -v ${_extra_files} ${_appname} && \
             zip -r ${_binname}_signed.zip ${_appname}"
 
-  _request_uuid=$(ssh "${OSX_HOST}" "xcrun altool --notarize-app --primary-bundle-id \"${OSX_BUNDLE_ID}\" --username \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --file ${_osx_tmpdir}/${_binname}_signed.zip")
-  _request_uuid=$(echo ${_request_uuid} | sed -e 's/.*RequestUUID = //')
-  ssh "${OSX_HOST}" "while xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ in\ progress; do echo Waiting on Apple notarization...; sleep 30s; done"
-  if ! ssh "${OSX_HOST}" "xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\" | grep -q Status:\ success"; then
+  _request_uuid=$(ssh "${OSX_HOST}" "xcrun notarytool submit ${_osx_tmpdir}/${_binname}_signed.zip --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --no-progress --output-format json")
+  _request_uuid=$(echo ${_request_uuid} | sed -e 's/.*"id":"\([^"]*\)".*/\1/')
+  if ! ssh "${OSX_HOST}" "xcrun notarytool wait ${_request_uuid} --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" | grep -q status:\ Accepted"; then
     echo "Notarization failed."
-    _notarization_log=$(ssh "${OSX_HOST}" "xcrun altool --notarization-info ${_request_uuid} -u \"${APPLE_ID}\" -p \"${APPLE_ID_PASSWORD}\"")
+    _notarization_log=$(ssh "${OSX_HOST}" "xcrun notarytool log ${_request_uuid} --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\"")
     echo "${_notarization_log}"
     ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
     exit 1
