@@ -1,5 +1,6 @@
 # User-specific configuration and signing key
 config.sh
+*.jks
 *.pfx
 *.pkcs12
 
