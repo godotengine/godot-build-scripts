@@ -71,8 +71,7 @@ if [ "${MONO}" == "1" ]; then
   # Make universal versions of the dylibs we use.
   lipo -create tmp-lib/x86_64/libmono-native-compat.dylib tmp-lib/arm64/libmono-native.dylib -output tmp-lib/libmono-native.dylib
   lipo -create tmp-lib/x86_64/libMonoPosixHelper.dylib tmp-lib/arm64/libMonoPosixHelper.dylib -output tmp-lib/libMonoPosixHelper.dylib
-  # Somehow only included in x86_64 build.
-  cp tmp-lib/x86_64/libmono-btls-shared.dylib tmp-lib/
+  lipo -create tmp-lib/x86_64/libmono-btls-shared.dylib tmp-lib/arm64/libmono-btls-shared.dylib -output tmp-lib/libmono-btls-shared.dylib
 
   cp -f tmp-lib/*.dylib bin/GodotSharp/Mono/lib/
 
