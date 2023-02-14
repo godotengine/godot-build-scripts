@@ -20,6 +20,7 @@ sed -i ${GODOT_SDK_LINUX_X86_64}/x86_64-godot-linux-gnu/sysroot/usr/lib/pkgconfi
 
 # Temporarily until we make --headless mode actually skip X11.
 dnf install -y libX11 libXcursor libXrandr libXinerama libXi mesa-libGL
+dnf -y install gettext
 
 # Mono
 

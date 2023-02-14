@@ -29,6 +29,8 @@ tar xf /root/godot.tar.gz --strip-components=1
 
 # Classical
 
+dnf -y install gettext
+
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Web..."
 
