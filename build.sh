@@ -83,17 +83,7 @@ while getopts "h?r:u:p:v:g:b:fsc" opt; do
   esac
 done
 
-export podman=none
-if which podman > /dev/null; then
-  export podman=podman
-elif which docker > /dev/null; then
-  export podman=docker
-fi
-
-if [ "${podman}" == "none" ]; then
-  echo "Either podman or docker needs to be installed"
-  exit 1
-fi
+export podman=${PODMAN}
 
 if [ $UID != 0 ]; then
   echo "WARNING: Running as non-root may cause problems for the uwp build"
@@ -145,6 +135,18 @@ if [ $skip_download == 0 ]; then
   fi
 fi
 
+# Keystore for Android editor signing
+# Optional - the config.sh will be copied but if it's not filled in,
+# it will do an unsigned build.
+if [ ! -d "deps/keystore" ]; then
+  mkdir -p deps/keystore
+  cp config.sh deps/keystore/
+  if [ ! -z "$GODOT_ANDROID_SIGN_KEYSTORE" ]; then
+    cp "$GODOT_ANDROID_SIGN_KEYSTORE" deps/keystore/
+    sed -i deps/keystore/config.sh -e "s@$GODOT_ANDROID_SIGN_KEYSTORE@/root/keystore/$GODOT_ANDROID_SIGN_KEYSTORE@"
+  fi
+fi
+
 if [ "${skip_git_checkout}" == 0 ]; then
   git clone https://github.com/godotengine/godot git || /bin/true
   pushd git
@@ -177,7 +179,7 @@ mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
 export podman_run="${podman} run -it --rm --env BUILD_NAME --env GODOT_VERSION_STATUS --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
-export img_version=3.x-f36-mono-6.12.0.182
+export img_version=$IMAGE_VERSION
 
 # Get AOT compilers from their containers.
 mkdir -p ${basedir}/out/aot-compilers
@@ -185,23 +187,23 @@ ${podman} run -it --rm -w /root -v ${basedir}/out/aot-compilers:/root/out localh
 chmod +x ${basedir}/out/aot-compilers/*/*
 
 mkdir -p ${basedir}/mono-glue
-${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-mono-glue:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
+#${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-mono-glue:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
 mkdir -p ${basedir}/out/windows
-${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
+#${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
 mkdir -p ${basedir}/out/linux
-${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
+#${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
 
 mkdir -p ${basedir}/out/javascript
-${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
+#${podman_run} -v ${basedir}/build-javascript:/root/build -v ${basedir}/out/javascript:/root/out localhost/godot-javascript:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/javascript
 
 mkdir -p ${basedir}/out/macosx
-${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx:/root/out localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
+#${podman_run} -v ${basedir}/build-macosx:/root/build -v ${basedir}/out/macosx:/root/out localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macosx
 
 mkdir -p ${basedir}/out/android
-${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
-
+${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
+exit 0
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-ios:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
 
