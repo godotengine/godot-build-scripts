@@ -8,6 +8,8 @@ export basedir=$(pwd)
 # For signing keystore and password.
 source ./config.sh
 
+export ZIP="7z a -bso0 -bd -mx9"
+
 can_sign_windows=0
 if [ ! -z "${SIGN_KEYSTORE}" ] && [ ! -z "${SIGN_PASSWORD}" ] && [[ $(type -P "osslsigncode") ]]; then
   can_sign_windows=1
@@ -47,7 +49,7 @@ sign_macos() {
             codesign --force --timestamp \
               --options=runtime --entitlements editor.entitlements \
               -s ${OSX_KEY_ID} -v ${_appname} && \
-            zip -r ${_binname}_signed.zip ${_appname}"
+            $ZIP -r ${_binname}_signed.zip ${_appname}"
 
   _request_uuid=$(ssh "${OSX_HOST}" "xcrun notarytool submit ${_macos_tmpdir}/${_binname}_signed.zip --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --no-progress --output-format json")
   _request_uuid=$(echo ${_request_uuid} | sed -e 's/.*"id":"\([^"]*\)".*/\1/')
@@ -61,7 +63,7 @@ sign_macos() {
     ssh "${OSX_HOST}" "
             cd ${_macos_tmpdir} && \
             xcrun stapler staple ${_appname} && \
-            zip -r ${_binname}_stapled.zip ${_appname}"
+            $ZIP -r ${_binname}_stapled.zip ${_appname}"
     scp "${OSX_HOST}:${_macos_tmpdir}/${_binname}_stapled.zip" "${_reldir}/${_binname}.zip"
     ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
   fi
@@ -82,7 +84,7 @@ sign_macos_template() {
             codesign --force -s - \
               --options=linker-signed \
               -v macos_template.app/Contents/MacOS/* && \
-            zip -r macos_signed.zip macos_template.app"
+            $ZIP -r macos_signed.zip macos_template.app"
 
   scp "${OSX_HOST}:${_macos_tmpdir}/macos_signed.zip" "${_reldir}/macos.zip"
   ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
@@ -240,22 +242,22 @@ if [ "${build_classical}" == "1" ]; then
   # Editor
   binname="${godot_basename}_linux.x86_64"
   cp out/linux/x86_64/tools/godot.linuxbsd.editor.x86_64 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  $ZIP "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_linux.x86_32"
   cp out/linux/x86_32/tools/godot.linuxbsd.editor.x86_32 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  $ZIP "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_linux.arm64"
   cp out/linux/arm64/tools/godot.linuxbsd.editor.arm64 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  $ZIP "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_linux.arm32"
   cp out/linux/arm32/tools/godot.linuxbsd.editor.arm32 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  $ZIP "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   # Templates
@@ -279,7 +281,7 @@ if [ "${build_classical}" == "1" ]; then
   cp out/windows/x86_64/tools/godot.windows.editor.x86_64.console.exe ${wrpname}
   strip ${wrpname}
   sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
+  $ZIP "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
 
   binname="${godot_basename}_win32.exe"
@@ -290,7 +292,7 @@ if [ "${build_classical}" == "1" ]; then
   cp out/windows/x86_32/tools/godot.windows.editor.x86_32.console.exe ${wrpname}
   strip ${wrpname}
   sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
+  $ZIP "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
 
   # Templates
@@ -313,7 +315,7 @@ if [ "${build_classical}" == "1" ]; then
   mkdir -p Godot.app/Contents/MacOS
   cp out/macos/tools/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
-  zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
+  $ZIP -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
   sign_macos ${reldir} ${binname} 0
 
@@ -325,7 +327,7 @@ if [ "${build_classical}" == "1" ]; then
   cp out/macos/templates/godot.macos.template_release.universal macos_template.app/Contents/MacOS/godot_macos_release.universal
   cp out/macos/templates/godot.macos.template_debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.universal
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
-  zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
+  $ZIP -r "${templatesdir}/macos.zip" macos_template.app
   rm -rf macos_template.app
   sign_macos_template ${templatesdir} 0
 
@@ -370,7 +372,7 @@ if [ "${build_classical}" == "1" ]; then
   cp -r deps/vulkansdk-macos/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
-  zip -q -9 -r "${templatesdir}/ios.zip" *
+  $ZIP -r "${templatesdir}/ios.zip" *
   cd ..
   rm -rf ios_xcode
 
@@ -378,7 +380,7 @@ if [ "${build_classical}" == "1" ]; then
 
   echo "${templates_version}" > ${templatesdir}/version.txt
   pushd ${templatesdir}/..
-  zip -q -9 -r -D "${reldir}/${godot_basename}_export_templates.tpz" templates/*
+  $ZIP -r "${reldir}/${godot_basename}_export_templates.tpz" templates/*
   popd
 
   ## SHA-512 sums (Classical) ##
@@ -402,14 +404,14 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p ${binbasename}_x86_64
   cp out/linux/x86_64/tools-mono/godot.linuxbsd.editor.x86_64.mono ${binbasename}_x86_64/${binbasename}.x86_64
   cp -rp out/linux/x86_64/tools-mono/GodotSharp ${binbasename}_x86_64/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_x86_64.zip" ${binbasename}_x86_64
+  $ZIP -r "${reldir_mono}/${binbasename}_x86_64.zip" ${binbasename}_x86_64
   rm -rf ${binbasename}_x86_64
 
   binbasename="${godot_basename}_mono_linux"
   mkdir -p ${binbasename}_x86_32
   cp out/linux/x86_32/tools-mono/godot.linuxbsd.editor.x86_32.mono ${binbasename}_x86_32/${binbasename}.x86_32
   cp -rp out/linux/x86_32/tools-mono/GodotSharp/ ${binbasename}_x86_32/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_x86_32.zip" ${binbasename}_x86_32
+  $ZIP -r "${reldir_mono}/${binbasename}_x86_32.zip" ${binbasename}_x86_32
   rm -rf ${binbasename}_x86_32
 
   binbasename="${godot_basename}_mono_linux"
@@ -449,7 +451,7 @@ if [ "${build_mono}" == "1" ]; then
   cp out/windows/x86_64/tools-mono/godot.windows.editor.x86_64.mono.console.exe ${binname}/${wrpname}.exe
   strip ${binname}/${wrpname}.exe
   sign_windows ${binname}/${wrpname}.exe
-  zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
+  $ZIP -r "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
   binname="${godot_basename}_mono_win32"
@@ -462,7 +464,7 @@ if [ "${build_mono}" == "1" ]; then
   cp out/windows/x86_32/tools-mono/godot.windows.editor.x86_32.mono.console.exe ${binname}/${wrpname}.exe
   strip ${binname}/${wrpname}.exe
   sign_windows ${binname}/${wrpname}.exe
-  zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
+  $ZIP -r "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
   # Templates
@@ -486,7 +488,7 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macos/tools-mono/godot.macos.editor.universal.mono Godot_mono.app/Contents/MacOS/Godot
   cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
   chmod +x Godot_mono.app/Contents/MacOS/Godot
-  zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
+  $ZIP -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
   sign_macos ${reldir_mono} ${binname} 1
 
@@ -497,7 +499,7 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macos/templates-mono/godot.macos.template_debug.universal.mono macos_template.app/Contents/MacOS/godot_macos_debug.universal
   cp out/macos/templates-mono/godot.macos.template_release.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.universal
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
-  zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
+  $ZIP -r "${templatesdir_mono}/macos.zip" macos_template.app
   rm -rf macos_template.app
   sign_macos_template ${templatesdir_mono} 1
 
@@ -521,7 +523,7 @@ if [ "${build_mono}" == "1" ]; then
   cp -r deps/vulkansdk-macos/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
-  zip -q -9 -r "${templatesdir_mono}/ios.zip" *
+  $ZIP -r "${templatesdir_mono}/ios.zip" *
   cd ..
   rm -rf ios_xcode
 
@@ -541,7 +543,7 @@ if [ "${build_mono}" == "1" ]; then
 
   echo "${templates_version}.mono" > ${templatesdir_mono}/version.txt
   pushd ${templatesdir_mono}/..
-  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" templates/*
+  $ZIP -r "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" templates/*
   popd
 
   ## SHA-512 sums (Mono) ##
