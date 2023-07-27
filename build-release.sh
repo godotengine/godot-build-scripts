@@ -11,6 +11,8 @@ exec > >(tee -a "out/logs/build-release") 2>&1
 # For signing keystore and password.
 source ./config.sh
 
+export ZIP="7z a -bso0 -bd -mx9"
+
 can_sign_windows=0
 if [ ! -z "${WINDOWS_SIGN_NAME}" ] && [ ! -z "${WINDOWS_SIGN_URL}" ] && [[ $(type -P "osslsigncode") ]]; then
   can_sign_windows=1
@@ -173,22 +175,22 @@ if [ "${build_classical}" == "1" ]; then
   # Editor
   binname="${godot_basename}_linux.x86_64"
   cp out/linux/x86_64/tools/godot.linuxbsd.editor.x86_64 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  $ZIP "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_linux.x86_32"
   cp out/linux/x86_32/tools/godot.linuxbsd.editor.x86_32 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  $ZIP "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_linux.arm64"
   cp out/linux/arm64/tools/godot.linuxbsd.editor.arm64 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  $ZIP "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_linux.arm32"
   cp out/linux/arm32/tools/godot.linuxbsd.editor.arm32 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  $ZIP "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   # ICU data
@@ -217,7 +219,7 @@ if [ "${build_classical}" == "1" ]; then
   sign_windows ${binname}
   cp out/windows/x86_64/tools/godot.windows.editor.x86_64.console.exe ${wrpname}
   sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
+  $ZIP "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
 
   binname="${godot_basename}_win32.exe"
@@ -226,7 +228,7 @@ if [ "${build_classical}" == "1" ]; then
   sign_windows ${binname}
   cp out/windows/x86_32/tools/godot.windows.editor.x86_32.console.exe ${wrpname}
   sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
+  $ZIP "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
 
   binname="${godot_basename}_windows_arm64.exe"
@@ -235,7 +237,7 @@ if [ "${build_classical}" == "1" ]; then
   sign_windows ${binname}
   cp out/windows/arm64/tools/godot.windows.editor.arm64.llvm.console.exe ${wrpname}
   sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
+  $ZIP "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
 
   # Templates
@@ -262,7 +264,7 @@ if [ "${build_classical}" == "1" ]; then
   cp out/macos/tools/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
   sign_macos Godot.app
-  zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
+  $ZIP -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
 
   # Templates
@@ -274,7 +276,7 @@ if [ "${build_classical}" == "1" ]; then
   cp out/macos/templates/godot.macos.template_debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.universal
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   sign_macos_template macos_template.app
-  zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
+  $ZIP -r "${templatesdir}/macos.zip" macos_template.app
   rm -rf macos_template.app
 
   ## Steam (Classical) ##
@@ -302,7 +304,7 @@ if [ "${build_classical}" == "1" ]; then
     cp deps/steam/libsteam_api.dylib Godot.app/Contents/Frameworks/libsteam_api.dylib
     chmod +x Godot.app/Contents/MacOS/Godot
     sign_macos Godot.app
-    zip -q -9 -r "${binname}_steam.zip" Godot.app
+    $ZIP "${binname}_steam.zip" Godot.app
     rm -rf Godot.app
     unzip ${binname}_steam.zip -d ${steamdir}/
     rm -f ${binname}_steam.zip
@@ -372,7 +374,7 @@ if [ "${build_classical}" == "1" ]; then
   cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos,xros}*
   cd ios_xcode
-  zip -q -9 -r "${templatesdir}/ios.zip" *
+  $ZIP -r "${templatesdir}/ios.zip" *
   cd ..
   rm -rf ios_xcode
 
@@ -394,7 +396,7 @@ if [ "${build_classical}" == "1" ]; then
 
   echo "${templates_version}" > ${templatesdir}/version.txt
   pushd ${templatesdir}/..
-  zip -q -9 -r -D "${reldir}/${godot_basename}_export_templates.tpz" templates/*
+  $ZIP -r "${reldir}/${godot_basename}_export_templates.tpz" templates/*
   popd
 
   ## SHA-512 sums (Classical) ##
@@ -418,28 +420,28 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p ${binbasename}_x86_64
   cp out/linux/x86_64/tools-mono/godot.linuxbsd.editor.x86_64.mono ${binbasename}_x86_64/${binbasename}.x86_64
   cp -rp out/linux/x86_64/tools-mono/GodotSharp ${binbasename}_x86_64/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_x86_64.zip" ${binbasename}_x86_64
+  $ZIP -r "${reldir_mono}/${binbasename}_x86_64.zip" ${binbasename}_x86_64
   rm -rf ${binbasename}_x86_64
 
   binbasename="${godot_basename}_mono_linux"
   mkdir -p ${binbasename}_x86_32
   cp out/linux/x86_32/tools-mono/godot.linuxbsd.editor.x86_32.mono ${binbasename}_x86_32/${binbasename}.x86_32
   cp -rp out/linux/x86_32/tools-mono/GodotSharp/ ${binbasename}_x86_32/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_x86_32.zip" ${binbasename}_x86_32
+  $ZIP -r "${reldir_mono}/${binbasename}_x86_32.zip" ${binbasename}_x86_32
   rm -rf ${binbasename}_x86_32
 
   binbasename="${godot_basename}_mono_linux"
   mkdir -p ${binbasename}_arm64
   cp out/linux/arm64/tools-mono/godot.linuxbsd.editor.arm64.mono ${binbasename}_arm64/${binbasename}.arm64
   cp -rp out/linux/arm64/tools-mono/GodotSharp/ ${binbasename}_arm64/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_arm64.zip" ${binbasename}_arm64
+  $ZIP "${reldir_mono}/${binbasename}_arm64.zip" ${binbasename}_arm64
   rm -rf ${binbasename}_arm64
 
   binbasename="${godot_basename}_mono_linux"
   mkdir -p ${binbasename}_arm32
   cp out/linux/arm32/tools-mono/godot.linuxbsd.editor.arm32.mono ${binbasename}_arm32/${binbasename}.arm32
   cp -rp out/linux/arm32/tools-mono/GodotSharp/ ${binbasename}_arm32/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_arm32.zip" ${binbasename}_arm32
+  $ZIP "${reldir_mono}/${binbasename}_arm32.zip" ${binbasename}_arm32
   rm -rf ${binbasename}_arm32
 
   # ICU data
@@ -470,7 +472,7 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/windows/x86_64/tools-mono/GodotSharp ${binname}/
   cp out/windows/x86_64/tools-mono/godot.windows.editor.x86_64.mono.console.exe ${binname}/${wrpname}.exe
   sign_windows ${binname}/${wrpname}.exe
-  zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
+  $ZIP -r "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
   binname="${godot_basename}_mono_win32"
@@ -481,7 +483,7 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/windows/x86_32/tools-mono/GodotSharp ${binname}/
   cp out/windows/x86_32/tools-mono/godot.windows.editor.x86_32.mono.console.exe ${binname}/${wrpname}.exe
   sign_windows ${binname}/${wrpname}.exe
-  zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
+  $ZIP "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
   binname="${godot_basename}_mono_windows_arm64"
@@ -492,7 +494,7 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/windows/arm64/tools-mono/GodotSharp ${binname}/
   cp out/windows/arm64/tools-mono/godot.windows.editor.arm64.llvm.mono.console.exe ${binname}/${wrpname}.exe
   sign_windows ${binname}/${wrpname}.exe
-  zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
+  $ZIP -r "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
   # Templates
@@ -520,7 +522,7 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   sign_macos Godot_mono.app
-  zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
+  $ZIP -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
 
   # Templates
@@ -531,7 +533,7 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macos/templates-mono/godot.macos.template_release.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.universal
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   sign_macos_template macos_template.app
-  zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
+  $ZIP -r "${templatesdir_mono}/macos.zip" macos_template.app
   rm -rf macos_template.app
 
   ## Android (Mono) ##
@@ -554,11 +556,11 @@ if [ "${build_mono}" == "1" ]; then
   cp out/ios/templates-mono/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates-mono/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates-mono/libgodot_camera.ios.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64/libgodot_camera.a
-  cp out/ios/templates-mono/libgodot_camera.ios.debug.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64/libgodot_camera.a 
+  cp out/ios/templates-mono/libgodot_camera.ios.debug.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64/libgodot_camera.a
   cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
-  zip -q -9 -r "${templatesdir_mono}/ios.zip" *
+  $ZIP -r "${templatesdir_mono}/ios.zip" *
   cd ..
   rm -rf ios_xcode
 
@@ -591,7 +593,7 @@ if [ "${build_mono}" == "1" ]; then
 
   echo "${templates_version}.mono" > ${templatesdir_mono}/version.txt
   pushd ${templatesdir_mono}/..
-  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" templates/*
+  $ZIP -r "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" templates/*
   popd
 
   ## SHA-512 sums (Mono) ##
@@ -614,7 +616,7 @@ if [ "${build_dotnet}" == "1" ]; then
     # Editor
     binname="${godot_basename}_dotnet_linux.${arch}"
     cp out/linux/${arch}/tools-dotnet/godot.linuxbsd.editor.${arch}.dotnet ${binname}
-    zip -r -q -9 "${reldir_dotnet}/${binname}.zip" ${binname}
+    $ZIP "${reldir_dotnet}/${binname}.zip" ${binname}
     rm ${binname}
 
     # Templates
@@ -647,7 +649,7 @@ if [ "${build_dotnet}" == "1" ]; then
     sign_windows ${binname}
     cp out/windows/${arch}/tools-dotnet/godot.windows.editor.${arch}${is_llvm}.dotnet.console.exe ${wrpname}
     sign_windows ${wrpname}
-    zip -r -q -9 "${reldir_dotnet}/${binname}.zip" ${binname} ${wrpname}
+    $ZIP "${reldir_dotnet}/${binname}.zip" ${binname} ${wrpname}
     rm ${binname} ${wrpname}
 
     # Templates
