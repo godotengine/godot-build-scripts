@@ -490,6 +490,15 @@ if [ "${build_mono}" == "1" ]; then
   rm -rf macos_template.app
   sign_macos_template ${templatesdir_mono} 1
 
+  ## Android (Mono) ##
+
+  # Lib for direct download
+  cp out/android/templates-mono/godot-lib.template_release.aar ${reldir_mono}/godot-lib.${templates_version}.mono.template_release.aar
+
+  # Templates
+  cp out/android/templates-mono/*.apk ${templatesdir_mono}/
+  cp out/android/templates-mono/android_source.zip ${templatesdir_mono}/
+
   # No .NET support for those platforms yet.
 
   if false; then
@@ -499,15 +508,6 @@ if [ "${build_mono}" == "1" ]; then
   # Templates
   cp out/web/templates-mono/godot.web.template_debug.wasm32.mono.zip ${templatesdir_mono}/web_debug.zip
   cp out/web/templates-mono/godot.web.template_release.wasm32.mono.zip ${templatesdir_mono}/web_release.zip
-
-  ## Android (Mono) ##
-
-  # Lib for direct download
-  cp out/android/templates-mono/godot-lib.template_release.aar ${reldir_mono}/godot-lib.${templates_version}.mono.template_release.aar
-
-  # Templates
-  cp out/android/templates-mono/*.apk ${templatesdir_mono}/
-  cp out/android/templates-mono/android_source.zip ${templatesdir_mono}/
 
   ## iOS (Mono) ##
 

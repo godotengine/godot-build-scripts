@@ -88,9 +88,7 @@ fi
 
 # Mono
 
-# No Android support with .NET 6 yet.
-#if [ "${MONO}" == "1" ]; then
-if false; then
+if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for Android..."
 
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
@@ -115,7 +113,7 @@ if false; then
   cp bin/android_source.zip /root/out/templates-mono/
   cp bin/android_debug.apk /root/out/templates-mono/
   cp bin/android_release.apk /root/out/templates-mono/
-  cp bin/godot-lib.release.aar /root/out/templates-mono/
+  cp bin/godot-lib.template_release.aar /root/out/templates-mono/
 fi
 
 echo "Android build successful"
