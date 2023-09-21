@@ -85,10 +85,6 @@ done
 
 export podman=${PODMAN}
 
-if [ $UID != 0 ]; then
-  echo "WARNING: Running as non-root may cause problems for the uwp build"
-fi
-
 if [ -z "${godot_version}" ]; then
   echo "-v <version> is mandatory!"
   exit 1
@@ -124,7 +120,7 @@ if [ $skip_download == 0 ]; then
   if [ ! -z "${logged_in}" ]; then
     echo "Fetching private images"
 
-    for image in macosx android ios uwp; do
+    for image in macosx android ios; do
       if [ ${force_download} == 1 ] || ! ${podman} image exists godot-private/$image; then
         if ! ${podman} pull ${registry}/godot-private/${image}; then
           echo "ERROR: image $image does not exist and can't be downloaded"
@@ -207,9 +203,6 @@ ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:
 
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-ios:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
-
-#mkdir -p ${basedir}/out/uwp
-#${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
 
 if [ ! -z "$SUDO_UID" ]; then
   chown -R "${SUDO_UID}":"${SUDO_GID}" ${basedir}/git ${basedir}/out ${basedir}/mono-glue ${basedir}/godot*.tar.gz
