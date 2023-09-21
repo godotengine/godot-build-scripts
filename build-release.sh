@@ -341,43 +341,6 @@ if [ "${build_classical}" == "1" ]; then
   cd ..
   rm -rf ios_xcode
 
-#  ## UWP (Classical) ##
-#
-#  if [ ! -d "deps/angle" ]; then
-#    echo "Downloading ANGLE binaries from https://github.com/GodotBuilder/godot-builds/releases/tag/_tools"
-#    mkdir -p deps && cd deps
-#    curl -LO https://github.com/GodotBuilder/godot-builds/releases/download/_tools/angle.7z
-#    7z x angle.7z && rm -f angle.7z
-#    cd ..
-#  fi
-#
-#  rm -rf uwp_template_*
-#  for arch in ARM Win32 x64; do
-#    cp -r git/misc/dist/uwp_template uwp_template_${arch}
-#    cp deps/angle/winrt/10/src/Release_${arch}/libEGL.dll \
-#      deps/angle/winrt/10/src/Release_${arch}/libGLESv2.dll \
-#      uwp_template_${arch}/
-#    cp -r uwp_template_${arch} uwp_template_${arch}_debug
-#  done
-#
-#  cp out/uwp/arm/godot.uwp.template_release.32.arm.exe uwp_template_ARM/godot.uwp.exe
-#  cp out/uwp/arm/godot.uwp.template_debug.32.arm.exe uwp_template_ARM_debug/godot.uwp.exe
-#  cd uwp_template_ARM && zip -q -9 -r "${templatesdir}/uwp_arm_release.zip" * && cd ..
-#  cd uwp_template_ARM_debug && zip -q -9 -r "${templatesdir}/uwp_arm_debug.zip" * && cd ..
-#  rm -rf uwp_template_ARM*
-#
-#  cp out/uwp/x86/godot.uwp.template_release.32.x86.exe uwp_template_Win32/godot.uwp.exe
-#  cp out/uwp/x86/godot.uwp.template_debug.32.x86.exe uwp_template_Win32_debug/godot.uwp.exe
-#  cd uwp_template_Win32 && zip -q -9 -r "${templatesdir}/uwp_x86_release.zip" * && cd ..
-#  cd uwp_template_Win32_debug && zip -q -9 -r "${templatesdir}/uwp_x86_debug.zip" * && cd ..
-#  rm -rf uwp_template_Win32*
-#
-#  cp out/uwp/x64/godot.uwp.template_release.64.x64.exe uwp_template_x64/godot.uwp.exe
-#  cp out/uwp/x64/godot.uwp.template_debug.64.x64.exe uwp_template_x64_debug/godot.uwp.exe
-#  cd uwp_template_x64 && zip -q -9 -r "${templatesdir}/uwp_x64_release.zip" * && cd ..
-#  cd uwp_template_x64_debug && zip -q -9 -r "${templatesdir}/uwp_x64_debug.zip" * && cd ..
-#  rm -rf uwp_template_x64*
-
   ## Templates TPZ (Classical) ##
 
   echo "${templates_version}" > ${templatesdir}/version.txt
