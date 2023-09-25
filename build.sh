@@ -136,6 +136,18 @@ if [ ! -d "deps/vulkansdk-macos" ]; then
   echo "Missing Vulkan SDK for macOS, we're going to run into issues!"
 fi
 
+# Windows and macOS need ANGLE
+if [ ! -d "deps/angle" ]; then
+  echo "Missing ANGLE libraries, downloading them."
+  mkdir -p deps/angle
+  pushd deps/angle
+  curl -L -o windows.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6029/Windows.6029-1.MinGW_11.x86_64.x86_32.zip
+  curl -L -o macos.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6029/macOS.6029.Xcode_15.arm64.x86_64.zip
+  unzip windows.zip && rm -f windows.zip
+  unzip macos.zip && rm -f macos.zip
+  popd
+fi
+
 # Keystore for Android editor signing
 # Optional - the config.sh will be copied but if it's not filled in,
 # it will do an unsigned build.
@@ -187,7 +199,7 @@ mkdir -p ${basedir}/mono-glue
 ${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
 mkdir -p ${basedir}/out/windows
-${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
+${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
 mkdir -p ${basedir}/out/linux
 ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
@@ -196,7 +208,7 @@ mkdir -p ${basedir}/out/web
 ${podman_run} -v ${basedir}/build-web:/root/build -v ${basedir}/out/web:/root/out localhost/godot-web:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/web
 
 mkdir -p ${basedir}/out/macos
-${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/vulkansdk-macos:/root/vulkansdk localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
+${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/vulkansdk-macos:/root/vulkansdk -v ${basedir}/deps/angle:/root/angle localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
 
 mkdir -p ${basedir}/out/android
 ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android

@@ -5,7 +5,7 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="osxcross_sdk=darwin22 production=yes use_volk=no vulkan_sdk_path=/root/vulkansdk"
+export OPTIONS="osxcross_sdk=darwin22 production=yes use_volk=no vulkan_sdk_path=/root/vulkansdk angle_libs=/root/angle"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export STRIP="x86_64-apple-darwin22-strip -u -r"
 export TERM=xterm
