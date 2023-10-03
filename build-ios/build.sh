@@ -57,9 +57,7 @@ fi
 
 # Mono
 
-# No iOS support with .NET 6 yet.
-#if [ "${MONO}" == "1" ]; then
-if false; then
+if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for iOS..."
 
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/

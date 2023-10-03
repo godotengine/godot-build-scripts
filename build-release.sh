@@ -462,16 +462,6 @@ if [ "${build_mono}" == "1" ]; then
   cp out/android/templates-mono/*.apk ${templatesdir_mono}/
   cp out/android/templates-mono/android_source.zip ${templatesdir_mono}/
 
-  # No .NET support for those platforms yet.
-
-  if false; then
-
-  ## Web (Mono) ##
-
-  # Templates
-  cp out/web/templates-mono/godot.web.template_debug.wasm32.mono.zip ${templatesdir_mono}/web_debug.zip
-  cp out/web/templates-mono/godot.web.template_release.wasm32.mono.zip ${templatesdir_mono}/web_release.zip
-
   ## iOS (Mono) ##
 
   rm -rf ios_xcode
@@ -486,6 +476,16 @@ if [ "${build_mono}" == "1" ]; then
   zip -q -9 -r "${templatesdir_mono}/ios.zip" *
   cd ..
   rm -rf ios_xcode
+
+  # No .NET support for those platforms yet.
+
+  if false; then
+
+  ## Web (Mono) ##
+
+  # Templates
+  cp out/web/templates-mono/godot.web.template_debug.wasm32.mono.zip ${templatesdir_mono}/web_debug.zip
+  cp out/web/templates-mono/godot.web.template_release.wasm32.mono.zip ${templatesdir_mono}/web_release.zip
 
   fi
 
