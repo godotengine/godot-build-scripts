@@ -18,9 +18,6 @@ tar xf /root/godot.tar.gz --strip-components=1
 # as well as signing and publishing to MavenCentral.
 source /root/keystore/config.sh
 
-# Temporary, until we make new build containers.
-dnf install -y java-17-openjdk-devel
-
 store_release="yes"
 if [ -z "${GODOT_ANDROID_SIGN_KEYSTORE}" ]; then
   echo "No keystore provided to sign the Android release editor build, using debug build instead."
@@ -28,8 +25,6 @@ if [ -z "${GODOT_ANDROID_SIGN_KEYSTORE}" ]; then
 fi
 
 # Classical
-
-dnf -y install gettext
 
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Android..."

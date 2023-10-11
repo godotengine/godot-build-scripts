@@ -5,9 +5,9 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="osxcross_sdk=darwin22 production=yes use_volk=no vulkan_sdk_path=/root/vulkansdk angle_libs=/root/angle"
+export OPTIONS="osxcross_sdk=darwin23 production=yes use_volk=no vulkan_sdk_path=/root/vulkansdk angle_libs=/root/angle"
 export OPTIONS_MONO="module_mono_enabled=yes"
-export STRIP="x86_64-apple-darwin22-strip -u -r"
+export STRIP="x86_64-apple-darwin23-strip -u -r"
 export TERM=xterm
 
 rm -rf godot
@@ -16,8 +16,6 @@ cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
 # Classical
-
-dnf -y install gettext
 
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for macOS..."
