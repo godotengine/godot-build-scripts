@@ -1,2 +1,3 @@
-rm -rf releases tmp web
+#!/bin/bash
 
+rm -rf releases tmp web
