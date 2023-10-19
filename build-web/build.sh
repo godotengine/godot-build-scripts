@@ -8,7 +8,7 @@ set -e
 # we run all builds in parallel each from their own folder.
 export NUM_JOBS=5
 declare -a JOBS=(
-  "target=editor use_closure_compiler=yes"
+  "target=editor use_closure_compiler=no"
   "target=template_debug"
   "target=template_release"
   "target=template_debug dlink_enabled=yes"
