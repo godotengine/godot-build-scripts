@@ -8,7 +8,7 @@ set -e
 # we run all builds in parallel each from their own folder.
 export NUM_JOBS=5
 declare -a JOBS=(
-  "target=editor use_closure_compiler=no"
+  "target=editor use_closure_compiler=yes"
   "target=template_debug"
   "target=template_release"
   "target=template_debug dlink_enabled=yes"
@@ -28,8 +28,6 @@ cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
 # Classical
-
-dnf -y install gettext
 
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Web..."

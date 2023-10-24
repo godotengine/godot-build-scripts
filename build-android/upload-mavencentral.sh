@@ -13,7 +13,6 @@ ${PODMAN} run -it --rm \
   -v ${basedir}/out/android/source:/root/godot -v ${basedir}/deps/keystore:/root/keystore \
   localhost/godot-android:${IMAGE_VERSION} bash -c \
     "source /root/keystore/config.sh && \
-    dnf install -y java-17-openjdk-devel && \
     cp -r /root/godot/.gradle /root && \
     cd /root/godot/platform/android/java && \
     ./gradlew publishTemplateReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository"

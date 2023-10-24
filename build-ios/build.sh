@@ -11,7 +11,7 @@ export OPTIONS="production=yes use_lto=no"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
-export IOS_SDK="16.1"
+export IOS_SDK="17.0"
 export IOS_LIPO="/root/ioscross/arm64/bin/arm-apple-darwin11-lipo"
 
 rm -rf godot
@@ -20,8 +20,6 @@ cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
 # Classical
-
-dnf -y install gettext
 
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for iOS..."
@@ -36,15 +34,15 @@ if [ "${CLASSICAL}" == "1" ]; then
   # Disabled for now as it doesn't work with cctools-port and current LLVM.
   # See https://github.com/godotengine/build-containers/pull/85.
   #$SCONS platform=ios $OPTIONS arch=arm64 ios_simulator=yes target=template_debug \
-  #  IOS_SDK_PATH="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
-  #$SCONS platform=ios $OPTIONS arch=arm64 ios_simulator=no target=template_release \
-  #  IOS_SDK_PATH="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
+  #  IOS_SDK_PATH="/root/ioscross/arm64_sim/SDK/iPhoneSimulator${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
+  #$SCONS platform=ios $OPTIONS arch=arm64 ios_simulator=yes target=template_release \
+  #  IOS_SDK_PATH="/root/ioscross/arm64_sim/SDK/iPhoneSimulator${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
 
   # x86_64 simulator
   $SCONS platform=ios $OPTIONS arch=x86_64 ios_simulator=yes target=template_debug \
-    IOS_SDK_PATH="/root/ioscross/x86_64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
+    IOS_SDK_PATH="/root/ioscross/x86_64_sim/SDK/iPhoneSimulator${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
   $SCONS platform=ios $OPTIONS arch=x86_64 ios_simulator=yes target=template_release \
-    IOS_SDK_PATH="/root/ioscross/x86_64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
+    IOS_SDK_PATH="/root/ioscross/x86_64_sim/SDK/iPhoneSimulator${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
 
   mkdir -p /root/out/templates
   cp bin/libgodot.ios.template_release.arm64.a /root/out/templates/libgodot.ios.a
@@ -72,15 +70,15 @@ if [ "${MONO}" == "1" ]; then
   # Disabled for now as it doesn't work with cctools-port and current LLVM.
   # See https://github.com/godotengine/build-containers/pull/85.
   #$SCONS platform=ios $OPTIONS $OPTIONS_MONO arch=arm64 ios_simulator=yes target=template_debug \
-  #  IOS_SDK_PATH="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
+  #  IOS_SDK_PATH="/root/ioscross/arm64_sim/SDK/iPhoneSimulator${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
   #$SCONS platform=ios $OPTIONS $OPTIONS_MONO arch=arm64 ios_simulator=yes target=template_release \
-  #  IOS_SDK_PATH="/root/ioscross/arm64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
+  #  IOS_SDK_PATH="/root/ioscross/arm64_sim/SDK/iPhoneSimulator${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/arm64_sim/" ios_triple="arm-apple-darwin11-"
 
   # x86_64 simulator
   $SCONS platform=ios $OPTIONS $OPTIONS_MONO arch=x86_64 ios_simulator=yes target=template_debug \
-    IOS_SDK_PATH="/root/ioscross/x86_64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
+    IOS_SDK_PATH="/root/ioscross/x86_64_sim/SDK/iPhoneSimulator${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
   $SCONS platform=ios $OPTIONS $OPTIONS_MONO arch=x86_64 ios_simulator=yes target=template_release \
-    IOS_SDK_PATH="/root/ioscross/x86_64_sim/SDK/iPhoneOS${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
+    IOS_SDK_PATH="/root/ioscross/x86_64_sim/SDK/iPhoneSimulator${IOS_SDK}.sdk" IOS_TOOLCHAIN_PATH="/root/ioscross/x86_64_sim/" ios_triple="x86_64-apple-darwin11-"
 
   mkdir -p /root/out/templates-mono
 
