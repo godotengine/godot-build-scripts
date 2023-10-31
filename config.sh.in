@@ -50,7 +50,8 @@ export OSX_HOST=''
 export OSX_KEY_ID=''
 # Bundle id for the signed app
 export OSX_BUNDLE_ID=''
-# Username/password for Apple's signing APIs (used for atltool)
+# Username/password for Apple's signing APIs (used for notarytool)
+export APPLE_TEAM=''
 export APPLE_ID=''
 export APPLE_ID_PASSWORD=''
 
