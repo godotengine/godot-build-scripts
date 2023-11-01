@@ -240,13 +240,21 @@ if [ "${build_classical}" == "1" ]; then
   # Editor
   binname="${godot_basename}_linux.x86_64"
   cp out/linux/x86_64/tools/godot.linuxbsd.editor.x86_64 ${binname}
-  strip ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
   binname="${godot_basename}_linux.x86_32"
   cp out/linux/x86_32/tools/godot.linuxbsd.editor.x86_32 ${binname}
-  strip ${binname}
+  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  rm ${binname}
+
+  binname="${godot_basename}_linux.arm64"
+  cp out/linux/arm64/tools/godot.linuxbsd.editor.arm64 ${binname}
+  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  rm ${binname}
+
+  binname="${godot_basename}_linux.arm32"
+  cp out/linux/arm32/tools/godot.linuxbsd.editor.arm32 ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
@@ -255,7 +263,10 @@ if [ "${build_classical}" == "1" ]; then
   cp out/linux/x86_64/templates/godot.linuxbsd.template_debug.x86_64 ${templatesdir}/linux_debug.x86_64
   cp out/linux/x86_32/templates/godot.linuxbsd.template_release.x86_32 ${templatesdir}/linux_release.x86_32
   cp out/linux/x86_32/templates/godot.linuxbsd.template_debug.x86_32 ${templatesdir}/linux_debug.x86_32
-  strip ${templatesdir}/linux*
+  cp out/linux/arm64/templates/godot.linuxbsd.template_release.arm64 ${templatesdir}/linux_release.arm64
+  cp out/linux/arm64/templates/godot.linuxbsd.template_debug.arm64 ${templatesdir}/linux_debug.arm64
+  cp out/linux/arm32/templates/godot.linuxbsd.template_release.arm32 ${templatesdir}/linux_release.arm32
+  cp out/linux/arm32/templates/godot.linuxbsd.template_debug.arm32 ${templatesdir}/linux_debug.arm32
 
   ## Windows (Classical) ##
 
@@ -390,7 +401,6 @@ if [ "${build_mono}" == "1" ]; then
   binbasename="${godot_basename}_mono_linux"
   mkdir -p ${binbasename}_x86_64
   cp out/linux/x86_64/tools-mono/godot.linuxbsd.editor.x86_64.mono ${binbasename}_x86_64/${binbasename}.x86_64
-  strip ${binbasename}_x86_64/${binbasename}.x86_64
   cp -rp out/linux/x86_64/tools-mono/GodotSharp ${binbasename}_x86_64/
   zip -r -q -9 "${reldir_mono}/${binbasename}_x86_64.zip" ${binbasename}_x86_64
   rm -rf ${binbasename}_x86_64
@@ -398,17 +408,33 @@ if [ "${build_mono}" == "1" ]; then
   binbasename="${godot_basename}_mono_linux"
   mkdir -p ${binbasename}_x86_32
   cp out/linux/x86_32/tools-mono/godot.linuxbsd.editor.x86_32.mono ${binbasename}_x86_32/${binbasename}.x86_32
-  strip ${binbasename}_x86_32/${binbasename}.x86_32
   cp -rp out/linux/x86_32/tools-mono/GodotSharp/ ${binbasename}_x86_32/
   zip -r -q -9 "${reldir_mono}/${binbasename}_x86_32.zip" ${binbasename}_x86_32
   rm -rf ${binbasename}_x86_32
+
+  binbasename="${godot_basename}_mono_linux"
+  mkdir -p ${binbasename}_arm64
+  cp out/linux/arm64/tools-mono/godot.linuxbsd.editor.arm64.mono ${binbasename}_arm64/${binbasename}.arm64
+  cp -rp out/linux/arm64/tools-mono/GodotSharp/ ${binbasename}_arm64/
+  zip -r -q -9 "${reldir_mono}/${binbasename}_arm64.zip" ${binbasename}_arm64
+  rm -rf ${binbasename}_arm64
+
+  binbasename="${godot_basename}_mono_linux"
+  mkdir -p ${binbasename}_arm32
+  cp out/linux/arm32/tools-mono/godot.linuxbsd.editor.arm32.mono ${binbasename}_arm32/${binbasename}.arm32
+  cp -rp out/linux/arm32/tools-mono/GodotSharp/ ${binbasename}_arm32/
+  zip -r -q -9 "${reldir_mono}/${binbasename}_arm32.zip" ${binbasename}_arm32
+  rm -rf ${binbasename}_arm32
 
   # Templates
   cp out/linux/x86_64/templates-mono/godot.linuxbsd.template_debug.x86_64.mono ${templatesdir_mono}/linux_debug.x86_64
   cp out/linux/x86_64/templates-mono/godot.linuxbsd.template_release.x86_64.mono ${templatesdir_mono}/linux_release.x86_64
   cp out/linux/x86_32/templates-mono/godot.linuxbsd.template_debug.x86_32.mono ${templatesdir_mono}/linux_debug.x86_32
   cp out/linux/x86_32/templates-mono/godot.linuxbsd.template_release.x86_32.mono ${templatesdir_mono}/linux_release.x86_32
-  strip ${templatesdir_mono}/linux*
+  cp out/linux/arm64/templates-mono/godot.linuxbsd.template_debug.arm64.mono ${templatesdir_mono}/linux_debug.arm64
+  cp out/linux/arm64/templates-mono/godot.linuxbsd.template_release.arm64.mono ${templatesdir_mono}/linux_release.arm64
+  cp out/linux/arm32/templates-mono/godot.linuxbsd.template_debug.arm32.mono ${templatesdir_mono}/linux_debug.arm32
+  cp out/linux/arm32/templates-mono/godot.linuxbsd.template_release.arm32.mono ${templatesdir_mono}/linux_release.arm32
 
   ## Windows (Mono) ##
 
