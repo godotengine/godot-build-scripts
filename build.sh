@@ -148,6 +148,15 @@ if [ ! -d "deps/angle" ]; then
   popd
 fi
 
+if [ ! -d "deps/mesa" ]; then
+  echo "Missing Mesa/NIR libraries, downloading them."
+  mkdir -p deps/mesa
+  pushd deps/mesa
+  curl -L -o windows.zip https://github.com/godotengine/godot-nir-static/releases/download/23.1.0-devel-mingw/godot-nir-23.1.0-devel-mingw.zip
+  unzip windows.zip && rm -f windows.zip
+  popd
+fi
+
 # Keystore for Android editor signing
 # Optional - the config.sh will be copied but if it's not filled in,
 # it will do an unsigned build.
@@ -199,7 +208,7 @@ mkdir -p ${basedir}/mono-glue
 ${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
 mkdir -p ${basedir}/out/windows
-${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
+${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
 mkdir -p ${basedir}/out/linux
 ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
