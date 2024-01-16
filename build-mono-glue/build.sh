@@ -22,7 +22,7 @@ if [ "${MONO}" == "1" ]; then
   mono --version
   export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig/
 
-  ${SCONS} platform=x11 bits=64 ${OPTIONS} target=release_debug tools=yes module_mono_enabled=yes mono_glue=no
+  ${SCONS} platform=x11 ${OPTIONS} target=release_debug tools=yes module_mono_enabled=yes mono_glue=no
 
   rm -rf /root/mono-glue/*
   xvfb-run bin/godot.x11.opt.tools.64.mono --audio-driver Dummy --generate-mono-glue /root/mono-glue || /bin/true
