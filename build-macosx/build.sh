@@ -5,11 +5,11 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="osxcross_sdk=darwin21.4 production=yes"
+export OPTIONS="osxcross_sdk=darwin23 production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes mono_static=yes"
 export MONO_PREFIX_X86_64="/root/mono-installs/desktop-osx-x86_64-release"
 export MONO_PREFIX_ARM64="/root/mono-installs/desktop-osx-arm64-release"
-export STRIP="x86_64-apple-darwin21.4-strip -u -r"
+export STRIP="x86_64-apple-darwin23-strip -u -r"
 export TERM=xterm
 
 rm -rf godot
@@ -69,7 +69,7 @@ if [ "${MONO}" == "1" ]; then
   $STRIP bin/godot.osx.opt.tools.universal.mono
 
   # Make universal versions of the dylibs we use.
-  lipo -create tmp-lib/x86_64/libmono-native-compat.dylib tmp-lib/arm64/libmono-native.dylib -output tmp-lib/libmono-native.dylib
+  lipo -create tmp-lib/x86_64/libmono-native.dylib tmp-lib/arm64/libmono-native.dylib -output tmp-lib/libmono-native.dylib
   lipo -create tmp-lib/x86_64/libMonoPosixHelper.dylib tmp-lib/arm64/libMonoPosixHelper.dylib -output tmp-lib/libMonoPosixHelper.dylib
   lipo -create tmp-lib/x86_64/libmono-btls-shared.dylib tmp-lib/arm64/libmono-btls-shared.dylib -output tmp-lib/libmono-btls-shared.dylib
 
