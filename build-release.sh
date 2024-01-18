@@ -308,7 +308,7 @@ if [ "${build_classical}" == "1" ]; then
 
   ## UWP (Classical) ##
 
-  if [ ! -d "deps/angle" ]; then
+  if [ ! -d "deps/angle-uwp" ]; then
     echo "Downloading ANGLE binaries from https://github.com/godotengine/godot-build-scripts/releases/tag/_deps/"
     mkdir -p deps && cd deps
     curl -L -o angle-uwp.7z https://github.com/godotengine/godot-build-scripts/releases/download/_deps/angle-uwp-2.1.13.7z
@@ -320,7 +320,7 @@ if [ "${build_classical}" == "1" ]; then
   for arch in ARM Win32 x64; do
     cp -r git/misc/dist/uwp_template uwp_template_${arch}
     cp deps/angle-uwp/${arch}/libEGL.dll \
-    cp deps/angle-uwp/${arch}/libGLESv2.dll \
+      deps/angle-uwp/${arch}/libGLESv2.dll \
       uwp_template_${arch}/
     cp -r uwp_template_${arch} uwp_template_${arch}_debug
   done
