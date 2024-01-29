@@ -5,7 +5,7 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="production=yes angle_libs=/root/angle"
+export OPTIONS="production=yes angle_libs=/root/angle mesa_libs=/root/mesa d3d12=yes"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
