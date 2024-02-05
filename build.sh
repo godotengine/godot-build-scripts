@@ -152,8 +152,8 @@ if [ ! -d "deps/mesa" ]; then
   echo "Missing Mesa/NIR libraries, downloading them."
   mkdir -p deps/mesa
   pushd deps/mesa
-  curl -L -o windows.zip https://github.com/godotengine/godot-nir-static/releases/download/23.1.0-devel-mingw/godot-nir-23.1.0-devel-mingw.zip
-  unzip windows.zip && rm -f windows.zip
+  curl -L -o mesa.zip https://github.com/godotengine/godot-nir-static/releases/download/23.1.9/godot-nir-23.1.9.zip
+  unzip mesa.zip && rm -f mesa.zip
   popd
 fi
 
