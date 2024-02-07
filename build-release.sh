@@ -341,8 +341,14 @@ if [ "${build_classical}" == "1" ]; then
   cp out/web/templates/godot.web.template_release.wasm32.zip ${templatesdir}/web_release.zip
   cp out/web/templates/godot.web.template_debug.wasm32.zip ${templatesdir}/web_debug.zip
 
+  cp out/web/templates/godot.web.template_release.wasm32.nothreads.zip ${templatesdir}/web_nothreads_release.zip
+  cp out/web/templates/godot.web.template_debug.wasm32.nothreads.zip ${templatesdir}/web_nothreads_debug.zip
+
   cp out/web/templates/godot.web.template_release.wasm32.dlink.zip ${templatesdir}/web_dlink_release.zip
   cp out/web/templates/godot.web.template_debug.wasm32.dlink.zip ${templatesdir}/web_dlink_debug.zip
+
+  cp out/web/templates/godot.web.template_release.wasm32.nothreads.dlink.zip ${templatesdir}/web_dlink_nothreads_release.zip
+  cp out/web/templates/godot.web.template_debug.wasm32.nothreads.dlink.zip ${templatesdir}/web_dlink_nothreads_debug.zip
 
   ## Android (Classical) ##
 

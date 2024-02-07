@@ -8,11 +8,16 @@ set -e
 # we run all builds in parallel each from their own folder.
 export NUM_JOBS=5
 declare -a JOBS=(
-  "target=editor use_closure_compiler=yes"
   "target=template_debug"
   "target=template_release"
   "target=template_debug dlink_enabled=yes"
   "target=template_release dlink_enabled=yes"
+)
+declare -a JOBS_NOTHREADS=(
+  "target=template_debug threads=no"
+  "target=template_release threads=no"
+  "target=template_debug dlink_enabled=yes threads=no"
+  "target=template_release dlink_enabled=yes threads=no"
 )
 
 export SCONS="scons -j$(expr ${NUM_CORES} / ${NUM_JOBS}) verbose=yes warnings=no progress=no"
@@ -32,7 +37,7 @@ tar xf /root/godot.tar.gz --strip-components=1
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Web..."
 
-  for i in {0..4}; do
+  for i in {0..3}; do
     cp -r /root/godot /root/godot$i
     cd /root/godot$i
     echo "$SCONS platform=web ${OPTIONS} ${JOBS[$i]}"
@@ -40,16 +45,36 @@ if [ "${CLASSICAL}" == "1" ]; then
     pids[$i]=$!
   done
 
+  for i in {0..3}; do
+    cp -r /root/godot /root/godot-nothreads$i
+    cd /root/godot-nothreads$i
+    echo "$SCONS platform=web ${OPTIONS} ${JOBS_NOTHREADS[$i]}"
+    $SCONS platform=web ${OPTIONS} ${JOBS_NOTHREADS[$i]} &
+    pids_nothreads[$i]=$!
+  done
+
+  cd /root/godot
+  echo "$SCONS platform=web ${OPTIONS} target=editor use_closure_compiler=yes"
+  $SCONS platform=web ${OPTIONS} target=editor use_closure_compiler=yes &
+  pid_editor=$!
+
   for pid in ${pids[*]}; do
     wait $pid
   done
 
+  for pid in ${pids_nothreads[*]}; do
+    wait $pid
+  done
+
+  wait $pid_editor
+
   mkdir -p /root/out/tools
-  cp -rvp /root/godot0/bin/*.editor*.zip /root/out/tools
+  cp -rvp /root/godot/bin/*.editor*.zip /root/out/tools
 
   mkdir -p /root/out/templates
-  for i in {1..4}; do
+  for i in {0..3}; do
     cp -rvp /root/godot$i/bin/*.zip /root/out/templates
+    cp -rvp /root/godot-nothreads$i/bin/*.zip /root/out/templates
   done
 fi
 
