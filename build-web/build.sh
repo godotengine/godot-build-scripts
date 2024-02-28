@@ -45,14 +45,6 @@ if [ "${CLASSICAL}" == "1" ]; then
     pids[$i]=$!
   done
 
-  for i in {0..3}; do
-    cp -r /root/godot /root/godot-nothreads$i
-    cd /root/godot-nothreads$i
-    echo "$SCONS platform=web ${OPTIONS} ${JOBS_NOTHREADS[$i]}"
-    $SCONS platform=web ${OPTIONS} ${JOBS_NOTHREADS[$i]} &
-    pids_nothreads[$i]=$!
-  done
-
   cd /root/godot
   echo "$SCONS platform=web ${OPTIONS} target=editor use_closure_compiler=yes"
   $SCONS platform=web ${OPTIONS} target=editor use_closure_compiler=yes &
@@ -61,12 +53,19 @@ if [ "${CLASSICAL}" == "1" ]; then
   for pid in ${pids[*]}; do
     wait $pid
   done
+  wait $pid_editor
+
+  for i in {0..3}; do
+    cp -r /root/godot /root/godot-nothreads$i
+    cd /root/godot-nothreads$i
+    echo "$SCONS platform=web ${OPTIONS} ${JOBS_NOTHREADS[$i]}"
+    $SCONS platform=web ${OPTIONS} ${JOBS_NOTHREADS[$i]} &
+    pids_nothreads[$i]=$!
+  done
 
   for pid in ${pids_nothreads[*]}; do
     wait $pid
   done
-
-  wait $pid_editor
 
   mkdir -p /root/out/tools
   cp -rvp /root/godot/bin/*.editor*.zip /root/out/tools
