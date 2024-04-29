@@ -104,13 +104,13 @@ if [ "${MONO}" == "1" ]; then
   $SCONS platform=android arch=x86_64 $OPTIONS $OPTIONS_MONO target=template_release
 
   pushd platform/android/java
-  ./gradlew generateGodotTemplates
+  ./gradlew generateGodotMonoTemplates
   popd
 
   mkdir -p /root/out/templates-mono
   cp bin/android_source.zip /root/out/templates-mono/
-  cp bin/android_debug.apk /root/out/templates-mono/
-  cp bin/android_release.apk /root/out/templates-mono/
+  cp bin/android_monoDebug.apk /root/out/templates-mono/android_debug.apk
+  cp bin/android_monoRelease.apk /root/out/templates-mono/android_release.apk
   cp bin/godot-lib.template_release.aar /root/out/templates-mono/
 fi
 
