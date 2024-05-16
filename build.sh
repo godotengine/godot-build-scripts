@@ -131,9 +131,16 @@ if [ $skip_download == 0 ]; then
   fi
 fi
 
-# macOS and iOS need the Vulkan SDK
-if [ ! -d "deps/vulkansdk-macos" ]; then
-  echo "Missing Vulkan SDK for macOS, we're going to run into issues!"
+# macOS needs MoltenVK
+if [ ! -d "deps/moltenvk" ]; then
+  echo "Missing MoltenVK for macOS, downloading it."
+  mkdir -p deps/moltenvk
+  pushd deps/moltenvk
+  curl -L -o moltenvk.tar https://github.com/godotengine/moltenvk-osxcross/releases/download/vulkan-sdk-1.3.283.0/MoltenVK-all.tar
+  tar xf moltenvk.tar && rm -f moltenvk.tar
+  mv MoltenVK/MoltenVK/include/ MoltenVK/
+  mv MoltenVK/MoltenVK/static/MoltenVK.xcframework/ MoltenVK/
+  popd
 fi
 
 # Windows and macOS need ANGLE
@@ -217,7 +224,7 @@ mkdir -p ${basedir}/out/web
 ${podman_run} -v ${basedir}/build-web:/root/build -v ${basedir}/out/web:/root/out localhost/godot-web:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/web
 
 mkdir -p ${basedir}/out/macos
-${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/vulkansdk-macos:/root/vulkansdk -v ${basedir}/deps/angle:/root/angle localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
+${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/moltenvk:/root/moltenvk -v ${basedir}/deps/angle:/root/angle localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
 
 mkdir -p ${basedir}/out/android
 ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
