@@ -149,7 +149,7 @@ if [ ! -d "deps/angle" ]; then
   mkdir -p deps/angle
   pushd deps/angle
   curl -L -o windows.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6029/Windows.6029-1.MinGW_11.x86_64.x86_32.zip
-  curl -L -o macos.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6029/macOS.6029.Xcode_15.arm64.x86_64.zip
+  curl -L -o macos.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6029.1/macOS.6029.1.Xcode_15.arm64.x86_64.zip
   unzip windows.zip && rm -f windows.zip
   unzip macos.zip && rm -f macos.zip
   popd
