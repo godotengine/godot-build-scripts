@@ -5,9 +5,9 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="osxcross_sdk=darwin23.3 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle"
+export OPTIONS="osxcross_sdk=darwin23.6 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle"
 export OPTIONS_MONO="module_mono_enabled=yes"
-export STRIP="x86_64-apple-darwin23.3-strip -u -r"
+export STRIP="x86_64-apple-darwin23.6-strip -u -r"
 export TERM=xterm
 
 rm -rf godot
