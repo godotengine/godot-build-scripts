@@ -7,7 +7,6 @@ set -e
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
 export OPTIONS="osxcross_sdk=darwin23.6 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle"
 export OPTIONS_MONO="module_mono_enabled=yes"
-export STRIP="x86_64-apple-darwin23.6-strip -u -r"
 export TERM=xterm
 
 rm -rf godot
@@ -23,7 +22,6 @@ if [ "${CLASSICAL}" == "1" ]; then
   $SCONS platform=macos $OPTIONS arch=x86_64 target=editor
   $SCONS platform=macos $OPTIONS arch=arm64 target=editor
   lipo -create bin/godot.macos.editor.x86_64 bin/godot.macos.editor.arm64 -output bin/godot.macos.editor.universal
-  $STRIP bin/godot.macos.editor.universal
 
   mkdir -p /root/out/tools
   cp -rvp bin/* /root/out/tools
@@ -32,11 +30,9 @@ if [ "${CLASSICAL}" == "1" ]; then
   $SCONS platform=macos $OPTIONS arch=x86_64 target=template_debug
   $SCONS platform=macos $OPTIONS arch=arm64 target=template_debug
   lipo -create bin/godot.macos.template_debug.x86_64 bin/godot.macos.template_debug.arm64 -output bin/godot.macos.template_debug.universal
-  $STRIP bin/godot.macos.template_debug.universal
   $SCONS platform=macos $OPTIONS arch=x86_64 target=template_release
   $SCONS platform=macos $OPTIONS arch=arm64 target=template_release
   lipo -create bin/godot.macos.template_release.x86_64 bin/godot.macos.template_release.arm64 -output bin/godot.macos.template_release.universal
-  $STRIP bin/godot.macos.template_release.universal
 
   mkdir -p /root/out/templates
   cp -rvp bin/* /root/out/templates
@@ -54,7 +50,6 @@ if [ "${MONO}" == "1" ]; then
   $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 target=editor
   $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 target=editor
   lipo -create bin/godot.macos.editor.x86_64.mono bin/godot.macos.editor.arm64.mono -output bin/godot.macos.editor.universal.mono
-  $STRIP bin/godot.macos.editor.universal.mono
   ./modules/mono/build_scripts/build_assemblies.py --godot-output-dir=./bin --godot-platform=macos
 
   mkdir -p /root/out/tools-mono
@@ -64,11 +59,9 @@ if [ "${MONO}" == "1" ]; then
   $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 target=template_debug
   $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 target=template_debug
   lipo -create bin/godot.macos.template_debug.x86_64.mono bin/godot.macos.template_debug.arm64.mono -output bin/godot.macos.template_debug.universal.mono
-  $STRIP bin/godot.macos.template_debug.universal.mono
   $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 target=template_release
   $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 target=template_release
   lipo -create bin/godot.macos.template_release.x86_64.mono bin/godot.macos.template_release.arm64.mono -output bin/godot.macos.template_release.universal.mono
-  $STRIP bin/godot.macos.template_release.universal.mono
 
   mkdir -p /root/out/templates-mono
   cp -rvp bin/* /root/out/templates-mono
