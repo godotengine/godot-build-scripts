@@ -274,10 +274,8 @@ if [ "${build_classical}" == "1" ]; then
   binname="${godot_basename}_win64.exe"
   wrpname="${godot_basename}_win64_console.exe"
   cp out/windows/x86_64/tools/godot.windows.editor.x86_64.exe ${binname}
-  strip ${binname}
   sign_windows ${binname}
   cp out/windows/x86_64/tools/godot.windows.editor.x86_64.console.exe ${wrpname}
-  strip ${wrpname}
   sign_windows ${wrpname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
@@ -285,10 +283,8 @@ if [ "${build_classical}" == "1" ]; then
   binname="${godot_basename}_win32.exe"
   wrpname="${godot_basename}_win32_console.exe"
   cp out/windows/x86_32/tools/godot.windows.editor.x86_32.exe ${binname}
-  strip ${binname}
   sign_windows ${binname}
   cp out/windows/x86_32/tools/godot.windows.editor.x86_32.console.exe ${wrpname}
-  strip ${wrpname}
   sign_windows ${wrpname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
@@ -302,7 +298,6 @@ if [ "${build_classical}" == "1" ]; then
   cp out/windows/x86_64/templates/godot.windows.template_debug.x86_64.console.exe ${templatesdir}/windows_debug_x86_64_console.exe
   cp out/windows/x86_32/templates/godot.windows.template_release.x86_32.console.exe ${templatesdir}/windows_release_x86_32_console.exe
   cp out/windows/x86_32/templates/godot.windows.template_debug.x86_32.console.exe ${templatesdir}/windows_debug_x86_32_console.exe
-  strip ${templatesdir}/windows*.exe
 
   ## macOS (Classical) ##
 
@@ -449,11 +444,9 @@ if [ "${build_mono}" == "1" ]; then
   wrpname="${godot_basename}_mono_win64_console"
   mkdir -p ${binname}
   cp out/windows/x86_64/tools-mono/godot.windows.editor.x86_64.mono.exe ${binname}/${binname}.exe
-  strip ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
   cp -rp out/windows/x86_64/tools-mono/GodotSharp ${binname}/
   cp out/windows/x86_64/tools-mono/godot.windows.editor.x86_64.mono.console.exe ${binname}/${wrpname}.exe
-  strip ${binname}/${wrpname}.exe
   sign_windows ${binname}/${wrpname}.exe
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
@@ -462,11 +455,9 @@ if [ "${build_mono}" == "1" ]; then
   wrpname="${godot_basename}_mono_win32_console"
   mkdir -p ${binname}
   cp out/windows/x86_32/tools-mono/godot.windows.editor.x86_32.mono.exe ${binname}/${binname}.exe
-  strip ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
   cp -rp out/windows/x86_32/tools-mono/GodotSharp ${binname}/
   cp out/windows/x86_32/tools-mono/godot.windows.editor.x86_32.mono.console.exe ${binname}/${wrpname}.exe
-  strip ${binname}/${wrpname}.exe
   sign_windows ${binname}/${wrpname}.exe
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
@@ -480,7 +471,6 @@ if [ "${build_mono}" == "1" ]; then
   cp out/windows/x86_64/templates-mono/godot.windows.template_release.x86_64.mono.console.exe ${templatesdir_mono}/windows_release_x86_64_console.exe
   cp out/windows/x86_32/templates-mono/godot.windows.template_debug.x86_32.mono.console.exe ${templatesdir_mono}/windows_debug_x86_32_console.exe
   cp out/windows/x86_32/templates-mono/godot.windows.template_release.x86_32.mono.console.exe ${templatesdir_mono}/windows_release_x86_32_console.exe
-  strip ${templatesdir_mono}/windows*.exe
 
   ## macOS (Mono) ##
 
