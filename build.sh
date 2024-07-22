@@ -148,10 +148,16 @@ if [ ! -d "deps/angle" ]; then
   echo "Missing ANGLE libraries, downloading them."
   mkdir -p deps/angle
   pushd deps/angle
-  curl -L -o windows.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6029/Windows.6029-1.MinGW_11.x86_64.x86_32.zip
-  curl -L -o macos.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6029.1/macOS.6029.1.Xcode_15.arm64.x86_64.zip
-  unzip windows.zip && rm -f windows.zip
-  unzip macos.zip && rm -f macos.zip
+  curl -L -o windows_arm64.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6601/godot-angle-static-arm64-llvm-release.zip
+  curl -L -o windows_x86_64.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6601/godot-angle-static-x86_64-gcc-release.zip
+  curl -L -o windows_x86_32.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6601/godot-angle-static-x86_32-gcc-release.zip
+  curl -L -o macos_arm64.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6601/godot-angle-static-arm64-macos-release.zip
+  curl -L -o macos_x86_64.zip https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6601/godot-angle-static-x86_64-macos-release.zip
+  unzip -o windows_arm64.zip && rm -f windows_arm64.zip
+  unzip -o windows_x86_64.zip && rm -f windows_x86_64.zip
+  unzip -o windows_x86_32.zip && rm -f windows_x86_32.zip
+  unzip -o macos_arm64.zip && rm -f macos_arm64.zip
+  unzip -o macos_x86_64.zip && rm -f macos_x86_64.zip
   popd
 fi
 
@@ -159,8 +165,12 @@ if [ ! -d "deps/mesa" ]; then
   echo "Missing Mesa/NIR libraries, downloading them."
   mkdir -p deps/mesa
   pushd deps/mesa
-  curl -L -o mesa.zip https://github.com/godotengine/godot-nir-static/releases/download/23.1.9/godot-nir-23.1.9.zip
-  unzip mesa.zip && rm -f mesa.zip
+  curl -L -o mesa_arm64.zip https://github.com/godotengine/godot-nir-static/releases/download/23.1.9-1/godot-nir-static-arm64-llvm-release.zip
+  curl -L -o mesa_x86_64.zip https://github.com/godotengine/godot-nir-static/releases/download/23.1.9-1/godot-nir-static-x86_64-gcc-release.zip
+  curl -L -o mesa_x86_32.zip https://github.com/godotengine/godot-nir-static/releases/download/23.1.9-1/godot-nir-static-x86_32-gcc-release.zip
+  unzip -o mesa_arm64.zip && rm -f mesa_arm64.zip
+  unzip -o mesa_x86_64.zip && rm -f mesa_x86_64.zip
+  unzip -o mesa_x86_32.zip && rm -f mesa_x86_32.zip
   popd
 fi
 
