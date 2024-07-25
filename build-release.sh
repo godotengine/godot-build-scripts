@@ -381,7 +381,7 @@ if [ "${build_classical}" == "1" ]; then
   cp out/ios/templates/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
-  cp -r deps/vulkansdk-macos/MoltenVK/MoltenVK.xcframework ios_xcode/
+  cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
   zip -q -9 -r "${templatesdir}/ios.zip" *
@@ -542,7 +542,7 @@ if [ "${build_mono}" == "1" ]; then
   cp out/ios/templates-mono/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates-mono/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates-mono/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
-  cp -r deps/vulkansdk-macos/MoltenVK/MoltenVK.xcframework ios_xcode/
+  cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
   zip -q -9 -r "${templatesdir_mono}/ios.zip" *
