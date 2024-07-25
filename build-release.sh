@@ -289,8 +289,8 @@ if [ "${build_classical}" == "1" ]; then
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
 
-  binname="${godot_basename}_arm64.exe"
-  wrpname="${godot_basename}_arm64_console.exe"
+  binname="${godot_basename}_windows_arm64.exe"
+  wrpname="${godot_basename}_windows_arm64_console.exe"
   cp out/windows/arm64/tools/godot.windows.editor.arm64.llvm.exe ${binname}
   sign_windows ${binname}
   cp out/windows/arm64/tools/godot.windows.editor.arm64.llvm.console.exe ${wrpname}
@@ -475,8 +475,8 @@ if [ "${build_mono}" == "1" ]; then
   zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
   rm -rf ${binname}
 
-  binname="${godot_basename}_mono_arm64"
-  wrpname="${godot_basename}_mono_arm64_console"
+  binname="${godot_basename}_mono_windows_arm64"
+  wrpname="${godot_basename}_mono_windows_arm64_console"
   mkdir -p ${binname}
   cp out/windows/arm64/tools-mono/godot.windows.editor.arm64.llvm.mono.exe ${binname}/${binname}.exe
   sign_windows ${binname}/${binname}.exe
