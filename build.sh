@@ -148,7 +148,7 @@ if [ ! -d "deps/angle" ]; then
   echo "Missing ANGLE libraries, downloading them."
   mkdir -p deps/angle
   pushd deps/angle
-  base_url=https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6601.1/godot-angle-static
+  base_url=https://github.com/godotengine/godot-angle-static/releases/download/chromium%2F6601.2/godot-angle-static
   curl -L -o windows_arm64.zip $base_url-arm64-llvm-release.zip
   curl -L -o windows_x86_64.zip $base_url-x86_64-gcc-release.zip
   curl -L -o windows_x86_32.zip $base_url-x86_32-gcc-release.zip
