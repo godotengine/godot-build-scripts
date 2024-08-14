@@ -28,6 +28,7 @@ godot_version=""
 git_treeish="master"
 build_classical=1
 build_mono=1
+build_steam=0
 force_download=0
 skip_download=1
 skip_git_checkout=0
@@ -99,6 +100,10 @@ case "$choice" in
   * ) echo "Invalid choice, aborting."; exit 1;;
 esac
 export GODOT_VERSION_STATUS="${status}"
+
+if [ "${status}" == "stable" ]; then
+  build_steam=1
+fi
 
 if [ ! -z "${username}" ] && [ ! -z "${password}" ]; then
   if ${podman} login ${registry} -u "${username}" -p "${password}"; then
@@ -226,7 +231,7 @@ mkdir -p ${basedir}/mono-glue
 ${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
 mkdir -p ${basedir}/out/windows
-${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
+${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa --env STEAM=${build_steam} localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
 mkdir -p ${basedir}/out/linux
 ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux

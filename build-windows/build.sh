@@ -52,6 +52,17 @@ if [ "${CLASSICAL}" == "1" ]; then
   mkdir -p /root/out/arm64/templates
   cp -rvp bin/* /root/out/arm64/templates
   rm -rf bin
+
+  if [ "${STEAM}" == "1" ]; then
+    build_name=${BUILD_NAME}
+    export BUILD_NAME="steam"
+    $SCONS platform=windows arch=x86_64 $OPTIONS target=editor steamapi=yes
+    $SCONS platform=windows arch=x86_32 $OPTIONS target=editor steamapi=yes
+    mkdir -p /root/out/steam
+    cp -rvp bin/* /root/out/steam
+    rm -rf bin
+    export BUILD_NAME=${build_name}
+  fi
 fi
 
 # Mono
