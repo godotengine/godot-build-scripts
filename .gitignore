@@ -18,3 +18,10 @@ releases/
 sha512sums/
 tmp/
 web/
+
+# Editors
+*.swp
+
+# Python
+*.pyc
+__pycache__/
