@@ -366,8 +366,8 @@ if [ "${build_classical}" == "1" ]; then
   # Editor
   binname="${godot_basename}_android_editor.apk"
   cp out/android/tools/android_editor.apk ${reldir}/${binname}
-  binname="${godot_basename}_android_editor_meta.apk"
-  cp out/android/tools/android_editor_meta.apk ${reldir}/${binname}
+  binname="${godot_basename}_android_editor_horizonos.apk"
+  cp out/android/tools/android_editor_horizonos.apk ${reldir}/${binname}
   binname="${godot_basename}_android_editor.aab"
   cp out/android/tools/android_editor.aab ${reldir}/${binname}
 

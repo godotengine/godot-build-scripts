@@ -37,22 +37,22 @@ if [ "${CLASSICAL}" == "1" ]; then
   pushd platform/android/java
   # Generate the regular Android editor.
   ./gradlew generateGodotEditor
-  # Generate the Android editor for Meta devices.
-  ./gradlew generateGodotMetaEditor
+  # Generate the Android editor for HorizonOS devices.
+  ./gradlew generateGodotHorizonOSEditor
   popd
 
   mkdir -p /root/out/tools
   # Copy the generated Android editor binaries (apk & aab).
   if [ "$store_release" == "yes" ]; then
-    cp bin/android_editor_builds/android_editor-google-release.apk /root/out/tools/android_editor.apk
-    cp bin/android_editor_builds/android_editor-google-release.aab /root/out/tools/android_editor.aab
-    # For the Meta build, we only copy the apk.
-    cp bin/android_editor_builds/android_editor-meta-release.apk /root/out/tools/android_editor_meta.apk
+    cp bin/android_editor_builds/android_editor-android-release.apk /root/out/tools/android_editor.apk
+    cp bin/android_editor_builds/android_editor-android-release.aab /root/out/tools/android_editor.aab
+    # For the HorizonOS build, we only copy the apk.
+    cp bin/android_editor_builds/android_editor-horizonos-release.apk /root/out/tools/android_editor_horizonos.apk
   else
-    cp bin/android_editor_builds/android_editor-google-debug.apk /root/out/tools/android_editor.apk
-    cp bin/android_editor_builds/android_editor-google-debug.aab /root/out/tools/android_editor.aab
-    # For the Meta build, we only copy the apk.
-    cp bin/android_editor_builds/android_editor-meta-debug.apk /root/out/tools/android_editor_meta.apk
+    cp bin/android_editor_builds/android_editor-android-debug.apk /root/out/tools/android_editor.apk
+    cp bin/android_editor_builds/android_editor-android-debug.aab /root/out/tools/android_editor.aab
+    # For the HorizonOS build, we only copy the apk.
+    cp bin/android_editor_builds/android_editor-horizonos-debug.apk /root/out/tools/android_editor_horizonos.apk
   fi
 
   # Restart from a clean tarball, as we'll copy all the contents
