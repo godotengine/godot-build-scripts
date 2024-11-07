@@ -85,7 +85,7 @@ done
 
 export podman=${PODMAN}
 
-if [ $UID != 0 ]; then
+if [ $UID != 0 ] && grep -qv sudo <<< "${podman}"; then
   echo "WARNING: Running as non-root may cause problems for the uwp build"
 fi
 
@@ -178,13 +178,12 @@ export basedir="$(pwd)"
 mkdir -p ${basedir}/out
 mkdir -p ${basedir}/out/logs
 
-export podman_run="${podman} run -it --rm --env BUILD_NAME --env GODOT_VERSION_STATUS --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+export podman_run="${podman} run -it --rm --env BUILD_NAME=${BUILD_NAME} --env GODOT_VERSION_STATUS=${GODOT_VERSION_STATUS} --env NUM_CORES=${NUM_CORES} --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=$IMAGE_VERSION
 
 # Get AOT compilers from their containers.
 mkdir -p ${basedir}/out/aot-compilers
-${podman} run -it --rm -w /root -v ${basedir}/out/aot-compilers:/root/out localhost/godot-ios:${img_version} bash -c "cp -r /root/aot-compilers/* /root/out"
-chmod +x ${basedir}/out/aot-compilers/*/*
+${podman} run -it --rm -w /root -v ${basedir}/out/aot-compilers:/root/out localhost/godot-ios:${img_version} bash -c "cp -r /root/aot-compilers/* /root/out && chmod +x /root/out/*/*"
 
 mkdir -p ${basedir}/mono-glue
 ${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-mono-glue:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
@@ -213,6 +212,10 @@ ${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server:/r
 mkdir -p ${basedir}/out/uwp
 ${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
 
+uid=$(id -un)
+gid=$(id -gn)
 if [ ! -z "$SUDO_UID" ]; then
-  chown -R "${SUDO_UID}":"${SUDO_GID}" ${basedir}/git ${basedir}/out ${basedir}/mono-glue ${basedir}/godot*.tar.gz
+  uid="${SUDO_UID}"
+  gid="${SUDO_GID}"
 fi
+chown -R -f $uid:$gid ${basedir}/git ${basedir}/out ${basedir}/mono-glue ${basedir}/godot*.tar.gz
