@@ -115,8 +115,7 @@ publish_maven_library() {
   if [ $can_publish_maven == 0 ]; then
     return
   fi
-  # FIXME: Might be worth reworking the script to make it all sudo-safe and use appropriate users throughout.
-  sudo sh build-android/upload-mavencentral.sh
+  sh build-android/upload-mavencentral.sh
 }
 
 godot_version=""
