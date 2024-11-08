@@ -13,6 +13,7 @@ rm -rf godot
 mkdir godot
 cd godot
 tar xf /root/godot.tar.gz --strip-components=1
+cp -rf /root/swappy/* thirdparty/swappy-frame-pacing/
 
 # Environment variables and keystore needed for signing store editor build,
 # as well as signing and publishing to MavenCentral.
@@ -59,6 +60,7 @@ if [ "${CLASSICAL}" == "1" ]; then
   # outside the container for the MavenCentral upload.
   rm -rf /root/godot/*
   tar xf /root/godot.tar.gz --strip-components=1
+  cp -rf /root/swappy/* thirdparty/swappy-frame-pacing/
 
   $SCONS platform=android arch=arm32 $OPTIONS target=template_debug
   $SCONS platform=android arch=arm32 $OPTIONS target=template_release

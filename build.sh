@@ -180,6 +180,15 @@ if [ ! -d "deps/mesa" ]; then
   popd
 fi
 
+if [ ! -d "deps/swappy" ]; then
+  echo "Missing Swappy libraries, downloading them."
+  mkdir -p deps/swappy
+  pushd deps/swappy
+  curl -L -O https://github.com/darksylinc/godot-swappy/releases/download/v2023.3.0.0/godot-swappy.7z
+  7z x godot-swappy.7z && rm godot-swappy.7z
+  popd
+fi
+
 # Keystore for Android editor signing
 # Optional - the config.sh will be copied but if it's not filled in,
 # it will do an unsigned build.
@@ -243,7 +252,7 @@ mkdir -p ${basedir}/out/macos
 ${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/moltenvk:/root/moltenvk -v ${basedir}/deps/angle:/root/angle localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
 
 mkdir -p ${basedir}/out/android
-${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
+${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/swappy:/root/swappy -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
 
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-ios:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
