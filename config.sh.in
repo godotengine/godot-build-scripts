@@ -12,6 +12,14 @@
 # relevant tool in your PATH or an absolute path to run it from.
 export PODMAN='sudo podman'
 
+# Path to a Git clone of https://github.com/godotengine/godot-builds.
+# Only used for uploading official releases.
+export GODOT_BUILDS_PATH=''
+
+# SSH hostname to upload Web editor builds to.
+# Only used for uploading official releases.
+export WEB_EDITOR_HOSTNAME=''
+
 # Registry for build containers.
 # The default registry is the one used for official Godot builds.
 # Note that some of its images are private and only accessible to selected
