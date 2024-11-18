@@ -88,46 +88,14 @@ sign_macos_template() {
   ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
 }
 
-can_publish_nuget=0
-if [ ! -z "${NUGET_SOURCE}" ] && [ ! -z "${NUGET_API_KEY}" ] && [[ $(type -P "dotnet") ]]; then
-  can_publish_nuget=1
-else
-  echo "Disabling NuGet package publishing as config.sh does not define the required data (NUGET_SOURCE, NUGET_API_KEY), or dotnet can't be found in PATH."
-fi
-
-publish_nuget_packages() {
-  if [ $can_publish_nuget == 0 ]; then
-    return
-  fi
-  for pkg in "$@"; do
-    dotnet nuget push $pkg --source "${NUGET_SOURCE}" --api-key "${NUGET_API_KEY}" --skip-duplicate
-  done
-}
-
-can_publish_maven=0
-if [ ! -d "${basedir}/deps/keystore" ]; then
-  echo "Disabling Android library publishing as ${basedir}/deps/keystore doesn't exist."
-else
-  can_publish_maven=1
-fi
-
-publish_maven_library() {
-  if [ $can_publish_maven == 0 ]; then
-    return
-  fi
-  sh build-android/upload-mavencentral.sh
-}
-
 godot_version=""
 templates_version=""
 do_cleanup=1
 make_tarball=1
 build_classical=1
 build_mono=1
-publish_nuget=0
-publish_maven=0
 
-while getopts "h?v:t:b:p:n-:" opt; do
+while getopts "h?v:t:b:n-:" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
@@ -135,7 +103,6 @@ while getopts "h?v:t:b:p:n-:" opt; do
     echo "  -v godot version (e.g: 3.2-stable) [mandatory]"
     echo "  -t templates version (e.g. 3.2.stable) [mandatory]"
     echo "  -b build target: all|classical|mono|none (default: all)"
-    echo "  -p publish target: all|nuget|maven|none (default: none)"
     echo "  --no-cleanup disable deleting pre-existing output folders (default: false)"
     echo "  --no-tarball disable generating source tarball (default: false)"
     echo
@@ -155,16 +122,6 @@ while getopts "h?v:t:b:p:n-:" opt; do
     elif [ "$OPTARG" == "none" ]; then
       build_classical=0
       build_mono=0
-    fi
-    ;;
-  p)
-    if [ "$OPTARG" == "nuget" ]; then
-      publish_nuget=1
-    elif [ "$OPTARG" == "maven" ]; then
-      publish_maven=1
-    elif [ "$OPTARG" == "all" ]; then
-      publish_nuget=1
-      publish_maven=1
     fi
     ;;
   -)
@@ -576,24 +533,6 @@ if [ "${build_mono}" == "1" ]; then
   mkdir -p ${basedir}/sha512sums/${godot_version}/mono
   cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/mono/
   popd
-
-fi
-
-# NuGet packages
-
-if [ "${publish_nuget}" == "1" ]; then
-
-  echo "Publishing NuGet packages..."
-  publish_nuget_packages out/linux/x86_64/tools-mono/GodotSharp/Tools/nupkgs/*.nupkg
-
-fi
-
-# Godot Android library
-
-if [ "${publish_maven}" == "1" ]; then
-
-  echo "Publishing Android library to MavenCentral..."
-  publish_maven_library
 
 fi
 
