@@ -257,6 +257,9 @@ if [ "${build_classical}" == "1" ]; then
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
+  # ICU data
+  cp ${basedir}/git/thirdparty/icu4c/icudt.dat ${templatesdir}/icudt.dat
+
   # Templates
   cp out/linux/x86_64/templates/godot.linuxbsd.template_release.x86_64 ${templatesdir}/linux_release.x86_64
   cp out/linux/x86_64/templates/godot.linuxbsd.template_debug.x86_64 ${templatesdir}/linux_debug.x86_64
@@ -440,6 +443,9 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/linux/arm32/tools-mono/GodotSharp/ ${binbasename}_arm32/
   zip -r -q -9 "${reldir_mono}/${binbasename}_arm32.zip" ${binbasename}_arm32
   rm -rf ${binbasename}_arm32
+
+  # ICU data
+  cp ${basedir}/git/thirdparty/icu4c/icudt.dat ${templatesdir_mono}/icudt.dat
 
   # Templates
   cp out/linux/x86_64/templates-mono/godot.linuxbsd.template_debug.x86_64.mono ${templatesdir_mono}/linux_debug.x86_64
