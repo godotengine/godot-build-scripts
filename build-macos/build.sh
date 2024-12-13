@@ -5,7 +5,7 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
-export OPTIONS="osxcross_sdk=darwin25.1 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.1/usr/bin/swift-frontend"
+export OPTIONS="osxcross_sdk=darwin25.1 production=yes debug_symbols=yes separate_debug_symbols=yes debug_paths_relative=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.1/usr/bin/swift-frontend"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
