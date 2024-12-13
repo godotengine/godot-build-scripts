@@ -5,7 +5,7 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="production=yes"
+export OPTIONS="production=yes debug_symbols=yes separate_debug_symbols=yes debug_paths_relative=yes"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
@@ -13,6 +13,8 @@ rm -rf godot
 mkdir godot
 cd godot
 tar xf /root/godot.tar.gz --strip-components=1
+
+dnf install -y binutils
 
 # Classical
 
