@@ -5,7 +5,7 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="production=yes use_mingw=yes angle_libs=/root/angle mesa_libs=/root/mesa d3d12=yes"
+export OPTIONS="production=yes debug_symbols=yes separate_debug_symbols=yes debug_paths_relative=yes use_mingw=yes angle_libs=/root/angle mesa_libs=/root/mesa d3d12=yes"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_LLVM="use_llvm=yes mingw_prefix=/root/llvm-mingw"
 export TERM=xterm
