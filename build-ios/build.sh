@@ -11,7 +11,7 @@ export OPTIONS="production=yes use_lto=no"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
-export IOS_SDK="17.5"
+export IOS_SDK="18.2"
 export IOS_LIPO="/root/ioscross/arm64/bin/arm-apple-darwin11-lipo"
 
 rm -rf godot
