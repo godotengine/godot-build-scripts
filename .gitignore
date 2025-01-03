@@ -11,6 +11,7 @@ git/
 mono-glue/
 godot*.tar.gz
 angle.7z
+*.pyc
 
 # Output
 out/

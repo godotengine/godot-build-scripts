@@ -12,27 +12,11 @@
 # relevant tool in your PATH or an absolute path to run it from.
 export PODMAN='podman'
 
-# Path to a Git clone of https://github.com/godotengine/godot-builds.
-# Only used for uploading official releases.
-export GODOT_BUILDS_PATH=''
-
-# SSH hostname to upload Web editor builds to.
-# Only used for uploading official releases.
-export WEB_EDITOR_HOSTNAME=''
-
-# Registry for build containers.
-# The default registry is the one used for official Godot builds.
-# Note that some of its images are private and only accessible to selected
-# contributors.
-# You can build your own registry with scripts at
-# https://github.com/godotengine/build-containers
-export REGISTRY='registry.prehensile-tales.com'
-
-# Version string of the images to use in build.sh.
-export IMAGE_VERSION='4.x-f36'
+# Name and version of the images to use in build.sh.
+export IMAGE_VERSION='4.4-f41'
 
 # Default build name used to distinguish between official and custom builds.
-export BUILD_NAME='custom_build'
+export BUILD_REVISION='custom_build'
 
 # Default number of parallel cores for each build.
 export NUM_CORES=16
@@ -62,30 +46,3 @@ export OSX_BUNDLE_ID=''
 export APPLE_TEAM=''
 export APPLE_ID=''
 export APPLE_ID_PASSWORD=''
-
-# NuGet source for publishing .NET packages
-export NUGET_SOURCE='nuget.org'
-# API key for publishing NuGet packages to nuget.org
-export NUGET_API_KEY=''
-
-# MavenCentral (sonatype) credentials
-export OSSRH_GROUP_ID=''
-export OSSRH_USERNAME=''
-export OSSRH_PASSWORD=''
-# Sonatype assigned ID used to upload the generated artifacts
-export SONATYPE_STAGING_PROFILE_ID=''
-# Used to sign the artifacts after they're built
-# ID of the GPG key pair, the last eight characters of its fingerprint
-export SIGNING_KEY_ID=''
-# Passphrase of the key pair
-export SIGNING_PASSWORD=''
-# Base64 encoded private GPG key
-export SIGNING_KEY=''
-
-# Android signing configs
-# Path to the Android keystore file used to sign the release build
-export GODOT_ANDROID_SIGN_KEYSTORE=''
-# Key alias used for signing the release build
-export GODOT_ANDROID_KEYSTORE_ALIAS=''
-# Password for the key used for signing the release build
-export GODOT_ANDROID_SIGN_PASSWORD=''

@@ -30,22 +30,14 @@ sign_macos() {
   _macos_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
   _reldir="$1"
   _binname="$2"
-  _is_mono="$3"
-
-  if [[ "${_is_mono}" == "1" ]]; then
-    _appname="Godot_mono.app"
-    _sharpdir="${_appname}/Contents/Resources/GodotSharp"
-  else
-    _appname="Godot.app"
-  fi
+  _appname="Godot.app"
 
   scp "${_reldir}/${_binname}.zip" "${OSX_HOST}:${_macos_tmpdir}"
-  scp "${basedir}/git/misc/dist/macos/editor.entitlements" "${OSX_HOST}:${_macos_tmpdir}"
   ssh "${OSX_HOST}" "
             cd ${_macos_tmpdir} && \
             unzip ${_binname}.zip && \
             codesign --force --timestamp \
-              --options=runtime --entitlements editor.entitlements \
+              --options=runtime \
               -s ${OSX_KEY_ID} -v ${_appname} && \
             zip -r ${_binname}_signed.zip ${_appname}"
 
@@ -73,18 +65,17 @@ sign_macos_template() {
   fi
   _macos_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
   _reldir="$1"
-  _is_mono="$2"
 
-  scp "${_reldir}/macos.zip" "${OSX_HOST}:${_macos_tmpdir}"
+  scp "${_reldir}/osx.zip" "${OSX_HOST}:${_macos_tmpdir}"
   ssh "${OSX_HOST}" "
             cd ${_macos_tmpdir} && \
-            unzip macos.zip && \
+            unzip osx.zip && \
             codesign --force -s - \
               --options=linker-signed \
-              -v macos_template.app/Contents/MacOS/* && \
-            zip -r macos_signed.zip macos_template.app"
+              -v osx_template.app/Contents/MacOS/* && \
+            zip -r osx_signed.zip osx_template.app"
 
-  scp "${OSX_HOST}:${_macos_tmpdir}/macos_signed.zip" "${_reldir}/macos.zip"
+  scp "${OSX_HOST}:${_macos_tmpdir}/osx_signed.zip" "${_reldir}/osx.zip"
   ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
 }
 
@@ -92,17 +83,14 @@ godot_version=""
 templates_version=""
 do_cleanup=1
 make_tarball=1
-build_classical=1
-build_mono=1
 
-while getopts "h?v:t:b:n-:" opt; do
+while getopts "h?v:t:n-:" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
     echo
     echo "  -v godot version (e.g: 3.2-stable) [mandatory]"
     echo "  -t templates version (e.g. 3.2.stable) [mandatory]"
-    echo "  -b build target: all|classical|mono|none (default: all)"
     echo "  --no-cleanup disable deleting pre-existing output folders (default: false)"
     echo "  --no-tarball disable generating source tarball (default: false)"
     echo
@@ -113,16 +101,6 @@ while getopts "h?v:t:b:n-:" opt; do
     ;;
   t)
     templates_version=$OPTARG
-    ;;
-  b)
-    if [ "$OPTARG" == "classical" ]; then
-      build_mono=0
-    elif [ "$OPTARG" == "mono" ]; then
-      build_classical=0
-    elif [ "$OPTARG" == "none" ]; then
-      build_classical=0
-      build_mono=0
-    fi
     ;;
   -)
     case "${OPTARG}" in
@@ -151,12 +129,9 @@ elif [[ "{$templates_version}" == *"-"* ]]; then
   exit 1
 fi
 
-export webdir="${basedir}/web/${templates_version}"
 export reldir="${basedir}/releases/${godot_version}"
-export reldir_mono="${reldir}/mono"
 export tmpdir="${basedir}/tmp"
 export templatesdir="${tmpdir}/templates"
-export templatesdir_mono="${tmpdir}/mono/templates"
 
 export godot_basename="Godot_v${godot_version}"
 
@@ -164,15 +139,11 @@ export godot_basename="Godot_v${godot_version}"
 
 if [ "${do_cleanup}" == "1" ]; then
 
-  rm -rf ${webdir}
   rm -rf ${reldir}
   rm -rf ${tmpdir}
 
-  mkdir -p ${webdir}
   mkdir -p ${reldir}
-  mkdir -p ${reldir_mono}
   mkdir -p ${templatesdir}
-  mkdir -p ${templatesdir_mono}
 
 fi
 
@@ -189,169 +160,81 @@ fi
 
 # Classical
 
-if [ "${build_classical}" == "1" ]; then
+if true; then
 
   ## Linux (Classical) ##
 
   # Editor
-  binname="${godot_basename}_linux.x86_64"
-  cp out/linux/x86_64/tools/godot.linuxbsd.editor.x86_64 ${binname}
+  binname="${godot_basename}_x11.64"
+  cp out/linux/godot.x11.opt.tools.64 ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
-  binname="${godot_basename}_linux.x86_32"
-  cp out/linux/x86_32/tools/godot.linuxbsd.editor.x86_32 ${binname}
+  binname="${godot_basename}_x11.32"
+  cp out/linux/godot.x11.opt.tools.32 ${binname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
-
-  binname="${godot_basename}_linux.arm64"
-  cp out/linux/arm64/tools/godot.linuxbsd.editor.arm64 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
-  rm ${binname}
-
-  binname="${godot_basename}_linux.arm32"
-  cp out/linux/arm32/tools/godot.linuxbsd.editor.arm32 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
-  rm ${binname}
-
-  # ICU data
-  if [ -f ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ]; then
-    cp ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ${templatesdir}/icudt_godot.dat
-  else
-    echo "icudt_godot.dat" not found.
-  fi
 
   # Templates
-  cp out/linux/x86_64/templates/godot.linuxbsd.template_release.x86_64 ${templatesdir}/linux_release.x86_64
-  cp out/linux/x86_64/templates/godot.linuxbsd.template_debug.x86_64 ${templatesdir}/linux_debug.x86_64
-  cp out/linux/x86_32/templates/godot.linuxbsd.template_release.x86_32 ${templatesdir}/linux_release.x86_32
-  cp out/linux/x86_32/templates/godot.linuxbsd.template_debug.x86_32 ${templatesdir}/linux_debug.x86_32
-  cp out/linux/arm64/templates/godot.linuxbsd.template_release.arm64 ${templatesdir}/linux_release.arm64
-  cp out/linux/arm64/templates/godot.linuxbsd.template_debug.arm64 ${templatesdir}/linux_debug.arm64
-  cp out/linux/arm32/templates/godot.linuxbsd.template_release.arm32 ${templatesdir}/linux_release.arm32
-  cp out/linux/arm32/templates/godot.linuxbsd.template_debug.arm32 ${templatesdir}/linux_debug.arm32
+  cp out/linux/godot.x11.opt.64 ${templatesdir}/linux_x11_64_release
+  cp out/linux/godot.x11.opt.debug.64 ${templatesdir}/linux_x11_64_debug
+  cp out/linux/godot.x11.opt.32 ${templatesdir}/linux_x11_32_release
+  cp out/linux/godot.x11.opt.debug.32 ${templatesdir}/linux_x11_32_debug
 
   ## Windows (Classical) ##
 
   # Editor
   binname="${godot_basename}_win64.exe"
-  wrpname="${godot_basename}_win64_console.exe"
-  cp out/windows/x86_64/tools/godot.windows.editor.x86_64.exe ${binname}
+  cp out/windows/godot.windows.opt.tools.64.exe ${binname}
   sign_windows ${binname}
-  cp out/windows/x86_64/tools/godot.windows.editor.x86_64.console.exe ${wrpname}
-  sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
-  rm ${binname} ${wrpname}
+  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  rm ${binname}
 
   binname="${godot_basename}_win32.exe"
-  wrpname="${godot_basename}_win32_console.exe"
-  cp out/windows/x86_32/tools/godot.windows.editor.x86_32.exe ${binname}
+  cp out/windows/godot.windows.opt.tools.32.exe ${binname}
   sign_windows ${binname}
-  cp out/windows/x86_32/tools/godot.windows.editor.x86_32.console.exe ${wrpname}
-  sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
-  rm ${binname} ${wrpname}
-
-  binname="${godot_basename}_windows_arm64.exe"
-  wrpname="${godot_basename}_windows_arm64_console.exe"
-  cp out/windows/arm64/tools/godot.windows.editor.arm64.llvm.exe ${binname}
-  sign_windows ${binname}
-  cp out/windows/arm64/tools/godot.windows.editor.arm64.llvm.console.exe ${wrpname}
-  sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
-  rm ${binname} ${wrpname}
+  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  rm ${binname}
 
   # Templates
-  cp out/windows/x86_64/templates/godot.windows.template_release.x86_64.exe ${templatesdir}/windows_release_x86_64.exe
-  cp out/windows/x86_64/templates/godot.windows.template_debug.x86_64.exe ${templatesdir}/windows_debug_x86_64.exe
-  cp out/windows/x86_32/templates/godot.windows.template_release.x86_32.exe ${templatesdir}/windows_release_x86_32.exe
-  cp out/windows/x86_32/templates/godot.windows.template_debug.x86_32.exe ${templatesdir}/windows_debug_x86_32.exe
-  cp out/windows/arm64/templates/godot.windows.template_release.arm64.llvm.exe ${templatesdir}/windows_release_arm64.exe
-  cp out/windows/arm64/templates/godot.windows.template_debug.arm64.llvm.exe ${templatesdir}/windows_debug_arm64.exe
-  cp out/windows/x86_64/templates/godot.windows.template_release.x86_64.console.exe ${templatesdir}/windows_release_x86_64_console.exe
-  cp out/windows/x86_64/templates/godot.windows.template_debug.x86_64.console.exe ${templatesdir}/windows_debug_x86_64_console.exe
-  cp out/windows/x86_32/templates/godot.windows.template_release.x86_32.console.exe ${templatesdir}/windows_release_x86_32_console.exe
-  cp out/windows/x86_32/templates/godot.windows.template_debug.x86_32.console.exe ${templatesdir}/windows_debug_x86_32_console.exe
-  cp out/windows/arm64/templates/godot.windows.template_release.arm64.llvm.console.exe ${templatesdir}/windows_release_arm64_console.exe
-  cp out/windows/arm64/templates/godot.windows.template_debug.arm64.llvm.console.exe ${templatesdir}/windows_debug_arm64_console.exe
+  cp out/windows/godot.windows.opt.64.exe ${templatesdir}/windows_64_release.exe
+  cp out/windows/godot.windows.opt.debug.64.exe ${templatesdir}/windows_64_debug.exe
+  cp out/windows/godot.windows.opt.32.exe ${templatesdir}/windows_32_release.exe
+  cp out/windows/godot.windows.opt.debug.32.exe ${templatesdir}/windows_32_debug.exe
 
   ## macOS (Classical) ##
 
   # Editor
-  binname="${godot_basename}_macos.universal"
+  binname="${godot_basename}_osx64"
   rm -rf Godot.app
-  cp -r git/misc/dist/macos_tools.app Godot.app
+  cp -r git/tools/Godot.app Godot.app
   mkdir -p Godot.app/Contents/MacOS
-  cp out/macos/tools/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
+  cp out/osx/godot.osx.opt.tools.64 Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
-  sign_macos ${reldir} ${binname} 0
+  sign_macos ${reldir} ${binname}
 
   # Templates
-  rm -rf macos_template.app
-  cp -r git/misc/dist/macos_template.app .
-  mkdir -p macos_template.app/Contents/MacOS
+  rm -rf osx_template.app
+  cp -r git/tools/osx_template.app .
+  mkdir -p osx_template.app/Contents/MacOS
 
-  cp out/macos/templates/godot.macos.template_release.universal macos_template.app/Contents/MacOS/godot_macos_release.universal
-  cp out/macos/templates/godot.macos.template_debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.universal
-  chmod +x macos_template.app/Contents/MacOS/godot_macos*
-  zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
-  rm -rf macos_template.app
-  sign_macos_template ${templatesdir} 0
+  cp out/osx/godot.osx.opt.64 osx_template.app/Contents/MacOS/godot_osx_release.64
+  cp out/osx/godot.osx.opt.debug.64 osx_template.app/Contents/MacOS/godot_osx_debug.64
+  chmod +x osx_template.app/Contents/MacOS/godot_osx*
+  zip -q -9 -r "${templatesdir}/osx.zip" osx_template.app
+  rm -rf osx_template.app
+  sign_macos_template ${templatesdir}
 
-  ## Web (Classical) ##
+  ## Server (Classical) ##
 
-  # Editor
-  unzip out/web/tools/godot.web.editor.wasm32.zip -d ${webdir}/
-  brotli --keep --force --quality=11 ${webdir}/*
-  binname="${godot_basename}_web_editor.zip"
-  cp out/web/tools/godot.web.editor.wasm32.zip ${reldir}/${binname}
-
-  # Templates
-  cp out/web/templates/godot.web.template_release.wasm32.zip ${templatesdir}/web_release.zip
-  cp out/web/templates/godot.web.template_debug.wasm32.zip ${templatesdir}/web_debug.zip
-
-  cp out/web/templates/godot.web.template_release.wasm32.nothreads.zip ${templatesdir}/web_nothreads_release.zip
-  cp out/web/templates/godot.web.template_debug.wasm32.nothreads.zip ${templatesdir}/web_nothreads_debug.zip
-
-  cp out/web/templates/godot.web.template_release.wasm32.dlink.zip ${templatesdir}/web_dlink_release.zip
-  cp out/web/templates/godot.web.template_debug.wasm32.dlink.zip ${templatesdir}/web_dlink_debug.zip
-
-  cp out/web/templates/godot.web.template_release.wasm32.nothreads.dlink.zip ${templatesdir}/web_dlink_nothreads_release.zip
-  cp out/web/templates/godot.web.template_debug.wasm32.nothreads.dlink.zip ${templatesdir}/web_dlink_nothreads_debug.zip
-
-  ## Android (Classical) ##
-
-  # Lib for direct download
-  cp out/android/templates/godot-lib.template_release.aar ${reldir}/godot-lib.${templates_version}.template_release.aar
-
-  # Editor
-  binname="${godot_basename}_android_editor.apk"
-  cp out/android/tools/android_editor.apk ${reldir}/${binname}
-  binname="${godot_basename}_android_editor_horizonos.apk"
-  cp out/android/tools/android_editor_horizonos.apk ${reldir}/${binname}
-  binname="${godot_basename}_android_editor.aab"
-  cp out/android/tools/android_editor.aab ${reldir}/${binname}
-
-  # Templates
-  cp out/android/templates/*.apk ${templatesdir}/
-  cp out/android/templates/android_source.zip ${templatesdir}/
-
-  ## iOS (Classical) ##
-
-  rm -rf ios_xcode
-  cp -r git/misc/dist/ios_xcode ios_xcode
-  cp out/ios/templates/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
-  cp out/ios/templates/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
-  cp out/ios/templates/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
-  cp out/ios/templates/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
-  cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
-  rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
-  cd ios_xcode
-  zip -q -9 -r "${templatesdir}/ios.zip" *
-  cd ..
-  rm -rf ios_xcode
+  # Headless (editor)
+  binname="${godot_basename}_linux_server.64"
+  cp out/linux/godot_server.server.opt.tools.64 ${binname}
+  strip ${binname}
+  zip -q -9 "${reldir}/${binname}.zip" ${binname}
+  rm ${binname}
 
   ## Templates TPZ (Classical) ##
 
@@ -366,186 +249,6 @@ if [ "${build_classical}" == "1" ]; then
   sha512sum [Gg]* > SHA512-SUMS.txt
   mkdir -p ${basedir}/sha512sums/${godot_version}
   cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/
-  popd
-
-fi
-
-# Mono
-
-if [ "${build_mono}" == "1" ]; then
-
-  ## Linux (Mono) ##
-
-  # Editor
-  binbasename="${godot_basename}_mono_linux"
-  mkdir -p ${binbasename}_x86_64
-  cp out/linux/x86_64/tools-mono/godot.linuxbsd.editor.x86_64.mono ${binbasename}_x86_64/${binbasename}.x86_64
-  cp -rp out/linux/x86_64/tools-mono/GodotSharp ${binbasename}_x86_64/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_x86_64.zip" ${binbasename}_x86_64
-  rm -rf ${binbasename}_x86_64
-
-  binbasename="${godot_basename}_mono_linux"
-  mkdir -p ${binbasename}_x86_32
-  cp out/linux/x86_32/tools-mono/godot.linuxbsd.editor.x86_32.mono ${binbasename}_x86_32/${binbasename}.x86_32
-  cp -rp out/linux/x86_32/tools-mono/GodotSharp/ ${binbasename}_x86_32/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_x86_32.zip" ${binbasename}_x86_32
-  rm -rf ${binbasename}_x86_32
-
-  binbasename="${godot_basename}_mono_linux"
-  mkdir -p ${binbasename}_arm64
-  cp out/linux/arm64/tools-mono/godot.linuxbsd.editor.arm64.mono ${binbasename}_arm64/${binbasename}.arm64
-  cp -rp out/linux/arm64/tools-mono/GodotSharp/ ${binbasename}_arm64/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_arm64.zip" ${binbasename}_arm64
-  rm -rf ${binbasename}_arm64
-
-  binbasename="${godot_basename}_mono_linux"
-  mkdir -p ${binbasename}_arm32
-  cp out/linux/arm32/tools-mono/godot.linuxbsd.editor.arm32.mono ${binbasename}_arm32/${binbasename}.arm32
-  cp -rp out/linux/arm32/tools-mono/GodotSharp/ ${binbasename}_arm32/
-  zip -r -q -9 "${reldir_mono}/${binbasename}_arm32.zip" ${binbasename}_arm32
-  rm -rf ${binbasename}_arm32
-
-  # ICU data
-  if [ -f ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ]; then
-    cp ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ${templatesdir_mono}/icudt_godot.dat
-  else
-    echo "icudt_godot.dat" not found.
-  fi
-
-  # Templates
-  cp out/linux/x86_64/templates-mono/godot.linuxbsd.template_debug.x86_64.mono ${templatesdir_mono}/linux_debug.x86_64
-  cp out/linux/x86_64/templates-mono/godot.linuxbsd.template_release.x86_64.mono ${templatesdir_mono}/linux_release.x86_64
-  cp out/linux/x86_32/templates-mono/godot.linuxbsd.template_debug.x86_32.mono ${templatesdir_mono}/linux_debug.x86_32
-  cp out/linux/x86_32/templates-mono/godot.linuxbsd.template_release.x86_32.mono ${templatesdir_mono}/linux_release.x86_32
-  cp out/linux/arm64/templates-mono/godot.linuxbsd.template_debug.arm64.mono ${templatesdir_mono}/linux_debug.arm64
-  cp out/linux/arm64/templates-mono/godot.linuxbsd.template_release.arm64.mono ${templatesdir_mono}/linux_release.arm64
-  cp out/linux/arm32/templates-mono/godot.linuxbsd.template_debug.arm32.mono ${templatesdir_mono}/linux_debug.arm32
-  cp out/linux/arm32/templates-mono/godot.linuxbsd.template_release.arm32.mono ${templatesdir_mono}/linux_release.arm32
-
-  ## Windows (Mono) ##
-
-  # Editor
-  binname="${godot_basename}_mono_win64"
-  wrpname="${godot_basename}_mono_win64_console"
-  mkdir -p ${binname}
-  cp out/windows/x86_64/tools-mono/godot.windows.editor.x86_64.mono.exe ${binname}/${binname}.exe
-  sign_windows ${binname}/${binname}.exe
-  cp -rp out/windows/x86_64/tools-mono/GodotSharp ${binname}/
-  cp out/windows/x86_64/tools-mono/godot.windows.editor.x86_64.mono.console.exe ${binname}/${wrpname}.exe
-  sign_windows ${binname}/${wrpname}.exe
-  zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
-  rm -rf ${binname}
-
-  binname="${godot_basename}_mono_win32"
-  wrpname="${godot_basename}_mono_win32_console"
-  mkdir -p ${binname}
-  cp out/windows/x86_32/tools-mono/godot.windows.editor.x86_32.mono.exe ${binname}/${binname}.exe
-  sign_windows ${binname}/${binname}.exe
-  cp -rp out/windows/x86_32/tools-mono/GodotSharp ${binname}/
-  cp out/windows/x86_32/tools-mono/godot.windows.editor.x86_32.mono.console.exe ${binname}/${wrpname}.exe
-  sign_windows ${binname}/${wrpname}.exe
-  zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
-  rm -rf ${binname}
-
-  binname="${godot_basename}_mono_windows_arm64"
-  wrpname="${godot_basename}_mono_windows_arm64_console"
-  mkdir -p ${binname}
-  cp out/windows/arm64/tools-mono/godot.windows.editor.arm64.llvm.mono.exe ${binname}/${binname}.exe
-  sign_windows ${binname}/${binname}.exe
-  cp -rp out/windows/arm64/tools-mono/GodotSharp ${binname}/
-  cp out/windows/arm64/tools-mono/godot.windows.editor.arm64.llvm.mono.console.exe ${binname}/${wrpname}.exe
-  sign_windows ${binname}/${wrpname}.exe
-  zip -r -q -9 "${reldir_mono}/${binname}.zip" ${binname}
-  rm -rf ${binname}
-
-  # Templates
-  cp out/windows/x86_64/templates-mono/godot.windows.template_debug.x86_64.mono.exe ${templatesdir_mono}/windows_debug_x86_64.exe
-  cp out/windows/x86_64/templates-mono/godot.windows.template_release.x86_64.mono.exe ${templatesdir_mono}/windows_release_x86_64.exe
-  cp out/windows/x86_32/templates-mono/godot.windows.template_debug.x86_32.mono.exe ${templatesdir_mono}/windows_debug_x86_32.exe
-  cp out/windows/x86_32/templates-mono/godot.windows.template_release.x86_32.mono.exe ${templatesdir_mono}/windows_release_x86_32.exe
-  cp out/windows/arm64/templates-mono/godot.windows.template_debug.arm64.llvm.mono.exe ${templatesdir_mono}/windows_debug_arm64.exe
-  cp out/windows/arm64/templates-mono/godot.windows.template_release.arm64.llvm.mono.exe ${templatesdir_mono}/windows_release_arm64.exe
-  cp out/windows/x86_64/templates-mono/godot.windows.template_debug.x86_64.mono.console.exe ${templatesdir_mono}/windows_debug_x86_64_console.exe
-  cp out/windows/x86_64/templates-mono/godot.windows.template_release.x86_64.mono.console.exe ${templatesdir_mono}/windows_release_x86_64_console.exe
-  cp out/windows/x86_32/templates-mono/godot.windows.template_debug.x86_32.mono.console.exe ${templatesdir_mono}/windows_debug_x86_32_console.exe
-  cp out/windows/x86_32/templates-mono/godot.windows.template_release.x86_32.mono.console.exe ${templatesdir_mono}/windows_release_x86_32_console.exe
-  cp out/windows/arm64/templates-mono/godot.windows.template_debug.arm64.llvm.mono.console.exe ${templatesdir_mono}/windows_debug_arm64_console.exe
-  cp out/windows/arm64/templates-mono/godot.windows.template_release.arm64.llvm.mono.console.exe ${templatesdir_mono}/windows_release_arm64_console.exe
-
-  ## macOS (Mono) ##
-
-  # Editor
-  binname="${godot_basename}_mono_macos.universal"
-  rm -rf Godot_mono.app
-  cp -r git/misc/dist/macos_tools.app Godot_mono.app
-  mkdir -p Godot_mono.app/Contents/{MacOS,Resources}
-  cp out/macos/tools-mono/godot.macos.editor.universal.mono Godot_mono.app/Contents/MacOS/Godot
-  cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
-  chmod +x Godot_mono.app/Contents/MacOS/Godot
-  zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
-  rm -rf Godot_mono.app
-  sign_macos ${reldir_mono} ${binname} 1
-
-  # Templates
-  rm -rf macos_template.app
-  cp -r git/misc/dist/macos_template.app .
-  mkdir -p macos_template.app/Contents/{MacOS,Resources}
-  cp out/macos/templates-mono/godot.macos.template_debug.universal.mono macos_template.app/Contents/MacOS/godot_macos_debug.universal
-  cp out/macos/templates-mono/godot.macos.template_release.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.universal
-  chmod +x macos_template.app/Contents/MacOS/godot_macos*
-  zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
-  rm -rf macos_template.app
-  sign_macos_template ${templatesdir_mono} 1
-
-  ## Android (Mono) ##
-
-  # Lib for direct download
-  cp out/android/templates-mono/godot-lib.template_release.aar ${reldir_mono}/godot-lib.${templates_version}.mono.template_release.aar
-
-  # Templates
-  cp out/android/templates-mono/*.apk ${templatesdir_mono}/
-  cp out/android/templates-mono/android_source.zip ${templatesdir_mono}/
-
-  ## iOS (Mono) ##
-
-  rm -rf ios_xcode
-  cp -r git/misc/dist/ios_xcode ios_xcode
-  cp out/ios/templates-mono/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
-  cp out/ios/templates-mono/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
-  cp out/ios/templates-mono/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
-  cp out/ios/templates-mono/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
-  cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
-  rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
-  cd ios_xcode
-  zip -q -9 -r "${templatesdir_mono}/ios.zip" *
-  cd ..
-  rm -rf ios_xcode
-
-  # No .NET support for those platforms yet.
-
-  if false; then
-
-  ## Web (Mono) ##
-
-  # Templates
-  cp out/web/templates-mono/godot.web.template_debug.wasm32.mono.zip ${templatesdir_mono}/web_debug.zip
-  cp out/web/templates-mono/godot.web.template_release.wasm32.mono.zip ${templatesdir_mono}/web_release.zip
-
-  fi
-
-  ## Templates TPZ (Mono) ##
-
-  echo "${templates_version}.mono" > ${templatesdir_mono}/version.txt
-  pushd ${templatesdir_mono}/..
-  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_mono_export_templates.tpz" templates/*
-  popd
-
-  ## SHA-512 sums (Mono) ##
-
-  pushd ${reldir_mono}
-  sha512sum [Gg]* >> SHA512-SUMS.txt
-  mkdir -p ${basedir}/sha512sums/${godot_version}/mono
-  cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/mono/
   popd
 
 fi
