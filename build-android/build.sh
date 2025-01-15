@@ -40,6 +40,8 @@ if [ "${CLASSICAL}" == "1" ]; then
   ./gradlew generateGodotEditor
   # Generate the Android editor for HorizonOS devices.
   ./gradlew generateGodotHorizonOSEditor
+  # Generate the Android editor for PicoOS devices.
+  ./gradlew generateGodotPicoOSEditor
   popd
 
   mkdir -p /root/out/tools
@@ -47,13 +49,15 @@ if [ "${CLASSICAL}" == "1" ]; then
   if [ "$store_release" == "yes" ]; then
     cp bin/android_editor_builds/android_editor-android-release.apk /root/out/tools/android_editor.apk
     cp bin/android_editor_builds/android_editor-android-release.aab /root/out/tools/android_editor.aab
-    # For the HorizonOS build, we only copy the apk.
+    # For the HorizonOS and PicoOS builds, we only copy the apk.
     cp bin/android_editor_builds/android_editor-horizonos-release.apk /root/out/tools/android_editor_horizonos.apk
+    cp bin/android_editor_builds/android_editor-picoos-release.apk /root/out/tools/android_editor_picoos.apk
   else
     cp bin/android_editor_builds/android_editor-android-debug.apk /root/out/tools/android_editor.apk
     cp bin/android_editor_builds/android_editor-android-debug.aab /root/out/tools/android_editor.aab
-    # For the HorizonOS build, we only copy the apk.
+    # For the HorizonOS and PicoOS build, we only copy the apk.
     cp bin/android_editor_builds/android_editor-horizonos-debug.apk /root/out/tools/android_editor_horizonos.apk
+    cp bin/android_editor_builds/android_editor-picoos-debug.apk /root/out/tools/android_editor_picoos.apk
   fi
 
   # Restart from a clean tarball, as we'll copy all the contents
