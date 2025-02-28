@@ -184,7 +184,7 @@ if [ ! -d "deps/swappy" ]; then
   echo "Missing Swappy libraries, downloading them."
   mkdir -p deps/swappy
   pushd deps/swappy
-  curl -L -O https://github.com/darksylinc/godot-swappy/releases/download/v2023.3.0.0/godot-swappy.7z
+  curl -L -O https://github.com/godotengine/godot-swappy/releases/download/from-source-2025-01-31/godot-swappy.7z
   7z x godot-swappy.7z && rm godot-swappy.7z
   popd
 fi
