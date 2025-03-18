@@ -1,4 +1,4 @@
 #!/bin/bash
 
-rm -rf godot*.tar.gz mono-glue out releases tmp web
+rm -rf godot*.tar.gz mono-glue out releases steam tmp web
 git status

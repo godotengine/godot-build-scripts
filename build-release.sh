@@ -151,12 +151,13 @@ elif [[ "{$templates_version}" == *"-"* ]]; then
   exit 1
 fi
 
-export webdir="${basedir}/web/${templates_version}"
 export reldir="${basedir}/releases/${godot_version}"
 export reldir_mono="${reldir}/mono"
 export tmpdir="${basedir}/tmp"
 export templatesdir="${tmpdir}/templates"
 export templatesdir_mono="${tmpdir}/mono/templates"
+export webdir="${basedir}/web/${templates_version}"
+export steamdir="${basedir}/steam"
 
 export godot_basename="Godot_v${godot_version}"
 
@@ -164,15 +165,19 @@ export godot_basename="Godot_v${godot_version}"
 
 if [ "${do_cleanup}" == "1" ]; then
 
-  rm -rf ${webdir}
   rm -rf ${reldir}
   rm -rf ${tmpdir}
+  rm -rf ${webdir}
+  rm -rf ${steamdir}
 
-  mkdir -p ${webdir}
   mkdir -p ${reldir}
   mkdir -p ${reldir_mono}
   mkdir -p ${templatesdir}
   mkdir -p ${templatesdir_mono}
+  mkdir -p ${webdir}
+  if [ -d out/windows/steam ]; then
+    mkdir -p ${steamdir}
+  fi
 
 fi
 
@@ -260,6 +265,13 @@ if [ "${build_classical}" == "1" ]; then
   sign_windows ${wrpname}
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
+
+  if [ -d out/windows/steam ]; then
+    cp out/windows/steam/godot.windows.editor.x86_64.exe ${steamdir}/godot.windows.opt.tools.64.exe
+    cp out/windows/steam/godot.windows.editor.x86_32.exe ${steamdir}/godot.windows.opt.tools.32.exe
+    sign_windows ${steamdir}/godot.windows.opt.tools.64.exe
+    sign_windows ${steamdir}/godot.windows.opt.tools.32.exe
+  fi
 
   # Templates
   cp out/windows/x86_64/templates/godot.windows.template_release.x86_64.exe ${templatesdir}/windows_release_x86_64.exe
