@@ -148,6 +148,17 @@ if [ ! -d "deps/moltenvk" ]; then
   popd
 fi
 
+# accesskit-c for Windows, macOS and Linux
+if [ ! -d "deps/accesskit" ]; then
+  echo "Missing accesskit, downloading it."
+  mkdir -p deps/accesskit
+  pushd deps/accesskit
+  curl -L -o accesskit.zip https://github.com/godotengine/godot-accesskit-c-static/releases/download/0.15.1/accesskit-c-0.15.1.zip
+  unzip -o accesskit.zip && rm -f accesskit.zip
+  mv accesskit-c-* accesskit-c
+  popd
+fi
+
 # Windows and macOS need ANGLE
 if [ ! -d "deps/angle" ]; then
   echo "Missing ANGLE libraries, downloading them."
@@ -240,16 +251,16 @@ mkdir -p ${basedir}/mono-glue
 ${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
 mkdir -p ${basedir}/out/windows
-${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa --env STEAM=${build_steam} localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
+${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa -v ${basedir}/deps/accesskit:/root/accesskit --env STEAM=${build_steam} localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
 mkdir -p ${basedir}/out/linux
-${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
+${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out -v ${basedir}/deps/accesskit:/root/accesskit localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
 
 mkdir -p ${basedir}/out/web
 ${podman_run} -v ${basedir}/build-web:/root/build -v ${basedir}/out/web:/root/out localhost/godot-web:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/web
 
 mkdir -p ${basedir}/out/macos
-${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/moltenvk:/root/moltenvk -v ${basedir}/deps/angle:/root/angle localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
+${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/accesskit:/root/accesskit -v ${basedir}/deps/moltenvk:/root/moltenvk -v ${basedir}/deps/angle:/root/angle localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
 
 mkdir -p ${basedir}/out/android
 ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/swappy:/root/swappy -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
