@@ -12,9 +12,24 @@
 # relevant tool in your PATH or an absolute path to run it from.
 export PODMAN='podman'
 
+# GitHub token for @GodotBuilder for releases on godotengine/godot-builds,
+# can use a long expiry date.
+# For stable releases to godotengine/godot, generate a personal token with
+# write access to godotengine/godot for use in publish-release.sh.
+export GH_TOKEN=''
+
 # Path to a Git clone of https://github.com/godotengine/godot-builds.
 # Only used for uploading official releases.
 export GODOT_BUILDS_PATH=''
+
+# Path to the directory with the Steam upload setup.
+export UPLOAD_STEAM_PATH=''
+
+# Path to the directory with the EGS upload setup.
+export UPLOAD_EGS_PATH=''
+
+# Path to the 'butler' binary for upload of stable releases to itch.io.
+export UPLOAD_ITCH_BUTLER=''
 
 # SSH hostname to upload Web editor builds to.
 # Only used for uploading official releases.
