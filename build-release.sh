@@ -2,6 +2,9 @@
 
 set -e
 
+# Log output to a file automatically.
+exec > >(tee -a "out/logs/build-release") 2>&1
+
 # Config
 
 # For signing keystore and password.
