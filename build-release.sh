@@ -3,6 +3,9 @@
 set -e
 export basedir=$(pwd)
 
+# Log output to a file automatically.
+exec > >(tee -a "out/logs/build-release") 2>&1
+
 # Config
 
 # For signing keystore and password.
@@ -266,13 +269,6 @@ if [ "${build_classical}" == "1" ]; then
   zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
   rm ${binname} ${wrpname}
 
-  if [ -d out/windows/steam ]; then
-    cp out/windows/steam/godot.windows.editor.x86_64.exe ${steamdir}/godot.windows.opt.tools.64.exe
-    cp out/windows/steam/godot.windows.editor.x86_32.exe ${steamdir}/godot.windows.opt.tools.32.exe
-    sign_windows ${steamdir}/godot.windows.opt.tools.64.exe
-    sign_windows ${steamdir}/godot.windows.opt.tools.32.exe
-  fi
-
   # Templates
   cp out/windows/x86_64/templates/godot.windows.template_release.x86_64.exe ${templatesdir}/windows_release_x86_64.exe
   cp out/windows/x86_64/templates/godot.windows.template_debug.x86_64.exe ${templatesdir}/windows_debug_x86_64.exe
@@ -311,6 +307,20 @@ if [ "${build_classical}" == "1" ]; then
   zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
   rm -rf macos_template.app
   sign_macos_template ${templatesdir} 0
+
+  ## Steam (Classical) ##
+
+  if [ -d out/windows/steam ]; then
+    cp out/windows/steam/godot.windows.editor.x86_64.exe ${steamdir}/godot.windows.opt.tools.64.exe
+    cp out/windows/steam/godot.windows.editor.x86_32.exe ${steamdir}/godot.windows.opt.tools.32.exe
+    sign_windows ${steamdir}/godot.windows.opt.tools.64.exe
+    sign_windows ${steamdir}/godot.windows.opt.tools.32.exe
+    unzip ${reldir}/${godot_basename}_linux.x86_64.zip -d ${steamdir}/
+    unzip ${reldir}/${godot_basename}_linux.x86_32.zip -d ${steamdir}/
+    mv ${steamdir}/{${godot_basename}_linux.x86_64,godot.x11.opt.tools.64}
+    mv ${steamdir}/{${godot_basename}_linux.x86_32,godot.x11.opt.tools.32}
+    unzip ${reldir}/${godot_basename}_macos.universal -d ${steamdir}/
+  fi
 
   ## Web (Classical) ##
 
