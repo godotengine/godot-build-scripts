@@ -4,6 +4,14 @@ set -e
 
 OPTIND=1
 
+export basedir="$(pwd)"
+mkdir -p ${basedir}/out
+mkdir -p ${basedir}/out/logs
+mkdir -p ${basedir}/mono-glue
+
+# Log output to a file automatically.
+exec > >(tee -a "out/logs/build") 2>&1
+
 # Config
 
 # For default registry and number of cores.
@@ -238,11 +246,6 @@ EOF
   sh misc/scripts/make_tarball.sh -v ${godot_version} -g ${git_treeish}
   popd
 fi
-
-export basedir="$(pwd)"
-mkdir -p ${basedir}/out
-mkdir -p ${basedir}/out/logs
-mkdir -p ${basedir}/mono-glue
 
 export podman_run="${podman} run -it --rm --env BUILD_NAME=${BUILD_NAME} --env GODOT_VERSION_STATUS=${GODOT_VERSION_STATUS} --env NUM_CORES=${NUM_CORES} --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=$IMAGE_VERSION
