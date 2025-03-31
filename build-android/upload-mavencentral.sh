@@ -15,4 +15,4 @@ ${PODMAN} run -it --rm \
     "source /root/keystore/config.sh && \
     cp -r /root/godot/.gradle /root && \
     cd /root/godot/platform/android/java && \
-    ./gradlew publishTemplateReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository"
+    ./gradlew publishAllPublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository"
