@@ -60,11 +60,7 @@ if [ "${CLASSICAL}" == "1" ]; then
     cp bin/android_editor_builds/android_editor-picoos-debug.apk /root/out/tools/android_editor_picoos.apk
   fi
 
-  # Restart from a clean tarball, as we'll copy all the contents
-  # outside the container for the MavenCentral upload.
-  rm -rf /root/godot/*
-  tar xf /root/godot.tar.gz --strip-components=1
-  cp -rf /root/swappy/* thirdparty/swappy-frame-pacing/
+  # Template builds
 
   $SCONS platform=android arch=arm32 $OPTIONS target=template_debug
   $SCONS platform=android arch=arm32 $OPTIONS target=template_release
