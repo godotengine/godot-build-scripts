@@ -4,8 +4,10 @@ set -e
 
 # Config
 
+# Debug symbols are enabled for the Android builds. Gradle will strip them out of 
+# the final artifacts and generate a separate debug symbols file.
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
-export OPTIONS="production=yes"
+export OPTIONS="production=yes debug_symbols=yes"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
@@ -47,16 +49,26 @@ if [ "${CLASSICAL}" == "1" ]; then
   mkdir -p /root/out/tools
   # Copy the generated Android editor binaries (apk & aab).
   if [ "$store_release" == "yes" ]; then
+    cp bin/android_editor_builds/android-editor-android-release-native-debug-symbols.zip /root/out/tools/android_editor_native_debug_symbols.zip
     cp bin/android_editor_builds/android_editor-android-release.apk /root/out/tools/android_editor.apk
     cp bin/android_editor_builds/android_editor-android-release.aab /root/out/tools/android_editor.aab
+
     # For the HorizonOS and PicoOS builds, we only copy the apk.
+    cp bin/android_editor_builds/android-editor-horizonos-release-native-debug-symbols.zip /root/out/tools/android_editor_horizonos_native_debug_symbols.zip
     cp bin/android_editor_builds/android_editor-horizonos-release.apk /root/out/tools/android_editor_horizonos.apk
+
+    cp bin/android_editor_builds/android-editor-picoos-release-native-debug-symbols.zip /root/out/tools/android_editor_picoos_native_debug_symbols.zip
     cp bin/android_editor_builds/android_editor-picoos-release.apk /root/out/tools/android_editor_picoos.apk
   else
+    cp bin/android_editor_builds/android-editor-android-debug-native-debug-symbols.zip /root/out/tools/android_editor_native_debug_symbols.zip
     cp bin/android_editor_builds/android_editor-android-debug.apk /root/out/tools/android_editor.apk
     cp bin/android_editor_builds/android_editor-android-debug.aab /root/out/tools/android_editor.aab
+
     # For the HorizonOS and PicoOS build, we only copy the apk.
+    cp bin/android_editor_builds/android-editor-horizonos-debug-native-debug-symbols.zip /root/out/tools/android_editor_horizonos_native_debug_symbols.zip
     cp bin/android_editor_builds/android_editor-horizonos-debug.apk /root/out/tools/android_editor_horizonos.apk
+
+    cp bin/android_editor_builds/android-editor-picoos-debug-native-debug-symbols.zip /root/out/tools/android_editor_picoos_native_debug_symbols.zip
     cp bin/android_editor_builds/android_editor-picoos-debug.apk /root/out/tools/android_editor_picoos.apk
   fi
 
@@ -91,6 +103,8 @@ if [ "${CLASSICAL}" == "1" ]; then
   cp bin/android_debug.apk /root/out/templates/
   cp bin/android_release.apk /root/out/templates/
   cp bin/godot-lib.template_release.aar /root/out/templates/
+  cp bin/android-template-standard-debug-native-debug-symbols.zip /root/out/templates/android_debug_template_native_debug_symbols.zip
+  cp bin/android-template-standard-release-native-debug-symbols.zip /root/out/templates/android_release_template_native_debug_symbols.zip
 fi
 
 # Mono
@@ -121,6 +135,8 @@ if [ "${MONO}" == "1" ]; then
   cp bin/android_monoDebug.apk /root/out/templates-mono/android_debug.apk
   cp bin/android_monoRelease.apk /root/out/templates-mono/android_release.apk
   cp bin/godot-lib.template_release.aar /root/out/templates-mono/
+  cp bin/android-template-mono-debug-native-debug-symbols.zip /root/out/templates-mono/android_debug_template_native_debug_symbols.zip
+  cp bin/android-template-mono-release-native-debug-symbols.zip /root/out/templates-mono/android_release_template_native_debug_symbols.zip
 fi
 
 echo "Android build successful"
