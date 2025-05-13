@@ -4,7 +4,7 @@ set -e
 
 # Config
 
-export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
+export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 # Keep LTO disabled for iOS - it works but it makes linking apps on deploy very slow,
 # which is seen as a regression in the current workflow.
 export OPTIONS="production=yes use_lto=no"

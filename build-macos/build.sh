@@ -4,7 +4,7 @@ set -e
 
 # Config
 
-export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
+export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 export OPTIONS="osxcross_sdk=darwin24.2 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm

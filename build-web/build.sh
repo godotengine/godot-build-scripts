@@ -20,7 +20,7 @@ declare -a JOBS_NOTHREADS=(
   "target=template_release dlink_enabled=yes threads=no"
 )
 
-export SCONS="scons -j$(expr ${NUM_CORES} / ${NUM_JOBS}) verbose=yes warnings=no progress=no"
+export SCONS="scons -j$(expr ${NUM_CORES} / ${NUM_JOBS}) verbose=yes warnings=no progress=no redirect_build_objects=no"
 export OPTIONS="production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes -j${NUM_CORES}"
 export TERM=xterm

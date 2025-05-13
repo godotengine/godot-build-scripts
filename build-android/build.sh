@@ -6,7 +6,7 @@ set -e
 
 # Debug symbols are enabled for the Android builds. Gradle will strip them out of 
 # the final artifacts and generate a separate debug symbols file.
-export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
+export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 export OPTIONS="production=yes debug_symbols=yes"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
