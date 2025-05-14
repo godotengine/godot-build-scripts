@@ -239,6 +239,14 @@ if [ "${build_classical}" == "1" ]; then
   cp out/linux/arm32/templates/godot.linuxbsd.template_release.arm32 ${templatesdir}/linux_release.arm32
   cp out/linux/arm32/templates/godot.linuxbsd.template_debug.arm32 ${templatesdir}/linux_debug.arm32
 
+  zip -q -9 -r -D "${reldir}/${godot_basename}_linux_export_templates.tpz" ${templatesdir}/linux_*
+  for arch in x86_64 x86_32 arm64 arm32; do
+    zip -q -9 -r -D "${reldir}/${godot_basename}_linux_${arch}_export_templates.tpz" ${templatesdir}/linux_*.${arch}
+  done
+  for build in debug release; do
+    zip -q -9 -r -D "${reldir}/${godot_basename}_linux_${build}_export_templates.tpz" ${templatesdir}/linux_${build}.*
+  done
+
   ## Windows (Classical) ##
 
   # Editor
@@ -283,6 +291,14 @@ if [ "${build_classical}" == "1" ]; then
   cp out/windows/arm64/templates/godot.windows.template_release.arm64.llvm.console.exe ${templatesdir}/windows_release_arm64_console.exe
   cp out/windows/arm64/templates/godot.windows.template_debug.arm64.llvm.console.exe ${templatesdir}/windows_debug_arm64_console.exe
 
+  zip -q -9 -r -D "${reldir}/${godot_basename}_windows_export_templates.tpz" ${templatesdir}/windows_*
+  for arch in x86_64 x86_32 arm64; do
+    zip -q -9 -r -D "${reldir}/${godot_basename}_windows_${arch}_export_templates.tpz" ${templatesdir}/windows_*_${arch}*
+  done
+  for build in debug release; do
+    zip -q -9 -r -D "${reldir}/${godot_basename}_windows_${build}_export_templates.tpz" ${templatesdir}/windows_${build}_*
+  done
+
   ## macOS (Classical) ##
 
   # Editor
@@ -322,6 +338,8 @@ if [ "${build_classical}" == "1" ]; then
     unzip ${reldir}/${godot_basename}_macos.universal -d ${steamdir}/
   fi
 
+  zip -q -9 -r -D "${reldir}/${godot_basename}_macos_export_templates.tpz" ${templatesdir}/macos.zip
+
   ## Web (Classical) ##
 
   # Editor
@@ -343,6 +361,13 @@ if [ "${build_classical}" == "1" ]; then
   cp out/web/templates/godot.web.template_release.wasm32.nothreads.dlink.zip ${templatesdir}/web_dlink_nothreads_release.zip
   cp out/web/templates/godot.web.template_debug.wasm32.nothreads.dlink.zip ${templatesdir}/web_dlink_nothreads_debug.zip
 
+  zip -q -9 -r -D "${reldir}/${godot_basename}_web_export_templates.tpz" ${templatesdir}/web_*
+  for build in debug release; do
+    zip -q -9 -r -D "${reldir}/${godot_basename}_web_${build}_export_templates.tpz" ${templatesdir}/web_*${build}.zip
+  done
+  zip -q -9 -r -D "${reldir}/${godot_basename}_web_dlink_export_templates.tpz" ${templatesdir}/web_dlink*
+  zip -q -9 -r -D "${reldir}/${godot_basename}_web_nothreads_export_templates.tpz" ${templatesdir}/web_*nothreads*
+
   ## Android (Classical) ##
 
   # Lib for direct download
@@ -362,6 +387,12 @@ if [ "${build_classical}" == "1" ]; then
   cp out/android/templates/*.apk ${templatesdir}/
   cp out/android/templates/android_source.zip ${templatesdir}/
 
+  zip -q -9 -r -D "${reldir}/${godot_basename}_android_export_templates.tpz" ${templatesdir}/android_*
+  zip -q -9 -r -D "${reldir}/${godot_basename}_android_source_export_templates.tpz" ${templatesdir}/android_source.zip
+  for build in debug release; do
+    zip -q -9 -r -D "${reldir}/${godot_basename}_android_${build}_export_templates.tpz" ${templatesdir}/android_*${build}*
+  done
+
   ## iOS (Classical) ##
 
   rm -rf ios_xcode
@@ -376,6 +407,8 @@ if [ "${build_classical}" == "1" ]; then
   zip -q -9 -r "${templatesdir}/ios.zip" *
   cd ..
   rm -rf ios_xcode
+
+  zip -q -9 -r -D "${reldir}/${godot_basename}_ios_export_templates.tpz" ${templatesdir}/ios.zip
 
   ## Templates TPZ (Classical) ##
 
@@ -446,6 +479,14 @@ if [ "${build_mono}" == "1" ]; then
   cp out/linux/arm32/templates-mono/godot.linuxbsd.template_debug.arm32.mono ${templatesdir_mono}/linux_debug.arm32
   cp out/linux/arm32/templates-mono/godot.linuxbsd.template_release.arm32.mono ${templatesdir_mono}/linux_release.arm32
 
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_linux_mono_export_templates.tpz" ${templatesdir_mono}/linux_*
+  for arch in x86_64 x86_32 arm64 arm32; do
+    zip -q -9 -r -D "${reldir_mono}/${godot_basename}_linux_${arch}_mono_export_templates.tpz" ${templatesdir_mono}/linux_*.${arch}
+  done
+  for build in debug release; do
+    zip -q -9 -r -D "${reldir_mono}/${godot_basename}_linux_${build}_mono_export_templates.tpz" ${templatesdir_mono}/linux_${build}.*
+  done
+
   ## Windows (Mono) ##
 
   # Editor
@@ -496,6 +537,14 @@ if [ "${build_mono}" == "1" ]; then
   cp out/windows/arm64/templates-mono/godot.windows.template_debug.arm64.llvm.mono.console.exe ${templatesdir_mono}/windows_debug_arm64_console.exe
   cp out/windows/arm64/templates-mono/godot.windows.template_release.arm64.llvm.mono.console.exe ${templatesdir_mono}/windows_release_arm64_console.exe
 
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_windows_mono_export_templates.tpz" ${templatesdir_mono}/windows_*
+  for arch in x86_64 x86_32 arm64; do
+    zip -q -9 -r -D "${reldir_mono}/${godot_basename}_windows_${arch}_mono_export_templates.tpz" ${templatesdir_mono}/windows_*_${arch}*
+  done
+  for build in debug release; do
+    zip -q -9 -r -D "${reldir_mono}/${godot_basename}_windows_${build}_mono_export_templates.tpz" ${templatesdir_mono}/windows_${build}_*
+  done
+
   ## macOS (Mono) ##
 
   # Editor
@@ -521,6 +570,8 @@ if [ "${build_mono}" == "1" ]; then
   rm -rf macos_template.app
   sign_macos_template ${templatesdir_mono} 1
 
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_macos_mono_export_templates.tpz" ${templatesdir_mono}/macos.zip
+
   ## Android (Mono) ##
 
   # Lib for direct download
@@ -529,6 +580,12 @@ if [ "${build_mono}" == "1" ]; then
   # Templates
   cp out/android/templates-mono/*.apk ${templatesdir_mono}/
   cp out/android/templates-mono/android_source.zip ${templatesdir_mono}/
+
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_android_mono_export_templates.tpz" ${templatesdir_mono}/android_*
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_android_source_mono_export_templates.tpz" ${templatesdir_mono}/android_source.zip
+  for build in debug release; do
+    zip -q -9 -r -D "${reldir_mono}/${godot_basename}_android_${build}_mono_export_templates.tpz" ${templatesdir_mono}/android_*${build}*
+  done
 
   ## iOS (Mono) ##
 
@@ -545,6 +602,8 @@ if [ "${build_mono}" == "1" ]; then
   cd ..
   rm -rf ios_xcode
 
+  zip -q -9 -r -D "${reldir_mono}/${godot_basename}_ios_mono_export_templates.tpz" ${templatesdir_mono}/ios.zip
+
   # No .NET support for those platforms yet.
 
   if false; then
@@ -554,6 +613,11 @@ if [ "${build_mono}" == "1" ]; then
   # Templates
   cp out/web/templates-mono/godot.web.template_debug.wasm32.mono.zip ${templatesdir_mono}/web_debug.zip
   cp out/web/templates-mono/godot.web.template_release.wasm32.mono.zip ${templatesdir_mono}/web_release.zip
+
+  zip -q -9 -r -D "${reldir}/${reldir_mono}_web_mono_export_templates.tpz" ${templatesdir_mono}/web_*
+  for build in debug release; do
+    zip -q -9 -r -D "${reldir}/${reldir_mono}_web_${build}_mono_export_templates.tpz" ${templatesdir_mono}/web_*${build}.zip
+  done
 
   fi
 
