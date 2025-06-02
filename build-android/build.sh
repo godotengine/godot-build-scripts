@@ -4,18 +4,21 @@ set -e
 
 # Config
 
-# Debug symbols are enabled for the Android builds. Gradle will strip them out of 
+# Debug symbols are enabled for the Android builds. Gradle will strip them out of
 # the final artifacts and generate a separate debug symbols file.
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 export OPTIONS="production=yes debug_symbols=yes"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
-rm -rf godot
-mkdir godot
-cd godot
-tar xf /root/godot.tar.gz --strip-components=1
-cp -rf /root/swappy/* thirdparty/swappy-frame-pacing/
+prepare_source() {
+  cd /root
+  rm -rf godot
+  mkdir godot
+  cd godot
+  tar xf /root/godot.tar.gz --strip-components=1
+  cp -rf /root/swappy/* thirdparty/swappy-frame-pacing/
+}
 
 # Environment variables and keystore needed for signing store editor build,
 # as well as signing and publishing to MavenCentral.
@@ -32,6 +35,8 @@ fi
 if [ "${CLASSICAL}" == "1" ]; then
   echo "Starting classical build for Android..."
 
+  prepare_source
+
   $SCONS platform=android arch=arm32 $OPTIONS target=editor store_release=${store_release}
   $SCONS platform=android arch=arm64 $OPTIONS target=editor store_release=${store_release}
   $SCONS platform=android arch=x86_32 $OPTIONS target=editor store_release=${store_release}
@@ -47,6 +52,7 @@ if [ "${CLASSICAL}" == "1" ]; then
   popd
 
   mkdir -p /root/out/tools
+
   # Copy the generated Android editor binaries (apk & aab).
   if [ "$store_release" == "yes" ]; then
     cp bin/android_editor_builds/android-editor-android-release-native-debug-symbols.zip /root/out/tools/android_editor_native_debug_symbols.zip
@@ -73,6 +79,8 @@ if [ "${CLASSICAL}" == "1" ]; then
   fi
 
   # Template builds
+
+  prepare_source
 
   $SCONS platform=android arch=arm32 $OPTIONS target=template_debug
   $SCONS platform=android arch=arm32 $OPTIONS target=template_release
@@ -111,6 +119,8 @@ fi
 
 if [ "${MONO}" == "1" ]; then
   echo "Starting Mono build for Android..."
+
+  prepare_source
 
   cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
 

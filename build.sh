@@ -278,3 +278,5 @@ if [ ! -z "$SUDO_UID" ]; then
   gid="${SUDO_GID}"
 fi
 chown -R -f $uid:$gid ${basedir}/git ${basedir}/out ${basedir}/mono-glue ${basedir}/godot*.tar.gz
+
+echo "All builds completed. Check `out/logs/` to validate that they all succeeded (e.g. `tail -n 1 out/logs/*`)."
