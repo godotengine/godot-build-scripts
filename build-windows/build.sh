@@ -8,8 +8,6 @@ export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_
 export OPTIONS="production=yes use_mingw=yes angle_libs=/root/angle mesa_libs=/root/mesa d3d12=yes accesskit_sdk_path=/root/accesskit/accesskit-c"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_LLVM="use_llvm=yes mingw_prefix=/root/llvm-mingw"
-# Doesn't work currently for x86_32 with our mingw setup.
-export OPTIONS_X86_32="accesskit=no"
 export TERM=xterm
 
 rm -rf godot
@@ -33,13 +31,13 @@ if [ "${CLASSICAL}" == "1" ]; then
   cp -rvp bin/* /root/out/x86_64/templates
   rm -rf bin
 
-  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_X86_32 target=editor
+  $SCONS platform=windows arch=x86_32 $OPTIONS target=editor
   mkdir -p /root/out/x86_32/tools
   cp -rvp bin/* /root/out/x86_32/tools
   rm -rf bin
 
-  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_X86_32 target=template_debug
-  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_X86_32 target=template_release
+  $SCONS platform=windows arch=x86_32 $OPTIONS target=template_debug
+  $SCONS platform=windows arch=x86_32 $OPTIONS target=template_release
   mkdir -p /root/out/x86_32/templates
   cp -rvp bin/* /root/out/x86_32/templates
   rm -rf bin
@@ -59,7 +57,7 @@ if [ "${CLASSICAL}" == "1" ]; then
     build_name=${BUILD_NAME}
     export BUILD_NAME="steam"
     $SCONS platform=windows arch=x86_64 $OPTIONS target=editor steamapi=yes
-    $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_X86_32 target=editor steamapi=yes
+    $SCONS platform=windows arch=x86_32 $OPTIONS target=editor steamapi=yes
     mkdir -p /root/out/steam
     cp -rvp bin/* /root/out/steam
     rm -rf bin
@@ -87,14 +85,14 @@ if [ "${MONO}" == "1" ]; then
   cp -rvp bin/* /root/out/x86_64/templates-mono
   rm -rf bin
 
-  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_MONO $OPTIONS_X86_32 target=editor
+  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_MONO target=editor
   ./modules/mono/build_scripts/build_assemblies.py --godot-output-dir=./bin --godot-platform=windows
   mkdir -p /root/out/x86_32/tools-mono
   cp -rvp bin/* /root/out/x86_32/tools-mono
   rm -rf bin
 
-  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_MONO $OPTIONS_X86_32 target=template_debug
-  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_MONO $OPTIONS_X86_32 target=template_release
+  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_MONO target=template_debug
+  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_MONO target=template_release
   mkdir -p /root/out/x86_32/templates-mono
   cp -rvp bin/* /root/out/x86_32/templates-mono
   rm -rf bin
