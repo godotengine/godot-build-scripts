@@ -377,6 +377,17 @@ if [ "${build_classical}" == "1" ]; then
   cd ..
   rm -rf ios_xcode
 
+  ## visionOS (Classical) ##
+
+  rm -rf visionos_xcode
+  cp -r git/misc/dist/visionos_xcode visionos_xcode
+  cp out/visionos/templates/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
+  cp out/visionos/templates/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  cd visionos_xcode
+  zip -q -9 -r "${templatesdir}/visionos.zip" *
+  cd ..
+  rm -rf visionos_xcode
+
   ## Templates TPZ (Classical) ##
 
   echo "${templates_version}" > ${templatesdir}/version.txt
@@ -544,6 +555,17 @@ if [ "${build_mono}" == "1" ]; then
   zip -q -9 -r "${templatesdir_mono}/ios.zip" *
   cd ..
   rm -rf ios_xcode
+
+  ## visionOS (Mono) ##
+
+  rm -rf visionos_xcode
+  cp -r git/misc/dist/visionos_xcode visionos_xcode
+  cp out/visionos/templates-mono/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
+  cp out/visionos/templates-mono/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  cd visionos_xcode
+  zip -q -9 -r "${templatesdir_mono}/visionos.zip" *
+  cd ..
+  rm -rf visionos_xcode
 
   # No .NET support for those platforms yet.
 

@@ -133,7 +133,7 @@ if [ $skip_download == 0 ]; then
   if [ ! -z "${logged_in}" ]; then
     echo "Fetching private images"
 
-    for image in macosx android ios; do
+    for image in macosx android appleembedded; do
       if [ ${force_download} == 1 ] || ! ${podman} image exists godot-private/$image; then
         if ! ${podman} pull ${registry}/godot-private/${image}; then
           echo "ERROR: image $image does not exist and can't be downloaded"
@@ -269,7 +269,10 @@ mkdir -p ${basedir}/out/android
 ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/swappy:/root/swappy -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
 
 mkdir -p ${basedir}/out/ios
-${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-ios:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
+${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-appleembedded:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
+
+mkdir -p ${basedir}/out/visionos
+${podman_run} -v ${basedir}/build-visionos:/root/build -v ${basedir}/out/visionos:/root/out localhost/godot-appleembedded:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/visionos
 
 uid=$(id -un)
 gid=$(id -gn)
