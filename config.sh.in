@@ -21,19 +21,13 @@ export BUILD_REVISION='custom_build'
 # Default number of parallel cores for each build.
 export NUM_CORES=16
 
-# Set up your own signing keystore and relevant details below.
+# Set up your own Windows signing details below.
 # If you do not fill all SIGN_* fields, signing will be skipped.
-
-# Path to pkcs12 archive.
-export SIGN_KEYSTORE=''
-
-# Password for the private key.
-export SIGN_PASSWORD=''
 
 # Name and URL of the signed application.
 # Use your own when making a thirdparty build.
-export SIGN_NAME=''
-export SIGN_URL=''
+export WINDOWS_SIGN_NAME=''
+export WINDOWS_SIGN_URL=''
 
 # Hostname or IP address of an OSX host (Needed for signing)
 # eg 'user@10.1.0.10'

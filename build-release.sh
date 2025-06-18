@@ -9,17 +9,17 @@ export basedir=$(pwd)
 source ./config.sh
 
 can_sign_windows=0
-if [ ! -z "${SIGN_KEYSTORE}" ] && [ ! -z "${SIGN_PASSWORD}" ] && [[ $(type -P "osslsigncode") ]]; then
+if [ ! -z "${WINDOWS_SIGN_NAME}" ] && [ ! -z "${WINDOWS_SIGN_URL}" ] && [[ $(type -P "osslsigncode") ]]; then
   can_sign_windows=1
 else
-  echo "Disabling Windows binary signing as config.sh does not define the required data (SIGN_KEYSTORE, SIGN_PASSWORD), or osslsigncode can't be found in PATH."
+  echo "Disabling Windows binary signing as config.sh does not define the required data (WINDOWS_SIGN_NAME, WINDOWS_SIGN_URL), or osslsigncode can't be found in PATH."
 fi
 
 sign_windows() {
   if [ $can_sign_windows == 0 ]; then
     return
   fi
-  osslsigncode sign -pkcs12 ${SIGN_KEYSTORE} -pass "${SIGN_PASSWORD}" -n "${SIGN_NAME}" -i "${SIGN_URL}" -t http://timestamp.comodoca.com -in $1 -out $1-signed
+  P11_KIT_SERVER_ADDRESS=unix:path=/run/p11-kit/p11kit.sock osslsigncode sign -pkcs11module /usr/lib64/pkcs11/p11-kit-client.so -pkcs11cert 'pkcs11:model=SimplySign%20C' -key 'pkcs11:model=SimplySign%20C' -t http://time.certum.pl/ -n "${WINDOWS_SIGN_NAME}" -i "${WINDOWS_SIGN_URL}" -in $1 -out $1-signed
   mv $1-signed $1
 }
 
