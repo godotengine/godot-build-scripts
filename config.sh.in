@@ -38,7 +38,7 @@ export WEB_EDITOR_HOSTNAME=''
 export REGISTRY='registry.prehensile-tales.com'
 
 # Version string of the images to use in build.sh.
-export IMAGE_VERSION='3.x-f36-mono-6.12.0.182'
+export IMAGE_VERSION='3.6-f39-mono-6.12.0.198'
 
 # Default build name used to distinguish between official and custom builds.
 export BUILD_NAME='custom_build'
