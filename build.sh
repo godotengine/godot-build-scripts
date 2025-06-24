@@ -38,8 +38,9 @@ build_mono=1
 force_download=0
 skip_download=1
 skip_git_checkout=0
+build_uwp=0
 
-while getopts "h?r:u:p:v:g:b:fsc" opt; do
+while getopts "h?r:u:p:v:g:b:fscw" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
@@ -53,6 +54,7 @@ while getopts "h?r:u:p:v:g:b:fsc" opt; do
     echo "  -f force redownload of all images"
     echo "  -s skip downloading"
     echo "  -c skip checkout"
+    echo "  -w build UWP templates"
     echo
     exit 1
     ;;
@@ -86,6 +88,9 @@ while getopts "h?r:u:p:v:g:b:fsc" opt; do
     ;;
   c)
     skip_git_checkout=1
+    ;;
+  w)
+    build_uwp=1
     ;;
   esac
 done
@@ -212,8 +217,10 @@ ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/ou
 mkdir -p ${basedir}/out/server
 ${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
 
-mkdir -p ${basedir}/out/uwp
-${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
+if [ "${build_uwp}" == "1" ]; then
+  mkdir -p ${basedir}/out/uwp
+  ${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
+fi
 
 uid=$(id -un)
 gid=$(id -gn)

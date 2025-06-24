@@ -322,40 +322,46 @@ if [ "${build_classical}" == "1" ]; then
 
   ## UWP (Classical) ##
 
-  if [ ! -d "deps/angle-uwp" ]; then
-    echo "Downloading ANGLE binaries from https://github.com/godotengine/godot-build-scripts/releases/tag/_deps/"
-    mkdir -p deps && cd deps
-    curl -L -o angle-uwp.7z https://github.com/godotengine/godot-build-scripts/releases/download/_deps/angle-uwp-2.1.13.7z
-    7z x angle-uwp.7z && rm -f angle-uwp.7z
-    cd ..
+  if [ -d "out/uwp" ]; then
+    # UWP is now optional as it's tricky to get a reproducible build container for it.
+
+    if [ ! -d "deps/angle-uwp" ]; then
+      echo "Downloading ANGLE binaries from https://github.com/godotengine/godot-build-scripts/releases/tag/_deps/"
+      mkdir -p deps && cd deps
+      curl -L -o angle-uwp.7z https://github.com/godotengine/godot-build-scripts/releases/download/_deps/angle-uwp-2.1.13.7z
+      7z x angle-uwp.7z && rm -f angle-uwp.7z
+      cd ..
+    fi
+
+    rm -rf uwp_template_*
+    for arch in ARM Win32 x64; do
+      cp -r git/misc/dist/uwp_template uwp_template_${arch}
+      cp deps/angle-uwp/${arch}/libEGL.dll \
+        deps/angle-uwp/${arch}/libGLESv2.dll \
+        uwp_template_${arch}/
+      cp -r uwp_template_${arch} uwp_template_${arch}_debug
+    done
+
+    cp out/uwp/arm/godot.uwp.opt.32.arm.exe uwp_template_ARM/godot.uwp.exe
+    cp out/uwp/arm/godot.uwp.opt.debug.32.arm.exe uwp_template_ARM_debug/godot.uwp.exe
+    cd uwp_template_ARM && zip -q -9 -r "${templatesdir}/uwp_arm_release.zip" * && cd ..
+    cd uwp_template_ARM_debug && zip -q -9 -r "${templatesdir}/uwp_arm_debug.zip" * && cd ..
+    rm -rf uwp_template_ARM*
+
+    cp out/uwp/x86/godot.uwp.opt.32.x86.exe uwp_template_Win32/godot.uwp.exe
+    cp out/uwp/x86/godot.uwp.opt.debug.32.x86.exe uwp_template_Win32_debug/godot.uwp.exe
+    cd uwp_template_Win32 && zip -q -9 -r "${templatesdir}/uwp_x86_release.zip" * && cd ..
+    cd uwp_template_Win32_debug && zip -q -9 -r "${templatesdir}/uwp_x86_debug.zip" * && cd ..
+    rm -rf uwp_template_Win32*
+
+    cp out/uwp/x64/godot.uwp.opt.64.x64.exe uwp_template_x64/godot.uwp.exe
+    cp out/uwp/x64/godot.uwp.opt.debug.64.x64.exe uwp_template_x64_debug/godot.uwp.exe
+    cd uwp_template_x64 && zip -q -9 -r "${templatesdir}/uwp_x64_release.zip" * && cd ..
+    cd uwp_template_x64_debug && zip -q -9 -r "${templatesdir}/uwp_x64_debug.zip" * && cd ..
+    rm -rf uwp_template_x64*
+  else
+    echo "Skipping UWP templates as no builds were found."
   fi
-
-  rm -rf uwp_template_*
-  for arch in ARM Win32 x64; do
-    cp -r git/misc/dist/uwp_template uwp_template_${arch}
-    cp deps/angle-uwp/${arch}/libEGL.dll \
-      deps/angle-uwp/${arch}/libGLESv2.dll \
-      uwp_template_${arch}/
-    cp -r uwp_template_${arch} uwp_template_${arch}_debug
-  done
-
-  cp out/uwp/arm/godot.uwp.opt.32.arm.exe uwp_template_ARM/godot.uwp.exe
-  cp out/uwp/arm/godot.uwp.opt.debug.32.arm.exe uwp_template_ARM_debug/godot.uwp.exe
-  cd uwp_template_ARM && zip -q -9 -r "${templatesdir}/uwp_arm_release.zip" * && cd ..
-  cd uwp_template_ARM_debug && zip -q -9 -r "${templatesdir}/uwp_arm_debug.zip" * && cd ..
-  rm -rf uwp_template_ARM*
-
-  cp out/uwp/x86/godot.uwp.opt.32.x86.exe uwp_template_Win32/godot.uwp.exe
-  cp out/uwp/x86/godot.uwp.opt.debug.32.x86.exe uwp_template_Win32_debug/godot.uwp.exe
-  cd uwp_template_Win32 && zip -q -9 -r "${templatesdir}/uwp_x86_release.zip" * && cd ..
-  cd uwp_template_Win32_debug && zip -q -9 -r "${templatesdir}/uwp_x86_debug.zip" * && cd ..
-  rm -rf uwp_template_Win32*
-
-  cp out/uwp/x64/godot.uwp.opt.64.x64.exe uwp_template_x64/godot.uwp.exe
-  cp out/uwp/x64/godot.uwp.opt.debug.64.x64.exe uwp_template_x64_debug/godot.uwp.exe
-  cd uwp_template_x64 && zip -q -9 -r "${templatesdir}/uwp_x64_release.zip" * && cd ..
-  cd uwp_template_x64_debug && zip -q -9 -r "${templatesdir}/uwp_x64_debug.zip" * && cd ..
-  rm -rf uwp_template_x64*
 
   ## Templates TPZ (Classical) ##
 
