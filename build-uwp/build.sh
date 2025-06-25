@@ -4,7 +4,7 @@ set -e
 
 # Config
 
-export SCONS="call scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
+export SCONS="call scons -j8 verbose=yes warnings=no progress=no"
 export OPTIONS="production=yes"
 export BUILD_ARCHES="x86 x64 arm"
 export ANGLE_SRC_PATH='c:\angle'

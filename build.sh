@@ -4,6 +4,13 @@ set -e
 
 OPTIND=1
 
+export basedir="$(pwd)"
+mkdir -p ${basedir}/out
+mkdir -p ${basedir}/out/logs
+
+# Log output to a file automatically.
+exec > >(tee -a "out/logs/build") 2>&1
+
 # Config
 
 # For default registry and number of cores.
@@ -31,8 +38,9 @@ build_mono=1
 force_download=0
 skip_download=1
 skip_git_checkout=0
+build_uwp=0
 
-while getopts "h?r:u:p:v:g:b:fsc" opt; do
+while getopts "h?r:u:p:v:g:b:fscw" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
@@ -46,6 +54,7 @@ while getopts "h?r:u:p:v:g:b:fsc" opt; do
     echo "  -f force redownload of all images"
     echo "  -s skip downloading"
     echo "  -c skip checkout"
+    echo "  -w build UWP templates"
     echo
     exit 1
     ;;
@@ -80,12 +89,15 @@ while getopts "h?r:u:p:v:g:b:fsc" opt; do
   c)
     skip_git_checkout=1
     ;;
+  w)
+    build_uwp=1
+    ;;
   esac
 done
 
 export podman=${PODMAN}
 
-if [ $UID != 0 ]; then
+if [ $UID != 0 ] && grep -qv sudo <<< "${podman}"; then
   echo "WARNING: Running as non-root may cause problems for the uwp build"
 fi
 
@@ -174,17 +186,12 @@ EOF
   popd
 fi
 
-export basedir="$(pwd)"
-mkdir -p ${basedir}/out
-mkdir -p ${basedir}/out/logs
-
-export podman_run="${podman} run -it --rm --env BUILD_NAME --env GODOT_VERSION_STATUS --env NUM_CORES --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+export podman_run="${podman} run -it --rm --env BUILD_NAME=${BUILD_NAME} --env GODOT_VERSION_STATUS=${GODOT_VERSION_STATUS} --env NUM_CORES=${NUM_CORES} --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=$IMAGE_VERSION
 
 # Get AOT compilers from their containers.
 mkdir -p ${basedir}/out/aot-compilers
-${podman} run -it --rm -w /root -v ${basedir}/out/aot-compilers:/root/out localhost/godot-ios:${img_version} bash -c "cp -r /root/aot-compilers/* /root/out"
-chmod +x ${basedir}/out/aot-compilers/*/*
+${podman} run -it --rm -w /root -v ${basedir}/out/aot-compilers:/root/out localhost/godot-ios:${img_version} bash -c "cp -r /root/aot-compilers/* /root/out && chmod +x /root/out/*/*"
 
 mkdir -p ${basedir}/mono-glue
 ${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-mono-glue:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
@@ -210,9 +217,15 @@ ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/ou
 mkdir -p ${basedir}/out/server
 ${podman_run} -v ${basedir}/build-server:/root/build -v ${basedir}/out/server:/root/out localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/server
 
-mkdir -p ${basedir}/out/uwp
-${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
-
-if [ ! -z "$SUDO_UID" ]; then
-  chown -R "${SUDO_UID}":"${SUDO_GID}" ${basedir}/git ${basedir}/out ${basedir}/mono-glue ${basedir}/godot*.tar.gz
+if [ "${build_uwp}" == "1" ]; then
+  mkdir -p ${basedir}/out/uwp
+  ${podman_run} --ulimit nofile=32768:32768 -v ${basedir}/build-uwp:/root/build -v ${basedir}/out/uwp:/root/out ${registry}/godot-private/uwp:latest bash build/build.sh 2>&1 | tee ${basedir}/out/logs/uwp
 fi
+
+uid=$(id -un)
+gid=$(id -gn)
+if [ ! -z "$SUDO_UID" ]; then
+  uid="${SUDO_UID}"
+  gid="${SUDO_GID}"
+fi
+chown -R -f $uid:$gid ${basedir}/git ${basedir}/out ${basedir}/mono-glue ${basedir}/godot*.tar.gz
