@@ -362,6 +362,10 @@ if [ "${build_classical}" == "1" ]; then
   cp out/android/templates/*.apk ${templatesdir}/
   cp out/android/templates/android_source.zip ${templatesdir}/
 
+  # Native debug symbols
+  cp out/android/templates/android_release_template_native_debug_symbols.zip ${reldir}/native_debug_symbols.${templates_version}.template_release.android.zip
+  cp out/android/tools/android_editor_native_debug_symbols.zip ${reldir}/native_debug_symbols.${templates_version}.editor.android.zip
+
   ## iOS (Classical) ##
 
   rm -rf ios_xcode
