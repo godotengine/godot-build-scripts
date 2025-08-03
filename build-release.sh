@@ -369,7 +369,7 @@ if [ "${build_classical}" == "1" ]; then
   ## iOS (Classical) ##
 
   rm -rf ios_xcode
-  cp -r git/misc/dist/ios_xcode ios_xcode
+  cp -r git/misc/dist/apple_embedded_xcode ios_xcode
   cp out/ios/templates/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
@@ -384,7 +384,7 @@ if [ "${build_classical}" == "1" ]; then
   ## visionOS (Classical) ##
 
   rm -rf visionos_xcode
-  cp -r git/misc/dist/visionos_xcode visionos_xcode
+  cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
   cp out/visionos/templates/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
   cp out/visionos/templates/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
   cd visionos_xcode
@@ -548,7 +548,7 @@ if [ "${build_mono}" == "1" ]; then
   ## iOS (Mono) ##
 
   rm -rf ios_xcode
-  cp -r git/misc/dist/ios_xcode ios_xcode
+  cp -r git/misc/dist/apple_embedded_xcode ios_xcode
   cp out/ios/templates-mono/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates-mono/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates-mono/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
@@ -563,7 +563,7 @@ if [ "${build_mono}" == "1" ]; then
   ## visionOS (Mono) ##
 
   rm -rf visionos_xcode
-  cp -r git/misc/dist/visionos_xcode visionos_xcode
+  cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
   cp out/visionos/templates-mono/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
   cp out/visionos/templates-mono/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
   cd visionos_xcode
