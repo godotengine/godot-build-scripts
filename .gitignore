@@ -1,5 +1,6 @@
 # User-specific configuration and signing keys
 config.sh
+playstore_key.json
 *.jks
 *.pfx
 *.pkcs12

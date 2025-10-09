@@ -60,8 +60,8 @@ def main(aab_path, nds_path, key_path):
     print("Release uploaded and published successfully!")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python3 upload_playstore.py <aab-path> <json-key-path>")
+    if len(sys.argv) != 4:
+        print("Usage: python3 upload_playstore.py <aab-path> <native-debug-symbols-path> <json-key-path>")
         sys.exit(1)
     aab_path = sys.argv[1]
     nds_path = sys.argv[2]
