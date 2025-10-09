@@ -1,4 +1,4 @@
-import sys
+import sys, socket
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
@@ -10,6 +10,8 @@ RELEASE_NOTES = "Automated closed testing release"
 def main(aab_path, nds_path, key_path):
     scopes = ["https://www.googleapis.com/auth/androidpublisher"]
     credentials = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
+    initial_timeout = socket.getdefaulttimeout()
+    socket.setdefaulttimeout(900)
     service = build("androidpublisher", "v3", credentials=credentials)
 
     print("Creating a new edit")
@@ -58,6 +60,7 @@ def main(aab_path, nds_path, key_path):
 
     service.edits().commit(editId=edit_id, packageName=PACKAGE_NAME).execute()
     print("Release uploaded and published successfully!")
+    socket.setdefaulttimeout(initial_timeout)
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
