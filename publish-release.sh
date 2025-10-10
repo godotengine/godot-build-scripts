@@ -180,7 +180,7 @@ fi
 
 if [ -d "deps/playstore_key.json" ]; then
   echo "Publishing Android Editor to PlayStore..."
-  sh build-android/upload-playstore.sh
+  sh build-android/upload-playstore.sh ${godot_version}
 else
   echo "Disabling Android Editor publishing as deps/playstore_key.json doesn't exist."
 fi

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 <version-name>"
+  exit 1
+fi
+
+VERSION_NAME="$1"
+
 BASEDIR="$(pwd)"
 
 source ${BASEDIR}/config.sh
@@ -18,4 +25,4 @@ source "$VENV_DIR/bin/activate"
 echo "Installing google-api-python-client"
 pip install --upgrade google-api-python-client
 
-python3 "$PYTHON_SCRIPT" "$AAB_FILE" "$NDS_FILE" "$JSON_KEY_FILE"
+python3 "$PYTHON_SCRIPT" "$AAB_FILE" "$NDS_FILE" "$JSON_KEY_FILE" "$VERSION_NAME"
