@@ -176,6 +176,15 @@ else
   echo "Disabling NuGet package publishing as config.sh does not define the required data (NUGET_SOURCE, NUGET_API_KEY), or dotnet can't be found in PATH."
 fi
 
+# Godot Android Editor
+
+if [ -d "deps/playstore_key.json" ]; then
+  echo "Publishing Android Editor to PlayStore..."
+  sh build-android/upload-playstore.sh
+else
+  echo "Disabling Android Editor publishing as deps/playstore_key.json doesn't exist."
+fi
+
 # Godot Android library
 
 if [ -d "deps/keystore" ]; then
