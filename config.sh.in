@@ -98,3 +98,6 @@ export GODOT_ANDROID_SIGN_KEYSTORE=''
 export GODOT_ANDROID_KEYSTORE_ALIAS=''
 # Password for the key used for signing the release build
 export GODOT_ANDROID_SIGN_PASSWORD=''
+# Google Cloud Service Account JSON key with access to Play Console upload permissions
+# (View app information + Release apps to production and/or testing.)
+export GODOT_ANDROID_UPLOAD_JSON_KEY=''
