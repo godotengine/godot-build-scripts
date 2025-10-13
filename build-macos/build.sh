@@ -27,6 +27,19 @@ if [ "${CLASSICAL}" == "1" ]; then
   cp -rvp bin/* /root/out/tools
   rm -rf bin
 
+  if [ "${STEAM}" == "1" ]; then
+    build_name=${BUILD_NAME}
+    export BUILD_NAME="steam"
+    $SCONS platform=macos arch=x86_64 $OPTIONS target=editor steamapi=yes
+    $SCONS platform=macos arch=arm64 $OPTIONS target=editor steamapi=yes
+    lipo -create bin/godot.macos.editor.x86_64 bin/godot.macos.editor.arm64 -output bin/godot.macos.editor.universal
+
+    mkdir -p /root/out/steam
+    cp -rvp bin/* /root/out/steam
+    rm -rf bin
+    export BUILD_NAME=${build_name}
+  fi
+
   $SCONS platform=macos $OPTIONS arch=x86_64 target=template_debug
   $SCONS platform=macos $OPTIONS arch=arm64 target=template_debug
   lipo -create bin/godot.macos.template_debug.x86_64 bin/godot.macos.template_debug.arm64 -output bin/godot.macos.template_debug.universal

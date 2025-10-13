@@ -319,7 +319,20 @@ if [ "${build_classical}" == "1" ]; then
     unzip ${reldir}/${godot_basename}_linux.x86_32.zip -d ${steamdir}/
     mv ${steamdir}/{${godot_basename}_linux.x86_64,godot.x11.opt.tools.64}
     mv ${steamdir}/{${godot_basename}_linux.x86_32,godot.x11.opt.tools.32}
-    unzip ${reldir}/${godot_basename}_macos.universal -d ${steamdir}/
+  fi
+
+  if [ -d out/macos/steam ]; then
+    binname="${godot_basename}_macos.universal"
+    rm -rf Godot.app
+    cp -r git/misc/dist/macos_tools.app Godot.app
+    mkdir -p Godot.app/Contents/MacOS
+    cp out/macos/steam/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
+    #cp libsteam_api.dylib Godot.app/Contents/Frameworks/libsteam_api.dylib
+    chmod +x Godot.app/Contents/MacOS/Godot
+    zip -q -9 -r "${reldir}/${binname}_steam.zip" Godot.app
+    rm -rf Godot.app
+    sign_macos ${reldir} ${binname}_steam 0
+    unzip ${reldir}/${binname}_steam.zip -d ${steamdir}/
   fi
 
   ## Web (Classical) ##
