@@ -25,4 +25,5 @@ source "$VENV_DIR/bin/activate"
 echo "Installing google-api-python-client"
 pip install --upgrade google-api-python-client
 
+echo "Uploading editor to Google Play Store..."
 python3 "$PYTHON_SCRIPT" "$AAB_FILE" "$NDS_FILE" "$JSON_KEY_FILE" "$VERSION_NAME"

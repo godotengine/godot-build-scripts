@@ -178,11 +178,11 @@ fi
 
 # Godot Android Editor
 
-if [ -d "deps/playstore_key.json" ]; then
-  echo "Publishing Android Editor to PlayStore..."
+if [ -e "${GODOT_ANDROID_UPLOAD_JSON_KEY}" ]; then
+  echo "Publishing Android Editor to Play Store..."
   sh build-android/upload-playstore.sh ${godot_version}
 else
-  echo "Disabling Android Editor publishing as deps/playstore_key.json doesn't exist."
+  echo "Disabling Android Editor publishing as no valid Play Store JSON key was found."
 fi
 
 # Godot Android library
