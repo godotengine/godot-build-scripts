@@ -383,14 +383,14 @@ if [ "${build_classical}" == "1" ]; then
 
   ## visionOS (Classical) ##
 
-  rm -rf visionos_xcode
-  cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
-  cp out/visionos/templates/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
-  cp out/visionos/templates/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
-  cd visionos_xcode
-  zip -q -9 -r "${templatesdir}/visionos.zip" *
-  cd ..
-  rm -rf visionos_xcode
+  #rm -rf visionos_xcode
+  #cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
+  #cp out/visionos/templates/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
+  #cp out/visionos/templates/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  #cd visionos_xcode
+  #zip -q -9 -r "${templatesdir}/visionos.zip" *
+  #cd ..
+  #rm -rf visionos_xcode
 
   ## Templates TPZ (Classical) ##
 
@@ -562,14 +562,14 @@ if [ "${build_mono}" == "1" ]; then
 
   ## visionOS (Mono) ##
 
-  rm -rf visionos_xcode
-  cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
-  cp out/visionos/templates-mono/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
-  cp out/visionos/templates-mono/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
-  cd visionos_xcode
-  zip -q -9 -r "${templatesdir_mono}/visionos.zip" *
-  cd ..
-  rm -rf visionos_xcode
+  #rm -rf visionos_xcode
+  #cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
+  #cp out/visionos/templates-mono/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
+  #cp out/visionos/templates-mono/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  #cd visionos_xcode
+  #zip -q -9 -r "${templatesdir_mono}/visionos.zip" *
+  #cd ..
+  #rm -rf visionos_xcode
 
   # No .NET support for those platforms yet.
 
