@@ -271,8 +271,8 @@ ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-appleembedded:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
 
-mkdir -p ${basedir}/out/visionos
-${podman_run} -v ${basedir}/build-visionos:/root/build -v ${basedir}/out/visionos:/root/out localhost/godot-appleembedded:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/visionos
+#mkdir -p ${basedir}/out/visionos
+#${podman_run} -v ${basedir}/build-visionos:/root/build -v ${basedir}/out/visionos:/root/out localhost/godot-appleembedded:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/visionos
 
 uid=$(id -un)
 gid=$(id -gn)
