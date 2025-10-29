@@ -161,7 +161,6 @@ retry_command() {
 command="sudo mv /home/akien/web_editor/${template_version} /var/www/editor.godotengine.org/public/releases/"
 command="${command}; cd /var/www/editor.godotengine.org; sudo chown -R www-data:www-data public/releases/${template_version}"
 command="${command}; sudo ./create-symlinks.sh -v ${template_version}"
-ssh -P 22 ${WEB_EDITOR_HOSTNAME} "${command}"
 
 retry_command "scp -P 22 -r web/${template_version} ${WEB_EDITOR_HOSTNAME}:/home/akien/web_editor/"
 sleep 2
