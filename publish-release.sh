@@ -13,8 +13,9 @@ source ./config.sh
 godot_version=""
 latest_stable=0
 skip_stable=0
+draft_arg=""
 
-while getopts "h?v:ls" opt; do
+while getopts "h?v:lsd" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
@@ -22,6 +23,7 @@ while getopts "h?v:ls" opt; do
     echo "  -v godot version (e.g: 3.2-stable) [mandatory]"
     echo "  -l latest stable release (web editor, itch.io, EGS)"
     echo "  -s don't run stable specific steps"
+    echo "  -d publish as draft release on GitHub"
     echo
     exit 1
     ;;
@@ -33,6 +35,9 @@ while getopts "h?v:ls" opt; do
     ;;
   s)
     skip_stable=1
+    ;;
+  d)
+    draft_arg="-d"
     ;;
   esac
 done
@@ -100,7 +105,7 @@ if [ -z "${GODOT_BUILDS_PATH}" ]; then
   exit 1
 fi
 
-${GODOT_BUILDS_PATH}/tools/upload-github.sh -v ${version} -f ${status}
+${GODOT_BUILDS_PATH}/tools/upload-github.sh -v ${version} -f ${status} ${draft_arg}
 
 # Stable release only
 
@@ -116,7 +121,7 @@ if [ "${status}" == "stable" -a "${skip_stable}" == "0" ]; then
   release_title=$(echo "$release_info" | jq -r '.name')
   release_desc=$(echo "$release_info" | jq -r '.body')
 
-  gh release create ${godot_version} --repo godotengine/godot --title "$release_title" --notes "$release_desc"
+  gh release create ${godot_version} --repo godotengine/godot --title "$release_title" --notes "$release_desc" ${draft_arg}
   gh release upload ${godot_version} ${reldir}/[Gg]* ${reldir}/mono/[Gg]*
   # Concatenate SHA sums.
   cp ${reldir}/SHA512-SUMS.txt .
