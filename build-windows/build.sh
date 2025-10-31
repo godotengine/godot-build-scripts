@@ -7,6 +7,7 @@ set -e
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 export OPTIONS="production=yes use_mingw=yes angle_libs=/root/angle mesa_libs=/root/mesa d3d12=yes accesskit_sdk_path=/root/accesskit/accesskit-c"
 export OPTIONS_MONO="module_mono_enabled=yes"
+export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export OPTIONS_LLVM="use_llvm=yes mingw_prefix=/root/llvm-mingw"
 export TERM=xterm
 
@@ -107,6 +108,45 @@ if [ "${MONO}" == "1" ]; then
   $SCONS platform=windows arch=arm64 $OPTIONS $OPTIONS_MONO $OPTIONS_LLVM target=template_release
   mkdir -p /root/out/arm64/templates-mono
   cp -rvp bin/* /root/out/arm64/templates-mono
+  rm -rf bin
+fi
+
+# .NET
+
+if [ "${DOTNET}" == "1" ]; then
+  echo "Starting .NET build for Windows..."
+
+  $SCONS platform=windows arch=x86_64 $OPTIONS $OPTIONS_DOTNET target=editor
+  mkdir -p /root/out/x86_64/tools-dotnet
+  cp -rvp bin/* /root/out/x86_64/tools-dotnet
+  rm -rf bin
+
+  $SCONS platform=windows arch=x86_64 $OPTIONS $OPTIONS_DOTNET target=template_debug
+  $SCONS platform=windows arch=x86_64 $OPTIONS $OPTIONS_DOTNET target=template_release
+  mkdir -p /root/out/x86_64/templates-dotnet
+  cp -rvp bin/* /root/out/x86_64/templates-dotnet
+  rm -rf bin
+
+  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_DOTNET target=editor
+  mkdir -p /root/out/x86_32/tools-dotnet
+  cp -rvp bin/* /root/out/x86_32/tools-dotnet
+  rm -rf bin
+
+  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_DOTNET target=template_debug
+  $SCONS platform=windows arch=x86_32 $OPTIONS $OPTIONS_DOTNET target=template_release
+  mkdir -p /root/out/x86_32/templates-dotnet
+  cp -rvp bin/* /root/out/x86_32/templates-dotnet
+  rm -rf bin
+
+  $SCONS platform=windows arch=arm64 $OPTIONS $OPTIONS_DOTNET $OPTIONS_LLVM target=editor
+  mkdir -p /root/out/arm64/tools-dotnet
+  cp -rvp bin/* /root/out/arm64/tools-dotnet
+  rm -rf bin
+
+  $SCONS platform=windows arch=arm64 $OPTIONS $OPTIONS_DOTNET $OPTIONS_LLVM target=template_debug
+  $SCONS platform=windows arch=arm64 $OPTIONS $OPTIONS_DOTNET $OPTIONS_LLVM target=template_release
+  mkdir -p /root/out/arm64/templates-dotnet
+  cp -rvp bin/* /root/out/arm64/templates-dotnet
   rm -rf bin
 fi
 

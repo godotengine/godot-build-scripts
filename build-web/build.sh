@@ -23,6 +23,7 @@ declare -a JOBS_NOTHREADS=(
 export SCONS="scons -j$(expr ${NUM_CORES} / ${NUM_JOBS}) verbose=yes warnings=no progress=no redirect_build_objects=no"
 export OPTIONS="production=yes"
 export OPTIONS_MONO="module_mono_enabled=yes -j${NUM_CORES}"
+export OPTIONS_MONO="module_dotnet_enabled=yes -j${NUM_CORES}"
 export TERM=xterm
 
 source /root/emsdk/emsdk_env.sh
@@ -91,6 +92,28 @@ if false; then
 
   mkdir -p /root/out/templates-mono
   cp -rvp bin/*.zip /root/out/templates-mono
+  rm -f bin/*.zip
+fi
+
+
+
+
+# .NET
+
+
+
+
+
+# No Web support with .NET yet.
+#if [ "${DOTNET}" == "1" ]; then
+if false; then
+  echo "Starting .NET build for Web..."
+
+  $SCONS platform=web ${OPTIONS} ${OPTIONS_DOTNET} target=template_debug
+  $SCONS platform=web ${OPTIONS} ${OPTIONS_DOTNET} target=template_release
+
+  mkdir -p /root/out/templates-dotnet
+  cp -rvp bin/*.zip /root/out/templates-dotnet
   rm -f bin/*.zip
 fi
 

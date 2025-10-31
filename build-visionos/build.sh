@@ -10,6 +10,7 @@ export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_
 # Disable Vulkan and MoltenVK for visionOS - visionOS doesn't support MoltenVK.
 export OPTIONS="production=yes use_lto=no vulkan=no SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend"
 export OPTIONS_MONO="module_mono_enabled=yes"
+export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
 
 export VISIONOS_SDK="26.0"
@@ -58,6 +59,24 @@ if [ "${MONO}" == "1" ]; then
   mkdir -p /root/out/templates-mono
   cp bin/libgodot.visionos.template_release.arm64.a /root/out/templates-mono/libgodot.visionos.a
   cp bin/libgodot.visionos.template_debug.arm64.a /root/out/templates-mono/libgodot.visionos.debug.a
+fi
+
+# .NET
+
+if [ "${DOTNET}" == "1" ]; then
+  echo "Starting .NET build for visionOS..."
+
+  # arm64 device
+  $SCONS platform=visionos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_debug $VISIONOS_DEVICE $APPLE_TARGET_ARM64
+  $SCONS platform=visionos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_release $VISIONOS_DEVICE $APPLE_TARGET_ARM64
+
+  # arm64 simulator (disabled for now, see build-ios)
+  #$SCONS platform=visionos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_debug $VISIONOS_SIMULATOR $APPLE_TARGET_ARM64
+  #$SCONS platform=visionos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_release $VISIONOS_SIMULATOR $APPLE_TARGET_ARM64
+
+  mkdir -p /root/out/templates-dotnet
+  cp bin/libgodot.visionos.template_release.arm64.a /root/out/templates-dotnet/libgodot.visionos.a
+  cp bin/libgodot.visionos.template_debug.arm64.a /root/out/templates-dotnet/libgodot.visionos.debug.a
 fi
 
 echo "visionOS build successful"
