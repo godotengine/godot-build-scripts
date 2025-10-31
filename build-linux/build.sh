@@ -7,6 +7,7 @@ set -e
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 export OPTIONS="production=yes accesskit_sdk_path=/root/accesskit/accesskit-c"
 export OPTIONS_MONO="module_mono_enabled=yes"
+export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
 
 rm -rf godot
@@ -134,6 +135,64 @@ if [ "${MONO}" == "1" ]; then
   $SCONS platform=linuxbsd arch=arm32 $OPTIONS $OPTIONS_MONO target=template_release
   mkdir -p /root/out/arm32/templates-mono
   cp -rvp bin/* /root/out/arm32/templates-mono
+  rm -rf bin
+fi
+
+# .NET
+
+if [ "${DOTNET}" == "1" ]; then
+  echo "Starting .NET build for Linux..."
+
+  export PATH="${GODOT_SDK_LINUX_X86_64}/bin:${BASE_PATH}"
+
+  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS $OPTIONS_DOTNET target=editor
+  mkdir -p /root/out/x86_64/tools-dotnet
+  cp -rvp bin/* /root/out/x86_64/tools-dotnet
+  rm -rf bin
+
+  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS $OPTIONS_DOTNET target=template_debug
+  $SCONS platform=linuxbsd arch=x86_64 $OPTIONS $OPTIONS_DOTNET target=template_release
+  mkdir -p /root/out/x86_64/templates-dotnet
+  cp -rvp bin/* /root/out/x86_64/templates-dotnet
+  rm -rf bin
+
+  export PATH="${GODOT_SDK_LINUX_X86_32}/bin:${BASE_PATH}"
+
+  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS $OPTIONS_DOTNET target=editor
+  mkdir -p /root/out/x86_32/tools-dotnet
+  cp -rvp bin/* /root/out/x86_32/tools-dotnet
+  rm -rf bin
+
+  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS $OPTIONS_DOTNET target=template_debug
+  $SCONS platform=linuxbsd arch=x86_32 $OPTIONS $OPTIONS_DOTNET target=template_release
+  mkdir -p /root/out/x86_32/templates-dotnet
+  cp -rvp bin/* /root/out/x86_32/templates-dotnet
+  rm -rf bin
+
+  export PATH="${GODOT_SDK_LINUX_ARM64}/bin:${BASE_PATH}"
+
+  $SCONS platform=linuxbsd arch=arm64 $OPTIONS $OPTIONS_DOTNET target=editor
+  mkdir -p /root/out/arm64/tools-dotnet
+  cp -rvp bin/* /root/out/arm64/tools-dotnet
+  rm -rf bin
+
+  $SCONS platform=linuxbsd arch=arm64 $OPTIONS $OPTIONS_DOTNET target=template_debug
+  $SCONS platform=linuxbsd arch=arm64 $OPTIONS $OPTIONS_DOTNET target=template_release
+  mkdir -p /root/out/arm64/templates-dotnet
+  cp -rvp bin/* /root/out/arm64/templates-dotnet
+  rm -rf bin
+
+  export PATH="${GODOT_SDK_LINUX_ARM32}/bin:${BASE_PATH}"
+
+  $SCONS platform=linuxbsd arch=arm32 $OPTIONS $OPTIONS_DOTNET target=editor
+  mkdir -p /root/out/arm32/tools-dotnet
+  cp -rvp bin/* /root/out/arm32/tools-dotnet
+  rm -rf bin
+
+  $SCONS platform=linuxbsd arch=arm32 $OPTIONS $OPTIONS_DOTNET target=template_debug
+  $SCONS platform=linuxbsd arch=arm32 $OPTIONS $OPTIONS_DOTNET target=template_release
+  mkdir -p /root/out/arm32/templates-dotnet
+  cp -rvp bin/* /root/out/arm32/templates-dotnet
   rm -rf bin
 fi
 
