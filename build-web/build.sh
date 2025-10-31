@@ -10,14 +10,14 @@ export NUM_JOBS=5
 declare -a JOBS=(
   "target=template_debug"
   "target=template_release"
-  "target=template_debug dlink_enabled=yes"
-  "target=template_release dlink_enabled=yes"
+  "target=template_debug dlink_enabled=yes module_dotnet_enabled=yes"
+  "target=template_release dlink_enabled=yes module_dotnet_enabled=yes"
 )
 declare -a JOBS_NOTHREADS=(
   "target=template_debug threads=no"
   "target=template_release threads=no"
-  "target=template_debug dlink_enabled=yes threads=no"
-  "target=template_release dlink_enabled=yes threads=no"
+  "target=template_debug dlink_enabled=yes threads=no module_dotnet_enabled=yes"
+  "target=template_release dlink_enabled=yes threads=no module_dotnet_enabled=yes"
 )
 
 export SCONS="scons -j$(expr ${NUM_CORES} / ${NUM_JOBS}) verbose=yes warnings=no progress=no redirect_build_objects=no"

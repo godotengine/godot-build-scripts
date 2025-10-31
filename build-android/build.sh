@@ -81,15 +81,15 @@ if [ "${CLASSICAL}" == "1" ]; then
 
   prepare_source
 
-  $SCONS platform=android arch=arm32 $OPTIONS target=template_release
-  $SCONS platform=android arch=arm64 $OPTIONS target=template_release
-  $SCONS platform=android arch=x86_32 $OPTIONS target=template_release
-  $SCONS platform=android arch=x86_64 $OPTIONS target=template_release separate_debug_symbols=yes # Generate native debug symbols only for the release templates.
+  $SCONS platform=android arch=arm32 $OPTIONS module_dotnet_enabled=yes target=template_release
+  $SCONS platform=android arch=arm64 $OPTIONS module_dotnet_enabled=yes target=template_release
+  $SCONS platform=android arch=x86_32 $OPTIONS module_dotnet_enabled=yes target=template_release
+  $SCONS platform=android arch=x86_64 $OPTIONS module_dotnet_enabled=yes target=template_release separate_debug_symbols=yes # Generate native debug symbols only for the release templates.
 
-  $SCONS platform=android arch=arm32 $OPTIONS target=template_debug
-  $SCONS platform=android arch=arm64 $OPTIONS target=template_debug
-  $SCONS platform=android arch=x86_32 $OPTIONS target=template_debug
-  $SCONS platform=android arch=x86_64 $OPTIONS target=template_debug
+  $SCONS platform=android arch=arm32 $OPTIONS module_dotnet_enabled=yes target=template_debug
+  $SCONS platform=android arch=arm64 $OPTIONS module_dotnet_enabled=yes target=template_debug
+  $SCONS platform=android arch=x86_32 $OPTIONS module_dotnet_enabled=yes target=template_debug
+  $SCONS platform=android arch=x86_64 $OPTIONS module_dotnet_enabled=yes target=template_debug
 
   pushd platform/android/java
   ./gradlew generateGodotTemplates
