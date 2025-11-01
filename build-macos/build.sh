@@ -5,7 +5,7 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
-export OPTIONS="osxcross_sdk=darwin25 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend"
+export OPTIONS="osxcross_sdk=darwin25 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend module_dotnet_enabled=yes"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
@@ -21,7 +21,7 @@ if [ "${CLASSICAL}" == "1" ]; then
 
   $SCONS platform=macos $OPTIONS arch=x86_64 target=editor
   $SCONS platform=macos $OPTIONS arch=arm64 target=editor
-  lipo -create bin/godot.macos.editor.x86_64 bin/godot.macos.editor.arm64 -output bin/godot.macos.editor.universal
+  lipo -create bin/godot.macos.editor.x86_64.dotnet bin/godot.macos.editor.arm64.dotnet -output bin/godot.macos.editor.universal.dotnet
 
   mkdir -p /root/out/tools
   cp -rvp bin/* /root/out/tools
@@ -29,10 +29,10 @@ if [ "${CLASSICAL}" == "1" ]; then
 
   $SCONS platform=macos $OPTIONS arch=x86_64 target=template_debug
   $SCONS platform=macos $OPTIONS arch=arm64 target=template_debug
-  lipo -create bin/godot.macos.template_debug.x86_64 bin/godot.macos.template_debug.arm64 -output bin/godot.macos.template_debug.universal
+  lipo -create bin/godot.macos.template_debug.x86_64.dotnet bin/godot.macos.template_debug.arm64.dotnet -output bin/godot.macos.template_debug.universal.dotnet
   $SCONS platform=macos $OPTIONS arch=x86_64 target=template_release
   $SCONS platform=macos $OPTIONS arch=arm64 target=template_release
-  lipo -create bin/godot.macos.template_release.x86_64 bin/godot.macos.template_release.arm64 -output bin/godot.macos.template_release.universal
+  lipo -create bin/godot.macos.template_release.x86_64.dotnet bin/godot.macos.template_release.arm64.dotnet -output bin/godot.macos.template_release.universal.dotnet
 
   mkdir -p /root/out/templates
   cp -rvp bin/* /root/out/templates
