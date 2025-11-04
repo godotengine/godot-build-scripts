@@ -7,7 +7,7 @@ set -e
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 # Keep LTO disabled for iOS - it works but it makes linking apps on deploy very slow,
 # which is seen as a regression in the current workflow.
-export OPTIONS="production=yes use_lto=no SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend"
+export OPTIONS="production=yes use_lto=no SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend module_dotnet_enabled=yes"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export TERM=xterm
 
