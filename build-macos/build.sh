@@ -4,68 +4,28 @@ set -e
 
 # Config
 
-export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
-export OPTIONS="osxcross_sdk=darwin25 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend"
-export OPTIONS_MONO="module_mono_enabled=yes"
-export TERM=xterm
+export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no"
+export OPTIONS="osxcross_sdk=darwin24.5"
+export STRIP="x86_64-apple-darwin24.5-strip"
 
 rm -rf godot
 mkdir godot
 cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
-# Classical
+echo "Starting classical build for macOS..."
 
-if [ "${CLASSICAL}" == "1" ]; then
-  echo "Starting classical build for macOS..."
+$SCONS platform=osx $OPTIONS bits=64 tools=yes target=release_debug
+$STRIP bin/godot.osx.*
+mkdir -p /root/out/tools
+cp -rvp bin/* /root/out/tools
+rm -rf bin
 
-  $SCONS platform=macos $OPTIONS arch=x86_64 target=editor
-  $SCONS platform=macos $OPTIONS arch=arm64 target=editor
-  lipo -create bin/godot.macos.editor.x86_64 bin/godot.macos.editor.arm64 -output bin/godot.macos.editor.universal
-
-  mkdir -p /root/out/tools
-  cp -rvp bin/* /root/out/tools
-  rm -rf bin
-
-  $SCONS platform=macos $OPTIONS arch=x86_64 target=template_debug
-  $SCONS platform=macos $OPTIONS arch=arm64 target=template_debug
-  lipo -create bin/godot.macos.template_debug.x86_64 bin/godot.macos.template_debug.arm64 -output bin/godot.macos.template_debug.universal
-  $SCONS platform=macos $OPTIONS arch=x86_64 target=template_release
-  $SCONS platform=macos $OPTIONS arch=arm64 target=template_release
-  lipo -create bin/godot.macos.template_release.x86_64 bin/godot.macos.template_release.arm64 -output bin/godot.macos.template_release.universal
-
-  mkdir -p /root/out/templates
-  cp -rvp bin/* /root/out/templates
-  rm -rf bin
-fi
-
-# Mono
-
-if [ "${MONO}" == "1" ]; then
-  echo "Starting Mono build for macOS..."
-
-  cp -r /root/mono-glue/GodotSharp/GodotSharp/Generated modules/mono/glue/GodotSharp/GodotSharp/
-  cp -r /root/mono-glue/GodotSharp/GodotSharpEditor/Generated modules/mono/glue/GodotSharp/GodotSharpEditor/
-
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 target=editor
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 target=editor
-  lipo -create bin/godot.macos.editor.x86_64.mono bin/godot.macos.editor.arm64.mono -output bin/godot.macos.editor.universal.mono
-  ./modules/mono/build_scripts/build_assemblies.py --godot-output-dir=./bin --godot-platform=macos
-
-  mkdir -p /root/out/tools-mono
-  cp -rvp bin/* /root/out/tools-mono
-  rm -rf bin
-
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 target=template_debug
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 target=template_debug
-  lipo -create bin/godot.macos.template_debug.x86_64.mono bin/godot.macos.template_debug.arm64.mono -output bin/godot.macos.template_debug.universal.mono
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 target=template_release
-  $SCONS platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 target=template_release
-  lipo -create bin/godot.macos.template_release.x86_64.mono bin/godot.macos.template_release.arm64.mono -output bin/godot.macos.template_release.universal.mono
-
-  mkdir -p /root/out/templates-mono
-  cp -rvp bin/* /root/out/templates-mono
-  rm -rf bin
-fi
+$SCONS platform=osx $OPTIONS bits=64 tools=no target=release_debug
+$SCONS platform=osx $OPTIONS bits=64 tools=no target=release
+$STRIP bin/godot.osx.*
+mkdir -p /root/out/templates
+cp -rvp bin/* /root/out/templates
+rm -rf bin
 
 echo "macOS build successful"
