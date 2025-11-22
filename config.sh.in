@@ -13,7 +13,7 @@
 export PODMAN='podman'
 
 # Name and version of the images to use in build.sh.
-export IMAGE_VERSION='4.4-f41'
+export IMAGE_VERSION='4.5-f42'
 
 # Default build name used to distinguish between official and custom builds.
 export BUILD_REVISION='custom_build'

@@ -6,8 +6,8 @@ set -e
 dnf install -y pypy
 
 export SCONS="pypy /root/scons-local/scons.py -j${NUM_CORES}"
-export OPTIONS="osxcross_sdk=darwin24.2"
-export STRIP="x86_64-apple-darwin24.2-strip"
+export OPTIONS="osxcross_sdk=darwin24.5"
+export STRIP="x86_64-apple-darwin24.5-strip"
 
 rm -rf godot
 mkdir godot
