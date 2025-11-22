@@ -236,6 +236,10 @@ if true; then
   zip -q -9 "${reldir}/${binname}.zip" ${binname}
   rm ${binname}
 
+  # Templates
+  cp out/linux/godot_server.server.opt.64 ${templatesdir}/linux_server_64
+  cp out/linux/godot_server.server.opt.32 ${templatesdir}/linux_server_32
+
   ## Templates TPZ (Classical) ##
 
   echo "${templates_version}" > ${templatesdir}/version.txt

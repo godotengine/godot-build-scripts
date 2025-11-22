@@ -29,6 +29,10 @@ cp -rvp bin/godot.x11.* /root/out/
 
 export PATH="${GODOT_SDK_LINUX_X86_64}/bin:${BASE_PATH}"
 ${SCONS} platform=server ${OPTIONS} bits=64 tools=yes target=release_debug
+${SCONS} platform=server ${OPTIONS} bits=64 tools=no target=release
+
+export PATH="${GODOT_SDK_LINUX_X86_32}/bin:${BASE_PATH}"
+${SCONS} platform=server ${OPTIONS} bits=32 tools=no target=release
 
 ${STRIP} bin/godot_server.server.*
 cp -rvp bin/godot_server.server.* /root/out/
