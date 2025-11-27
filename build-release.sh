@@ -33,13 +33,10 @@ sign_macos() {
   _macos_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
   _reldir="$1"
   _binname="$2"
-  _is_mono="$3"
+  _appname="$3"
 
-  if [[ "${_is_mono}" == "1" ]]; then
-    _appname="Godot_mono.app"
+  if [[ "${_appname}" == "Godot_mono.app" ]]; then
     _sharpdir="${_appname}/Contents/Resources/GodotSharp"
-  else
-    _appname="Godot.app"
   fi
 
   scp "${_reldir}/${_binname}.zip" "${OSX_HOST}:${_macos_tmpdir}"
@@ -76,7 +73,6 @@ sign_macos_template() {
   fi
   _macos_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
   _reldir="$1"
-  _is_mono="$2"
 
   scp "${_reldir}/macos.zip" "${OSX_HOST}:${_macos_tmpdir}"
   ssh "${OSX_HOST}" "
@@ -97,6 +93,7 @@ do_cleanup=1
 make_tarball=1
 build_classical=1
 build_mono=1
+build_dotnet=0
 
 while getopts "h?v:t:b:n-:" opt; do
   case "$opt" in
@@ -105,7 +102,7 @@ while getopts "h?v:t:b:n-:" opt; do
     echo
     echo "  -v godot version (e.g: 3.2-stable) [mandatory]"
     echo "  -t templates version (e.g. 3.2.stable) [mandatory]"
-    echo "  -b build target: all|classical|mono|none (default: all)"
+    echo "  -b build target: all|classical|mono|dotnet|none (default: all)"
     echo "  --no-cleanup disable deleting pre-existing output folders (default: false)"
     echo "  --no-tarball disable generating source tarball (default: false)"
     echo
@@ -119,12 +116,21 @@ while getopts "h?v:t:b:n-:" opt; do
     ;;
   b)
     if [ "$OPTARG" == "classical" ]; then
+      build_classical=1
       build_mono=0
+      build_dotnet=0
     elif [ "$OPTARG" == "mono" ]; then
       build_classical=0
+      build_mono=1
+      build_dotnet=0
+    elif [ "$OPTARG" == "dotnet" ]; then
+      build_classical=0
+      build_mono=0
+      build_dotnet=1
     elif [ "$OPTARG" == "none" ]; then
       build_classical=0
       build_mono=0
+      build_dotnet=0
     fi
     ;;
   -)
@@ -156,9 +162,11 @@ fi
 
 export reldir="${basedir}/releases/${godot_version}"
 export reldir_mono="${reldir}/mono"
+export reldir_dotnet="${reldir}/dotnet"
 export tmpdir="${basedir}/tmp"
 export templatesdir="${tmpdir}/templates"
 export templatesdir_mono="${tmpdir}/mono/templates"
+export templatesdir_dotnet="${tmpdir}/dotnet/templates"
 export webdir="${basedir}/web/${templates_version}"
 export steamdir="${basedir}/steam"
 
@@ -174,9 +182,15 @@ if [ "${do_cleanup}" == "1" ]; then
   rm -rf ${steamdir}
 
   mkdir -p ${reldir}
-  mkdir -p ${reldir_mono}
+  if [ "${build_mono}" ]; then
+    mkdir -p ${reldir_mono}
+  fi
+  if [ "${build_dotnet}" ]; then
+    mkdir -p ${reldir_dotnet}
+  fi
   mkdir -p ${templatesdir}
   mkdir -p ${templatesdir_mono}
+  mkdir -p ${templatesdir_dotnet}
   mkdir -p ${webdir}
   if [ -d out/windows/steam ]; then
     mkdir -p ${steamdir}
@@ -294,7 +308,7 @@ if [ "${build_classical}" == "1" ]; then
   chmod +x Godot.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
-  sign_macos ${reldir} ${binname} 0
+  sign_macos ${reldir} ${binname} Godot.app
 
   # Templates
   rm -rf macos_template.app
@@ -306,7 +320,7 @@ if [ "${build_classical}" == "1" ]; then
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
   rm -rf macos_template.app
-  sign_macos_template ${templatesdir} 0
+  sign_macos_template ${templatesdir}
 
   ## Steam (Classical) ##
 
@@ -523,7 +537,7 @@ if [ "${build_mono}" == "1" ]; then
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
-  sign_macos ${reldir_mono} ${binname} 1
+  sign_macos ${reldir_mono} ${binname} Godot_mono.app
 
   # Templates
   rm -rf macos_template.app
@@ -534,7 +548,7 @@ if [ "${build_mono}" == "1" ]; then
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
   rm -rf macos_template.app
-  sign_macos_template ${templatesdir_mono} 1
+  sign_macos_template ${templatesdir_mono}
 
   ## Android (Mono) ##
 
@@ -596,6 +610,155 @@ if [ "${build_mono}" == "1" ]; then
   sha512sum [Gg]* >> SHA512-SUMS.txt
   mkdir -p ${basedir}/sha512sums/${godot_version}/mono
   cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/mono/
+  popd
+
+fi
+
+# .NET
+
+if [ "${build_dotnet}" == "1" ]; then
+
+  ## Linux (.NET) ##
+
+  for arch in x86_64 x86_32 arm64 arm32; do
+    # Editor
+    binname="${godot_basename}_dotnet_linux.${arch}"
+    cp out/linux/${arch}/tools-dotnet/godot.linuxbsd.editor.${arch}.dotnet ${binname}
+    zip -r -q -9 "${reldir_dotnet}/${binname}.zip" ${binname}
+    rm ${binname}
+
+    # Templates
+    cp out/linux/${arch}/templates-dotnet/godot.linuxbsd.template_debug.${arch}.dotnet ${templatesdir_dotnet}/linux_debug.${arch}
+    cp out/linux/${arch}/templates-dotnet/godot.linuxbsd.template_release.${arch}.dotnet ${templatesdir_dotnet}/linux_release.${arch}
+  done
+
+  # ICU data
+  if [ -f ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ]; then
+    cp ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ${templatesdir_dotnet}/icudt_godot.dat
+  else
+    echo "icudt_godot.dat" not found.
+  fi
+
+  ## Windows (.NET) ##
+
+  declare -A win_arch_map=(
+    ["x86_64"]="win64"
+    ["x86_32"]="win32"
+    ["arm64"]="arm64"
+  )
+
+  for arch in x86_64 x86_32 arm64; do
+    # Editor
+    winarch=${win_arch_map[${arch}]}
+    binname="${godot_basename}_dotnet_${winarch}.exe"
+    wrpname="${godot_basename}_dotnet_${winarch}_console.exe"
+    [[ "${arch}" == "arm64" ]] && is_llvm=".llvm"
+    cp out/windows/${arch}/tools-dotnet/godot.windows.editor.${arch}${is_llvm}.dotnet.exe ${binname}
+    sign_windows ${binname}
+    cp out/windows/${arch}/tools-dotnet/godot.windows.editor.${arch}${is_llvm}.dotnet.console.exe ${wrpname}
+    sign_windows ${wrpname}
+    zip -r -q -9 "${reldir_dotnet}/${binname}.zip" ${binname} ${wrpname}
+    rm ${binname} ${wrpname}
+
+    # Templates
+    cp out/windows/${arch}/templates-dotnet/godot.windows.template_debug.${arch}${is_llvm}.dotnet.exe ${templatesdir_dotnet}/windows_debug_${arch}.exe
+    cp out/windows/${arch}/templates-dotnet/godot.windows.template_release.${arch}${is_llvm}.dotnet.exe ${templatesdir_dotnet}/windows_release_${arch}.exe
+    cp out/windows/${arch}/templates-dotnet/godot.windows.template_debug.${arch}${is_llvm}.dotnet.console.exe ${templatesdir_dotnet}/windows_debug_${arch}_console.exe
+    cp out/windows/${arch}/templates-dotnet/godot.windows.template_release.${arch}${is_llvm}.dotnet.console.exe ${templatesdir_dotnet}/windows_release_${arch}_console.exe
+  done
+
+  ## macOS (.NET) ##
+
+  # Editor
+  binname="${godot_basename}_dotnet_macos.universal"
+  rm -rf Godot_dotnet.app
+  cp -r git/misc/dist/macos_tools.app Godot_dotnet.app
+  mkdir -p Godot_dotnet.app/Contents/MacOS
+  cp out/macos/tools-dotnet/godot.macos.editor.universal.dotnet Godot_dotnet.app/Contents/MacOS/Godot
+  chmod +x Godot_dotnet.app/Contents/MacOS/Godot
+  zip -q -9 -r "${reldir_dotnet}/${binname}.zip" Godot_dotnet.app
+  rm -rf Godot_dotnet.app
+  sign_macos ${reldir_dotnet} ${binname} Godot_dotnet.app
+
+  # Templates
+  rm -rf macos_template.app
+  cp -r git/misc/dist/macos_template.app .
+  mkdir -p macos_template.app/Contents/MacOS
+  cp out/macos/templates-dotnet/godot.macos.template_debug.universal.dotnet macos_template.app/Contents/MacOS/godot_macos_debug.universal
+  cp out/macos/templates-dotnet/godot.macos.template_release.universal.dotnet macos_template.app/Contents/MacOS/godot_macos_release.universal
+  chmod +x macos_template.app/Contents/MacOS/godot_macos*
+  zip -q -9 -r "${templatesdir_dotnet}/macos.zip" macos_template.app
+  rm -rf macos_template.app
+  sign_macos_template ${templatesdir_dotnet}
+
+  ## Android (.NET) ##
+
+  # Lib for direct download
+  cp out/android/templates-dotnet/godot-lib.template_release.aar ${reldir_dotnet}/godot-lib.${templates_version}.dotnet.template_release.aar
+
+  # Templates
+  cp out/android/templates-dotnet/*.apk ${templatesdir_dotnet}/
+  cp out/android/templates-dotnet/android_source.zip ${templatesdir_dotnet}/
+
+  ## iOS (.NET) ##
+
+  rm -rf ios_xcode
+  cp -r git/misc/dist/apple_embedded_xcode ios_xcode
+  cp out/ios/templates-dotnet/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates-dotnet/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates-dotnet/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates-dotnet/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
+  cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
+  rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
+  cd ios_xcode
+  zip -q -9 -r "${templatesdir_dotnet}/ios.zip" *
+  cd ..
+  rm -rf ios_xcode
+
+  ## visionOS (.NET) ##
+
+  #rm -rf visionos_xcode
+  #cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
+  #cp out/visionos/templates-dotnet/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
+  #cp out/visionos/templates-dotnet/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  #cd visionos_xcode
+  #zip -q -9 -r "${templatesdir_dotnet}/visionos.zip" *
+  #cd ..
+  #rm -rf visionos_xcode
+
+  # No .NET support for those platforms yet.
+
+  if false; then
+
+  ## Web (.NET) ##
+
+  # Templates
+  cp out/web/templates-dotnet/godot.web.template_debug.wasm32.dotnet.zip ${templatesdir_dotnet}/web_debug.zip
+  cp out/web/templates-dotnet/godot.web.template_release.wasm32.dotnet.zip ${templatesdir_dotnet}/web_release.zip
+
+  fi
+
+  ## Templates TPZ (.NET) ##
+
+  echo "${templates_version}.dotnet" > ${templatesdir_dotnet}/version.txt
+  pushd ${templatesdir_dotnet}/..
+  zip -q -9 -r -D "${reldir_dotnet}/${godot_basename}_dotnet_export_templates.tpz" templates/*
+  popd
+
+  ## .NET bindings ##
+
+  dotnetname="godot-dotnet-${templates_version}"
+  mkdir ${dotnetname}
+  cp out/dotnet/* ${dotnetname}/
+  zip -q -9 -r "${reldir_dotnet}/${dotnetname}.zip" ${dotnetname}
+  rm -rf ${dotnetname}
+
+  ## SHA-512 sums (.NET) ##
+
+  pushd ${reldir_dotnet}
+  sha512sum [Gg]* >> SHA512-SUMS.txt
+  mkdir -p ${basedir}/sha512sums/${godot_version}/dotnet
+  cp SHA512-SUMS.txt ${basedir}/sha512sums/${godot_version}/dotnet/
   popd
 
 fi
