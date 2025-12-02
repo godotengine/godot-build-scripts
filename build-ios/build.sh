@@ -9,6 +9,7 @@ export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_
 # which is seen as a regression in the current workflow.
 export OPTIONS="production=yes use_lto=no SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend"
 export OPTIONS_MONO="module_mono_enabled=yes"
+export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
 
 export IOS_SDK="26.0"
@@ -74,6 +75,32 @@ if [ "${MONO}" == "1" ]; then
   cp bin/libgodot.ios.template_debug.arm64.a /root/out/templates-mono/libgodot.ios.debug.a
   cp bin/libgodot.ios.template_release.x86_64.simulator.a /root/out/templates-mono/libgodot.ios.simulator.a
   cp bin/libgodot.ios.template_debug.x86_64.simulator.a /root/out/templates-mono/libgodot.ios.debug.simulator.a
+fi
+
+# .NET
+
+if [ "${DOTNET}" == "1" ]; then
+  echo "Starting .NET build for iOS..."
+
+  # arm64 device
+  $SCONS platform=ios $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_debug $IOS_DEVICE $APPLE_TARGET_ARM64
+  $SCONS platform=ios $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_release $IOS_DEVICE $APPLE_TARGET_ARM64
+
+  # arm64 simulator
+  # Disabled for now as it doesn't work with cctools-port and current LLVM.
+  # See https://github.com/godotengine/build-containers/pull/85.
+  #$SCONS platform=ios $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_debug $IOS_SIMULATOR $APPLE_TARGET_ARM64
+  #$SCONS platform=ios $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_release $IOS_SIMULATOR $APPLE_TARGET_ARM64
+
+  # x86_64 simulator
+  $SCONS platform=ios $OPTIONS $OPTIONS_DOTNET arch=x86_64 target=template_debug $IOS_SIMULATOR $APPLE_TARGET_X86_64
+  $SCONS platform=ios $OPTIONS $OPTIONS_DOTNET arch=x86_64 target=template_release $IOS_SIMULATOR $APPLE_TARGET_X86_64
+
+  mkdir -p /root/out/templates-dotnet
+  cp bin/libgodot.ios.template_release.arm64.a /root/out/templates-dotnet/libgodot.ios.a
+  cp bin/libgodot.ios.template_debug.arm64.a /root/out/templates-dotnet/libgodot.ios.debug.a
+  cp bin/libgodot.ios.template_release.x86_64.simulator.a /root/out/templates-dotnet/libgodot.ios.simulator.a
+  cp bin/libgodot.ios.template_debug.x86_64.simulator.a /root/out/templates-dotnet/libgodot.ios.debug.simulator.a
 fi
 
 echo "iOS build successful"

@@ -7,6 +7,7 @@ set -e
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 export OPTIONS="osxcross_sdk=darwin25 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend"
 export OPTIONS_MONO="module_mono_enabled=yes"
+export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
 
 rm -rf godot
@@ -65,6 +66,31 @@ if [ "${MONO}" == "1" ]; then
 
   mkdir -p /root/out/templates-mono
   cp -rvp bin/* /root/out/templates-mono
+  rm -rf bin
+fi
+
+# .NET
+
+if [ "${DOTNET}" == "1" ]; then
+  echo "Starting .NET build for macOS..."
+
+  $SCONS platform=macos $OPTIONS $OPTIONS_DOTNET arch=x86_64 target=editor
+  $SCONS platform=macos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=editor
+  lipo -create bin/godot.macos.editor.x86_64.dotnet bin/godot.macos.editor.arm64.dotnet -output bin/godot.macos.editor.universal.dotnet
+
+  mkdir -p /root/out/tools-dotnet
+  cp -rvp bin/* /root/out/tools-dotnet
+  rm -rf bin
+
+  $SCONS platform=macos $OPTIONS $OPTIONS_DOTNET arch=x86_64 target=template_debug
+  $SCONS platform=macos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_debug
+  lipo -create bin/godot.macos.template_debug.x86_64.dotnet bin/godot.macos.template_debug.arm64.dotnet -output bin/godot.macos.template_debug.universal.dotnet
+  $SCONS platform=macos $OPTIONS $OPTIONS_DOTNET arch=x86_64 target=template_release
+  $SCONS platform=macos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=template_release
+  lipo -create bin/godot.macos.template_release.x86_64.dotnet bin/godot.macos.template_release.arm64.dotnet -output bin/godot.macos.template_release.universal.dotnet
+
+  mkdir -p /root/out/templates-dotnet
+  cp -rvp bin/* /root/out/templates-dotnet
   rm -rf bin
 fi
 

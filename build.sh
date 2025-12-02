@@ -36,6 +36,7 @@ godot_version=""
 git_treeish="master"
 build_classical=1
 build_mono=1
+build_dotnet=0
 build_steam=0
 force_download=0
 skip_download=1
@@ -51,7 +52,7 @@ while getopts "h?r:u:p:v:g:b:fsc" opt; do
     echo "  -p password"
     echo "  -v godot version (e.g. 3.1-alpha5) [mandatory]"
     echo "  -g git treeish (e.g. master)"
-    echo "  -b all|classical|mono (default: all)"
+    echo "  -b all|classical|mono|dotnet (default: all)"
     echo "  -f force redownload of all images"
     echo "  -s skip downloading"
     echo "  -c skip checkout"
@@ -75,9 +76,17 @@ while getopts "h?r:u:p:v:g:b:fsc" opt; do
     ;;
   b)
     if [ "$OPTARG" == "classical" ]; then
+      build_classical=1
       build_mono=0
+      build_dotnet=0
     elif [ "$OPTARG" == "mono" ]; then
       build_classical=0
+      build_mono=1
+      build_dotnet=0
+    elif [ "$OPTARG" == "dotnet" ]; then
+      build_classical=0
+      build_mono=0
+      build_dotnet=1
     fi
     ;;
   f)
@@ -247,11 +256,14 @@ EOF
   popd
 fi
 
-export podman_run="${podman} run -it --rm --env BUILD_NAME=${BUILD_NAME} --env GODOT_VERSION_STATUS=${GODOT_VERSION_STATUS} --env NUM_CORES=${NUM_CORES} --env CLASSICAL=${build_classical} --env MONO=${build_mono} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
+export podman_run="${podman} run -it --rm --env BUILD_NAME=${BUILD_NAME} --env GODOT_VERSION_STATUS=${GODOT_VERSION_STATUS} --env NUM_CORES=${NUM_CORES} --env CLASSICAL=${build_classical} --env MONO=${build_mono} --env DOTNET=${build_dotnet} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=$IMAGE_VERSION
 
 mkdir -p ${basedir}/mono-glue
 ${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
+
+mkdir -p ${basedir}/out/dotnet
+${podman_run} -v ${basedir}/build-dotnet:/root/build -v ${basedir}/out/dotnet:/root/out --env GODOT_VERSION=${godot_version} localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/dotnet
 
 mkdir -p ${basedir}/out/windows
 ${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa -v ${basedir}/deps/accesskit:/root/accesskit --env STEAM=${build_steam} localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
