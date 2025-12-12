@@ -101,3 +101,6 @@ export GODOT_ANDROID_SIGN_PASSWORD=''
 # Google Cloud Service Account JSON key with access to Play Console upload permissions
 # (View app information + Release apps to production and/or testing.)
 export GODOT_ANDROID_UPLOAD_JSON_KEY=''
+# Horizon Store app ID and secret.
+export GODOT_ANDROID_HORIZON_APP_ID=''
+export GODOT_ANDROID_HORIZON_APP_SECRET=''
