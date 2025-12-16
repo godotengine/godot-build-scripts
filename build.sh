@@ -155,11 +155,11 @@ fi
 
 # macOS needs MoltenVK
 if [ ! -d "deps/moltenvk" ]; then
-  echo "Missing MoltenVK for macOS, downloading it."
+  echo "Missing MoltenVK for macOS/iOS, downloading it."
   mkdir -p deps/moltenvk
   pushd deps/moltenvk
-  curl -L -o moltenvk.tar https://github.com/godotengine/moltenvk-osxcross/releases/download/vulkan-sdk-1.3.283.0-2/MoltenVK-all.tar
-  tar xf moltenvk.tar && rm -f moltenvk.tar
+  curl -LO https://github.com/godotengine/moltenvk-osxcross/releases/download/moltenvk-1.4.1/MoltenVK-all.tar.xz
+  tar xvf MoltenVK-all.tar.xz && rm -f MoltenVK-all.tar.xz
   mv MoltenVK/MoltenVK/include/ MoltenVK/
   mv MoltenVK/MoltenVK/static/MoltenVK.xcframework/ MoltenVK/
   popd
