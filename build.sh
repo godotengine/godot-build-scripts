@@ -199,7 +199,7 @@ if [ ! -d "deps/mesa" ]; then
   echo "Missing Mesa/NIR libraries, downloading them."
   mkdir -p deps/mesa
   pushd deps/mesa
-  base_url=https://github.com/godotengine/godot-nir-static/releases/download/25.3.1/godot-nir-static
+  base_url=https://github.com/godotengine/godot-nir-static/releases/download/25.3.1-1/godot-nir-static
   curl -L -o mesa_arm64.zip $base_url-arm64-llvm-release.zip
   curl -L -o mesa_x86_64.zip $base_url-x86_64-gcc-release.zip
   curl -L -o mesa_x86_32.zip $base_url-x86_32-gcc-release.zip
