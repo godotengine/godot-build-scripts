@@ -242,6 +242,11 @@ if [ "${build_classical}" == "1" ]; then
   else
     echo "icudt_godot.dat" not found.
   fi
+  if [ -f ${basedir}/git/thirdparty/icu4c/icudt_godot_base.dat ]; then
+    cp ${basedir}/git/thirdparty/icu4c/icudt_godot_base.dat ${templatesdir}/icudt_godot_base.dat
+  else
+    echo "icudt_godot_base.dat" not found.
+  fi
 
   # Templates
   cp out/linux/x86_64/templates/godot.linuxbsd.template_release.x86_64 ${templatesdir}/linux_release.x86_64
@@ -464,6 +469,11 @@ if [ "${build_mono}" == "1" ]; then
   else
     echo "icudt_godot.dat" not found.
   fi
+  if [ -f ${basedir}/git/thirdparty/icu4c/icudt_godot_base.dat ]; then
+    cp ${basedir}/git/thirdparty/icu4c/icudt_godot_base.dat ${templatesdir_mono}/icudt_godot_base.dat
+  else
+    echo "icudt_godot_base.dat" not found.
+  fi
 
   # Templates
   cp out/linux/x86_64/templates-mono/godot.linuxbsd.template_debug.x86_64.mono ${templatesdir_mono}/linux_debug.x86_64
@@ -637,6 +647,11 @@ if [ "${build_dotnet}" == "1" ]; then
     cp ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ${templatesdir_dotnet}/icudt_godot.dat
   else
     echo "icudt_godot.dat" not found.
+  fi
+  if [ -f ${basedir}/git/thirdparty/icu4c/icudt_godot_base.dat ]; then
+    cp ${basedir}/git/thirdparty/icu4c/icudt_godot_base.dat ${templatesdir_dotnet}/icudt_godot_base.dat
+  else
+    echo "icudt_godo_base.dat" not found.
   fi
 
   ## Windows (.NET) ##
