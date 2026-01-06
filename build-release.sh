@@ -178,7 +178,7 @@ if [ "${do_cleanup}" == "1" ]; then
   mkdir -p ${templatesdir}
   mkdir -p ${templatesdir_mono}
   mkdir -p ${webdir}
-  if [ -d out/windows/steam ]; then
+  if [ -d out/windows/steam -o -d out/macos/steam ]; then
     mkdir -p ${steamdir}
   fi
 
@@ -315,11 +315,28 @@ if [ "${build_classical}" == "1" ]; then
     cp out/windows/steam/godot.windows.editor.x86_32.exe ${steamdir}/godot.windows.opt.tools.32.exe
     sign_windows ${steamdir}/godot.windows.opt.tools.64.exe
     sign_windows ${steamdir}/godot.windows.opt.tools.32.exe
+    cp deps/steam/steam_api{,64}.dll ${steamdir}/
+
+    # Also copy and rename regular Linux builds for convenience to deploy to Steam.
     unzip ${reldir}/${godot_basename}_linux.x86_64.zip -d ${steamdir}/
     unzip ${reldir}/${godot_basename}_linux.x86_32.zip -d ${steamdir}/
     mv ${steamdir}/{${godot_basename}_linux.x86_64,godot.x11.opt.tools.64}
     mv ${steamdir}/{${godot_basename}_linux.x86_32,godot.x11.opt.tools.32}
-    unzip ${reldir}/${godot_basename}_macos.universal -d ${steamdir}/
+  fi
+
+  if [ -d out/macos/steam ]; then
+    binname="${godot_basename}_macos.universal"
+    rm -rf Godot.app
+    cp -r git/misc/dist/macos_tools.app Godot.app
+    mkdir -p Godot.app/Contents/{Frameworks,MacOS}
+    cp out/macos/steam/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
+    cp deps/steam/libsteam_api.dylib Godot.app/Contents/Frameworks/libsteam_api.dylib
+    chmod +x Godot.app/Contents/MacOS/Godot
+    zip -q -9 -r "${binname}_steam.zip" Godot.app
+    rm -rf Godot.app
+    sign_macos . ${binname}_steam 0
+    unzip ${binname}_steam.zip -d ${steamdir}/
+    rm -f ${binname}_steam.zip
   fi
 
   ## Web (Classical) ##
