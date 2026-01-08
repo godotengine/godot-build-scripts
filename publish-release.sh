@@ -166,6 +166,34 @@ if [ "${status}" == "stable" -a "${skip_stable}" == "0" ]; then
   echo "All stable release upload steps done."
 fi
 
+# Upload to S3 Bucket
+
+upload_bucket() {
+  local file_path=$(realpath $1)
+  local upload_key=${godot_version}/$(basename $file_path)
+  echo "Uploading $upload_key..."
+  local json_data=$(curl -s -S -f -H "Authorization: Bearer $S3_API_KEY" https://storage.godotengine.org/api/v1/request_upload_url/2/${upload_key})
+  curl -s -S -f \
+    -F key="$upload_key" \
+    -F ACL=$(echo $json_data | jq '.fields.ACL') \
+    -F policy=$(echo $json_data | jq '.fields.policy') \
+    -F x-amz-algorithm=$(echo $json_data | jq '.fields."x-amz-algorithm"') \
+    -F x-amz-credential=$(echo $json_data | jq '.fields."x-amz-credential"') \
+    -F x-amz-date=$(echo $json_data | jq '.fields."x-amz-date"') \
+    -F x-amz-signature=$(echo $json_data | jq '.fields."x-amz-signature"') \
+    -F file="@$file_path" \
+    $(echo $json_data | jq -r '.url')
+}
+
+if [ ! -z "${S3_API_KEY}" ]; then
+  echo "Uploading release to S3 Bucket..."
+  for path in $reldir/Godot_v* $reldir/mono/Godot_v*; do
+    upload_bucket $path
+  done
+else
+  echo "Disabling S3 Bucket publishing as no valid API key was found."
+fi
+
 # NuGet packages
 
 publish_nuget_packages() {
