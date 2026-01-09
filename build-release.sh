@@ -661,7 +661,7 @@ if [ "${build_dotnet}" == "1" ]; then
   declare -A win_arch_map=(
     ["x86_64"]="win64"
     ["x86_32"]="win32"
-    ["arm64"]="arm64"
+    ["arm64"]="windows_arm64"
   )
 
   for arch in x86_64 x86_32 arm64; do
