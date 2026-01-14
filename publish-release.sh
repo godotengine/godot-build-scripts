@@ -213,14 +213,18 @@ fi
 
 if [ -e "${GODOT_ANDROID_UPLOAD_JSON_KEY}" ]; then
   echo "Publishing Android Editor to Play Store..."
-  sh build-android/upload-playstore.sh ${godot_version}
+  ./build-android/upload-playstore.sh "${godot_version}" || {
+    echo "Play Store upload script failed; continuing build..."
+  }
 else
   echo "Disabling Android Editor publishing on the Play Store as no valid Play Store JSON key was found."
 fi
 
 if [ ! -z "${GODOT_ANDROID_HORIZON_APP_ID}" ] && [ ! -z "${GODOT_ANDROID_HORIZON_APP_SECRET}" ]; then
   echo "Publishing Android Editor to Horizon Store..."
-  ./build-android/upload-horizon.sh ${godot_version} ${latest_stable}
+  ./build-android/upload-horizon.sh ${godot_version} ${latest_stable} || {
+    echo "Horizon Store upload script failed; continuing build..."
+  }
 else
   echo "Disabling Android Editor publishing on the Horizon Store as config.sh does not define the required data (GODOT_ANDROID_HORIZON_APP_ID, GODOT_ANDROID_HORIZON_SECRET)."
 fi
