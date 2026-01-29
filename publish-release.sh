@@ -138,6 +138,7 @@ if [ "${status}" == "stable" -a "${skip_stable}" == "0" ]; then
   cp -f ${basedir}/git/*.{md,txt,png,svg} content/
   # Steam specific binaries prepared by build-release.sh
   cp -r ${basedir}/steam/[Gg]* content/bin/
+  cp -r ${basedir}/steam/steam_api*.dll content/bin/
   unzip ${reldir}/${namever}_export_templates.tpz -d content/editor_data/export_templates/
   mv content/editor_data/export_templates/{templates,${template_version}}
   steam_build/build.sh
