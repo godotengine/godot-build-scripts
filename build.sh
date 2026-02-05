@@ -271,11 +271,11 @@ fi
 export podman_run="${podman} run -it --rm --env BUILD_NAME=${BUILD_NAME} --env GODOT_VERSION_STATUS=${GODOT_VERSION_STATUS} --env NUM_CORES=${NUM_CORES} --env CLASSICAL=${build_classical} --env MONO=${build_mono} --env DOTNET=${build_dotnet} -v ${basedir}/godot-${godot_version}.tar.gz:/root/godot.tar.gz -v ${basedir}/mono-glue:/root/mono-glue -w /root/"
 export img_version=$IMAGE_VERSION
 
-mkdir -p ${basedir}/mono-glue
-${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
+#mkdir -p ${basedir}/mono-glue
+#${podman_run} -v ${basedir}/build-mono-glue:/root/build localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/mono-glue
 
-mkdir -p ${basedir}/out/dotnet
-${podman_run} -v ${basedir}/build-dotnet:/root/build -v ${basedir}/out/dotnet:/root/out --env GODOT_VERSION=${godot_version} localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/dotnet
+#mkdir -p ${basedir}/out/dotnet
+#${podman_run} -v ${basedir}/build-dotnet:/root/build -v ${basedir}/out/dotnet:/root/out --env GODOT_VERSION=${godot_version} localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/dotnet
 
 mkdir -p ${basedir}/out/windows
 ${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa -v ${basedir}/deps/accesskit:/root/accesskit --env STEAM=${build_steam} localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
@@ -283,12 +283,12 @@ ${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:
 mkdir -p ${basedir}/out/linux
 ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out -v ${basedir}/deps/accesskit:/root/accesskit localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
 
-mkdir -p ${basedir}/out/web
-${podman_run} -v ${basedir}/build-web:/root/build -v ${basedir}/out/web:/root/out localhost/godot-web:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/web
+#mkdir -p ${basedir}/out/web
+#${podman_run} -v ${basedir}/build-web:/root/build -v ${basedir}/out/web:/root/out localhost/godot-web:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/web
 
 mkdir -p ${basedir}/out/macos
 ${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/accesskit:/root/accesskit -v ${basedir}/deps/moltenvk:/root/moltenvk -v ${basedir}/deps/angle:/root/angle --env STEAM=${build_steam} localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
-
+exit
 mkdir -p ${basedir}/out/android
 ${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/swappy:/root/swappy -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
 

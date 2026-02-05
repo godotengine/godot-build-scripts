@@ -13,7 +13,7 @@ source ./config.sh
 
 can_sign_windows=0
 if [ ! -z "${WINDOWS_SIGN_NAME}" ] && [ ! -z "${WINDOWS_SIGN_URL}" ] && [[ $(type -P "osslsigncode") ]]; then
-  can_sign_windows=1
+  can_sign_windows=0
 else
   echo "Disabling Windows binary signing as config.sh does not define the required data (WINDOWS_SIGN_NAME, WINDOWS_SIGN_URL), or osslsigncode can't be found in PATH."
 fi
@@ -48,6 +48,7 @@ sign_macos() {
               --options=runtime --entitlements editor.entitlements \
               -s ${OSX_KEY_ID} -v ${_appname} && \
             zip -r ${_binname}_signed.zip ${_appname}"
+   echo "Code signing complete."
 
   _request_uuid=$(ssh "${OSX_HOST}" "xcrun notarytool submit ${_macos_tmpdir}/${_binname}_signed.zip --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --no-progress --output-format json")
   _request_uuid=$(echo ${_request_uuid} | sed -e 's/.*"id":"\([^"]*\)".*/\1/')
@@ -62,6 +63,7 @@ sign_macos() {
             cd ${_macos_tmpdir} && \
             xcrun stapler staple ${_appname} && \
             zip -r ${_binname}_stapled.zip ${_appname}"
+    echo "Notarization complete."
     scp "${OSX_HOST}:${_macos_tmpdir}/${_binname}_stapled.zip" "${_reldir}/${_binname}.zip"
     ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
   fi
@@ -163,6 +165,7 @@ fi
 export reldir="${basedir}/releases/${godot_version}"
 export reldir_mono="${reldir}/mono"
 export reldir_dotnet="${reldir}/dotnet"
+export dsymdir="${reldir}/debugsymbols"
 export tmpdir="${basedir}/tmp"
 export templatesdir="${tmpdir}/templates"
 export templatesdir_mono="${tmpdir}/mono/templates"
@@ -171,6 +174,7 @@ export webdir="${basedir}/web/${templates_version}"
 export steamdir="${basedir}/steam"
 
 export godot_basename="Godot_v${godot_version}"
+export dsym_basename="Godot_native_debug_symbols.${templates_version}"
 
 # Cleanup and setup
 
@@ -188,6 +192,7 @@ if [ "${do_cleanup}" == "1" ]; then
   if [ "${build_dotnet}" ]; then
     mkdir -p ${reldir_dotnet}
   fi
+  mkdir -p ${dsymdir}
   mkdir -p ${templatesdir}
   mkdir -p ${templatesdir_mono}
   mkdir -p ${templatesdir_dotnet}
@@ -215,91 +220,91 @@ if [ "${build_classical}" == "1" ]; then
 
   ## Linux (Classical) ##
 
-  # Editor
-  binname="${godot_basename}_linux.x86_64"
-  cp out/linux/x86_64/tools/godot.linuxbsd.editor.x86_64 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
-  rm ${binname}
+  for arch in x86_64 x86_32 arm64 arm32; do
+    # Editor
 
-  binname="${godot_basename}_linux.x86_32"
-  cp out/linux/x86_32/tools/godot.linuxbsd.editor.x86_32 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
-  rm ${binname}
+    binname="${godot_basename}_linux.${arch}"
+    cp out/linux/${arch}/tools/godot.linuxbsd.editor.${arch} ${binname}
+    zip -q -9 "${reldir}/${binname}.zip" ${binname}
+    rm ${binname}
 
-  binname="${godot_basename}_linux.arm64"
-  cp out/linux/arm64/tools/godot.linuxbsd.editor.arm64 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
-  rm ${binname}
+#    dsym_editor="${dsym_basename}.editor.linux.${arch}.debugsymbols"
+#    cp out/linux/${arch}/tools/godot.linuxbsd.editor.${arch}.debugsymbols ${dsym_editor}
+#    zip -q -9 "${dsymdir}/${dsym_editor}.zip" ${dsym_editor}
+#    rm ${dsym_editor}
+    if [[ "${arch}" == "x86"* ]]; then  # Hack until arm stripping is fixed.
+    zip -q -9 "${dsymdir}/godot.linuxbsd.editor.${arch}.debugsymbols.zip" out/linux/${arch}/tools/godot.linuxbsd.editor.${arch}.debugsymbols
+    fi
 
-  binname="${godot_basename}_linux.arm32"
-  cp out/linux/arm32/tools/godot.linuxbsd.editor.arm32 ${binname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname}
-  rm ${binname}
+    # Templates
 
-  # ICU data
-  if [ -f ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ]; then
-    cp ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ${templatesdir}/icudt_godot.dat
-  else
-    echo "icudt_godot.dat" not found.
-  fi
+    cp out/linux/${arch}/templates/godot.linuxbsd.template_release.${arch} ${templatesdir}/linux_release.${arch}
+    cp out/linux/${arch}/templates/godot.linuxbsd.template_debug.${arch} ${templatesdir}/linux_debug.${arch}
 
-  # Templates
-  cp out/linux/x86_64/templates/godot.linuxbsd.template_release.x86_64 ${templatesdir}/linux_release.x86_64
-  cp out/linux/x86_64/templates/godot.linuxbsd.template_debug.x86_64 ${templatesdir}/linux_debug.x86_64
-  cp out/linux/x86_32/templates/godot.linuxbsd.template_release.x86_32 ${templatesdir}/linux_release.x86_32
-  cp out/linux/x86_32/templates/godot.linuxbsd.template_debug.x86_32 ${templatesdir}/linux_debug.x86_32
-  cp out/linux/arm64/templates/godot.linuxbsd.template_release.arm64 ${templatesdir}/linux_release.arm64
-  cp out/linux/arm64/templates/godot.linuxbsd.template_debug.arm64 ${templatesdir}/linux_debug.arm64
-  cp out/linux/arm32/templates/godot.linuxbsd.template_release.arm32 ${templatesdir}/linux_release.arm32
-  cp out/linux/arm32/templates/godot.linuxbsd.template_debug.arm32 ${templatesdir}/linux_debug.arm32
+#    dsym_release="${dsym_basename}.template_release.linux.${arch}.debugsymbols"
+#    dsym_debug="${dsym_basename}.template_debug.linux.${arch}.debugsymbols"
+#    cp out/linux/${arch}/templates/godot.linuxbsd.template_release.${arch}.debugsymbols ${dsym_release}
+#    cp out/linux/${arch}/templates/godot.linuxbsd.template_debug.${arch}.debugsymbols ${dsym_debug}
+#    zip -q -9 "${dsymdir}/${dsym_release}.zip" ${dsym_release}
+#    zip -q -9 "${dsymdir}/${dsym_debug}.zip" ${dsym_debug}
+#    rm ${dsym_release} ${dsym_debug}
+    if [[ "${arch}" == "x86"* ]]; then  # Hack until arm stripping is fixed.
+    zip -q -9 "${dsymdir}/godot.linuxbsd.template_release.${arch}.debugsymbols.zip" out/linux/${arch}/templates/godot.linuxbsd.template_release.${arch}.debugsymbols
+    zip -q -9 "${dsymdir}/godot.linuxbsd.template_debug.${arch}.debugsymbols.zip" out/linux/${arch}/templates/godot.linuxbsd.template_debug.${arch}.debugsymbols
+    fi
+  done
 
   ## Windows (Classical) ##
 
-  # Editor
-  binname="${godot_basename}_win64.exe"
-  wrpname="${godot_basename}_win64_console.exe"
-  cp out/windows/x86_64/tools/godot.windows.editor.x86_64.exe ${binname}
-  sign_windows ${binname}
-  cp out/windows/x86_64/tools/godot.windows.editor.x86_64.console.exe ${wrpname}
-  sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
-  rm ${binname} ${wrpname}
+  declare -A win_arch=(
+    ["x86_64"]="win64"
+    ["x86_32"]="win32"
+    ["arm64"]="arm64"
+  )
 
-  binname="${godot_basename}_win32.exe"
-  wrpname="${godot_basename}_win32_console.exe"
-  cp out/windows/x86_32/tools/godot.windows.editor.x86_32.exe ${binname}
-  sign_windows ${binname}
-  cp out/windows/x86_32/tools/godot.windows.editor.x86_32.console.exe ${wrpname}
-  sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
-  rm ${binname} ${wrpname}
+  for arch in x86_64 x86_32 arm64; do
+    # Editor
 
-  binname="${godot_basename}_windows_arm64.exe"
-  wrpname="${godot_basename}_windows_arm64_console.exe"
-  cp out/windows/arm64/tools/godot.windows.editor.arm64.llvm.exe ${binname}
-  sign_windows ${binname}
-  cp out/windows/arm64/tools/godot.windows.editor.arm64.llvm.console.exe ${wrpname}
-  sign_windows ${wrpname}
-  zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
-  rm ${binname} ${wrpname}
+    binname="${godot_basename}_${win_arch[${arch}]}.exe"
+    wrpname="${godot_basename}_${win_arch[${arch}]}_console.exe"
+    [ "${arch}" == "arm64" ] && llvm=".llvm"
+    cp out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.exe ${binname}
+    cp out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.console.exe ${wrpname}
+    sign_windows ${binname}
+    sign_windows ${wrpname}
+    zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
+    rm ${binname} ${wrpname}
 
-  # Templates
-  cp out/windows/x86_64/templates/godot.windows.template_release.x86_64.exe ${templatesdir}/windows_release_x86_64.exe
-  cp out/windows/x86_64/templates/godot.windows.template_debug.x86_64.exe ${templatesdir}/windows_debug_x86_64.exe
-  cp out/windows/x86_32/templates/godot.windows.template_release.x86_32.exe ${templatesdir}/windows_release_x86_32.exe
-  cp out/windows/x86_32/templates/godot.windows.template_debug.x86_32.exe ${templatesdir}/windows_debug_x86_32.exe
-  cp out/windows/arm64/templates/godot.windows.template_release.arm64.llvm.exe ${templatesdir}/windows_release_arm64.exe
-  cp out/windows/arm64/templates/godot.windows.template_debug.arm64.llvm.exe ${templatesdir}/windows_debug_arm64.exe
-  cp out/windows/x86_64/templates/godot.windows.template_release.x86_64.console.exe ${templatesdir}/windows_release_x86_64_console.exe
-  cp out/windows/x86_64/templates/godot.windows.template_debug.x86_64.console.exe ${templatesdir}/windows_debug_x86_64_console.exe
-  cp out/windows/x86_32/templates/godot.windows.template_release.x86_32.console.exe ${templatesdir}/windows_release_x86_32_console.exe
-  cp out/windows/x86_32/templates/godot.windows.template_debug.x86_32.console.exe ${templatesdir}/windows_debug_x86_32_console.exe
-  cp out/windows/arm64/templates/godot.windows.template_release.arm64.llvm.console.exe ${templatesdir}/windows_release_arm64_console.exe
-  cp out/windows/arm64/templates/godot.windows.template_debug.arm64.llvm.console.exe ${templatesdir}/windows_debug_arm64_console.exe
+#    dsym_editor="${dsym_basename}.editor.windows.${arch}.debugsymbols"
+#    dsym_editor_console="${dsym_basename}.editor.windows.${arch}.console.debugsymbols"
+#    cp out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.exe.debugsymbols ${dsym_editor}
+#    cp out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.console.exe.debugsymbols ${dsym_editor}.console
+#    zip -q -9 "${dsymdir}/${dsym_editor}.zip" ${dsym_editor}
+#    rm ${dsym_editor}
+    zip -q -9 "${dsymdir}/godot.windows.editor.${arch}${llvm}.exe.debugsymbols.zip" out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}{,.console.}.exe.debugsymbols
+
+    # Templates
+
+    cp out/windows/${arch}/templates/godot.windows.template_release.${arch}${llvm}.exe ${templatesdir}/windows_release_${arch}.exe
+    cp out/windows/${arch}/templates/godot.windows.template_debug.${arch}${llvm}.exe ${templatesdir}/windows_debug_${arch}.exe
+    cp out/windows/${arch}/templates/godot.windows.template_release.${arch}${llvm}.console.exe ${templatesdir}/windows_release_${arch}_console.exe
+    cp out/windows/${arch}/templates/godot.windows.template_debug.${arch}${llvm}.console.exe ${templatesdir}/windows_debug_${arch}_console.exe
+
+#    dsym_release="${dsym_basename}.template_release.windows.${arch}"
+#    dsym_debug="${dsym_basename}.template_debug.windows.${arch}"
+#    cp out/windows/${arch}/templates/godot.windows.template_release.${arch}.exe.debugsymbols ${dsym_release}
+#    cp out/windows/${arch}/templates/godot.windows.template_debug.${arch}.exe.debugsymbols ${dsym_debug}
+#    zip -q -9 "${dsymdir}/${dsym_release}.zip" ${dsym_release}
+#    zip -q -9 "${dsymdir}/${dsym_debug}.zip" ${dsym_debug}
+#    rm ${dsym_release} ${dsym_debug}
+    zip -q -9 "${dsymdir}/godot.windows.template_release.${arch}.exe.debugsymbols.zip" out/windows/${arch}/templates/godot.windows.template_release.${arch}${llvm}{,.console}.exe.debugsymbols
+    zip -q -9 "${dsymdir}/godot.windows.template_debug.${arch}.exe.debugsymbols.zip" out/windows/${arch}/templates/godot.windows.template_debug.${arch}${llvm}{,.console}.exe.debugsymbols
+  done
 
   ## macOS (Classical) ##
 
   # Editor
+
   binname="${godot_basename}_macos.universal"
   rm -rf Godot.app
   cp -r git/misc/dist/macos_tools.app Godot.app
@@ -310,7 +315,10 @@ if [ "${build_classical}" == "1" ]; then
   rm -rf Godot.app
   sign_macos ${reldir} ${binname} Godot.app
 
+  zip -q -9 -r "${dsymdir}/godot.macos.editor.universal.dSYM.zip" out/macos/tools/godot.macos.editor.universal.dSYM
+
   # Templates
+
   rm -rf macos_template.app
   cp -r git/misc/dist/macos_template.app .
   mkdir -p macos_template.app/Contents/MacOS
@@ -322,6 +330,10 @@ if [ "${build_classical}" == "1" ]; then
   rm -rf macos_template.app
   sign_macos_template ${templatesdir}
 
+  zip -q -9 -r "${dsymdir}/godot.macos.template_release.universal.dSYM.zip" out/macos/templates/godot.macos.template_release.universal.dSYM
+  zip -q -9 -r "${dsymdir}/godot.macos.template_debug.universal.dSYM.zip" out/macos/templates/godot.macos.template_debug.universal.dSYM
+
+exit
   ## Steam (Classical) ##
 
   if [ -d out/windows/steam ]; then
@@ -424,6 +436,13 @@ if [ "${build_classical}" == "1" ]; then
   #rm -rf visionos_xcode
 
   ## Templates TPZ (Classical) ##
+
+  # ICU data
+  if [ -f ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ]; then
+    cp ${basedir}/git/thirdparty/icu4c/icudt_godot.dat ${templatesdir}/icudt_godot.dat
+  else
+    echo "icudt_godot.dat" not found.
+  fi
 
   echo "${templates_version}" > ${templatesdir}/version.txt
   pushd ${templatesdir}/..
