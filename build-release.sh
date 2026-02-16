@@ -27,64 +27,19 @@ sign_windows() {
 }
 
 sign_macos() {
-  if [ -z "${OSX_HOST}" ]; then
-    return
-  fi
-  _macos_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
-  _reldir="$1"
-  _binname="$2"
-  _appname="$3"
-
-  if [[ "${_appname}" == "Godot_mono.app" ]]; then
-    _sharpdir="${_appname}/Contents/Resources/GodotSharp"
-  fi
-
-  scp "${_reldir}/${_binname}.zip" "${OSX_HOST}:${_macos_tmpdir}"
-  scp "${basedir}/git/misc/dist/macos/editor.entitlements" "${OSX_HOST}:${_macos_tmpdir}"
-  ssh "${OSX_HOST}" "
-            cd ${_macos_tmpdir} && \
-            unzip ${_binname}.zip && \
-            codesign --force --timestamp \
-              --options=runtime --entitlements editor.entitlements \
-              -s ${OSX_KEY_ID} -v ${_appname} && \
-            zip -r ${_binname}_signed.zip ${_appname}"
-
-  _request_uuid=$(ssh "${OSX_HOST}" "xcrun notarytool submit ${_macos_tmpdir}/${_binname}_signed.zip --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --no-progress --output-format json")
-  _request_uuid=$(echo ${_request_uuid} | sed -e 's/.*"id":"\([^"]*\)".*/\1/')
-  if ! ssh "${OSX_HOST}" "xcrun notarytool wait ${_request_uuid} --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" | grep -q status:\ Accepted"; then
-    echo "Notarization failed."
-    _notarization_log=$(ssh "${OSX_HOST}" "xcrun notarytool log ${_request_uuid} --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\"")
-    echo "${_notarization_log}"
-    ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
+  if ! ~/macos/notarize.sh "$1" "$2"; then
+    echo "notarization failed"
     exit 1
-  else
-    ssh "${OSX_HOST}" "
-            cd ${_macos_tmpdir} && \
-            xcrun stapler staple ${_appname} && \
-            zip -r ${_binname}_stapled.zip ${_appname}"
-    scp "${OSX_HOST}:${_macos_tmpdir}/${_binname}_stapled.zip" "${_reldir}/${_binname}.zip"
-    ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
   fi
 }
 
 sign_macos_template() {
-  if [ -z "${OSX_HOST}" ]; then
-    return
-  fi
-  _macos_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
-  _reldir="$1"
-
-  scp "${_reldir}/macos.zip" "${OSX_HOST}:${_macos_tmpdir}"
-  ssh "${OSX_HOST}" "
-            cd ${_macos_tmpdir} && \
-            unzip macos.zip && \
-            codesign --force -s - \
-              --options=linker-signed \
-              -v macos_template.app/Contents/MacOS/* && \
-            zip -r macos_signed.zip macos_template.app"
-
-  scp "${OSX_HOST}:${_macos_tmpdir}/macos_signed.zip" "${_reldir}/macos.zip"
-  ssh "${OSX_HOST}" "rm -rf ${_macos_tmpdir}"
+  for file in $(find "$1/Contents/Macos" -type f); do
+    if ! ~/macos/sign.sh "$file"; then
+      echo "signing failed"
+      exit 1
+    fi
+  done
 }
 
 godot_version=""
@@ -306,9 +261,9 @@ if [ "${build_classical}" == "1" ]; then
   mkdir -p Godot.app/Contents/MacOS
   cp out/macos/tools/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
+  sign_macos Godot.app git/misc/dist/macos/editor.entitlements
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
-  sign_macos ${reldir} ${binname} Godot.app
 
   # Templates
   rm -rf macos_template.app
@@ -318,9 +273,9 @@ if [ "${build_classical}" == "1" ]; then
   cp out/macos/templates/godot.macos.template_release.universal macos_template.app/Contents/MacOS/godot_macos_release.universal
   cp out/macos/templates/godot.macos.template_debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.universal
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
+  sign_macos_template macos_template.app
   zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
   rm -rf macos_template.app
-  sign_macos_template ${templatesdir}
 
   ## Steam (Classical) ##
 
@@ -346,9 +301,9 @@ if [ "${build_classical}" == "1" ]; then
     cp out/macos/steam/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
     cp deps/steam/libsteam_api.dylib Godot.app/Contents/Frameworks/libsteam_api.dylib
     chmod +x Godot.app/Contents/MacOS/Godot
+    sign_macos Godot.app
     zip -q -9 -r "${binname}_steam.zip" Godot.app
     rm -rf Godot.app
-    sign_macos . ${binname}_steam Godot.app
     unzip ${binname}_steam.zip -d ${steamdir}/
     rm -f ${binname}_steam.zip
   fi
@@ -552,9 +507,9 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macos/tools-mono/godot.macos.editor.universal.mono Godot_mono.app/Contents/MacOS/Godot
   cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
   chmod +x Godot_mono.app/Contents/MacOS/Godot
+  sign_macos Godot_mono.app git/misc/dist/macos/editor.entitlements
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
-  sign_macos ${reldir_mono} ${binname} Godot_mono.app
 
   # Templates
   rm -rf macos_template.app
@@ -563,9 +518,9 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macos/templates-mono/godot.macos.template_debug.universal.mono macos_template.app/Contents/MacOS/godot_macos_debug.universal
   cp out/macos/templates-mono/godot.macos.template_release.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.universal
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
+  sign_macos_template macos_template.app
   zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
   rm -rf macos_template.app
-  sign_macos_template ${templatesdir_mono}
 
   ## Android (Mono) ##
 
@@ -693,9 +648,9 @@ if [ "${build_dotnet}" == "1" ]; then
   mkdir -p Godot_dotnet.app/Contents/MacOS
   cp out/macos/tools-dotnet/godot.macos.editor.universal.dotnet Godot_dotnet.app/Contents/MacOS/Godot
   chmod +x Godot_dotnet.app/Contents/MacOS/Godot
+  sign_macos Godot_dotnet.app
   zip -q -9 -r "${reldir_dotnet}/${binname}.zip" Godot_dotnet.app
   rm -rf Godot_dotnet.app
-  sign_macos ${reldir_dotnet} ${binname} Godot_dotnet.app
 
   # Templates
   rm -rf macos_template.app
@@ -704,9 +659,9 @@ if [ "${build_dotnet}" == "1" ]; then
   cp out/macos/templates-dotnet/godot.macos.template_debug.universal.dotnet macos_template.app/Contents/MacOS/godot_macos_debug.universal
   cp out/macos/templates-dotnet/godot.macos.template_release.universal.dotnet macos_template.app/Contents/MacOS/godot_macos_release.universal
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
+  sign_macos_template macos_template.app
   zip -q -9 -r "${templatesdir_dotnet}/macos.zip" macos_template.app
   rm -rf macos_template.app
-  sign_macos_template ${templatesdir_dotnet}
 
   ## Android (.NET) ##
 
