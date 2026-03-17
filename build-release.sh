@@ -360,8 +360,9 @@ if [ "${build_classical}" == "1" ]; then
   cp out/ios/templates/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
+  rm -rf ios_xcode/libgodot.visionos.*
   cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
-  rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
+  rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos,xros}*
   cd ios_xcode
   zip -q -9 -r "${templatesdir}/ios.zip" *
   cd ..
@@ -373,6 +374,7 @@ if [ "${build_classical}" == "1" ]; then
   #cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
   #cp out/visionos/templates/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
   #cp out/visionos/templates/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  #rm -rf visionos_xcode/libgodot.ios.*
   #cd visionos_xcode
   #zip -q -9 -r "${templatesdir}/visionos.zip" *
   #cd ..
