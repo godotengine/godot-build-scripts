@@ -27,7 +27,7 @@ sign_windows() {
 }
 
 sign_macos() {
-  if ! ~/macos/notarize.sh "$1" "$2"; then
+  if ! ~/macos/notarize.sh "$1" git/misc/dist/macos/editor.entitlements; then
     echo "notarization failed"
     exit 1
   fi
@@ -243,7 +243,7 @@ if [ "${build_classical}" == "1" ]; then
   mkdir -p Godot.app/Contents/MacOS
   cp out/macos/tools/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
-  sign_macos Godot.app git/misc/dist/macos/editor.entitlements
+  sign_macos Godot.app
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
 
@@ -491,7 +491,7 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macos/tools-mono/godot.macos.editor.universal.mono Godot_mono.app/Contents/MacOS/Godot
   cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
   chmod +x Godot_mono.app/Contents/MacOS/Godot
-  sign_macos Godot_mono.app git/misc/dist/macos/editor.entitlements
+  sign_macos Godot_mono.app
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
 
