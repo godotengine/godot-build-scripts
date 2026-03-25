@@ -34,7 +34,7 @@ sign_macos() {
 }
 
 sign_macos_template() {
-  for file in $(find "$1/Contents/Macos" -type f); do
+  for file in $(find "$1/Contents/MacOS" -type f); do
     if ! ~/macos/sign.sh "$file"; then
       echo "signing failed"
       exit 1
