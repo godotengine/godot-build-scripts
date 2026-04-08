@@ -176,6 +176,16 @@ if [ ! -d "deps/accesskit" ]; then
   popd
 fi
 
+# WinRT headers for Windows
+if [ ! -d "deps/winrt" ]; then
+  echo "Missing WinRT headers, downloading it."
+  mkdir -p deps/winrt
+  pushd deps/winrt
+  curl -L -o winrt.zip https://github.com/godotengine/winrt-mingw/releases/download/72/winrt-headers.zip
+  unzip -o winrt.zip && rm -f winrt.zip
+  popd
+fi
+
 # Windows and macOS need ANGLE
 if [ ! -d "deps/angle" ]; then
   echo "Missing ANGLE libraries, downloading them."
@@ -278,7 +288,7 @@ mkdir -p ${basedir}/out/dotnet
 ${podman_run} -v ${basedir}/build-dotnet:/root/build -v ${basedir}/out/dotnet:/root/out --env GODOT_VERSION=${godot_version} localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/dotnet
 
 mkdir -p ${basedir}/out/windows
-${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa -v ${basedir}/deps/accesskit:/root/accesskit --env STEAM=${build_steam} localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
+${podman_run} -v ${basedir}/build-windows:/root/build -v ${basedir}/out/windows:/root/out -v ${basedir}/deps/angle:/root/angle -v ${basedir}/deps/mesa:/root/mesa -v ${basedir}/deps/accesskit:/root/accesskit -v ${basedir}/deps/winrt:/root/winrt --env STEAM=${build_steam} localhost/godot-windows:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/windows
 
 mkdir -p ${basedir}/out/linux
 ${podman_run} -v ${basedir}/build-linux:/root/build -v ${basedir}/out/linux:/root/out -v ${basedir}/deps/accesskit:/root/accesskit localhost/godot-linux:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/linux
