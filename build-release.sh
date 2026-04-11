@@ -333,6 +333,10 @@ if [ "${build_classical}" == "1" ]; then
 
   # Lib for direct download
   cp out/android/templates/godot-lib.template_release.aar ${reldir}/godot-lib.${templates_version}.template_release.aar
+  cp out/android/templates-perfetto/godot-lib.template_release.aar ${reldir}/godot-lib.${templates_version}.template_release.perfetto.aar
+  cp out/android/templates-perfetto/android_source.zip ${reldir}/${godot_basename}_android_source.perfetto.zip
+  cp out/android/templates-perfetto/android_debug.apk ${reldir}/${godot_basename}_android_debug.perfetto.apk
+  cp out/android/templates-perfetto/android_release.apk ${reldir}/${godot_basename}_android_release.perfetto.apk
 
   # Editor
   binname="${godot_basename}_android_editor.apk"

@@ -19,6 +19,8 @@ prepare_source() {
   cd godot
   tar xf /root/godot.tar.gz --strip-components=1
   cp -rf /root/swappy/* thirdparty/swappy-frame-pacing/
+  mkdir -p thirdparty/perfetto
+  cp -rf /root/perfetto/* thirdparty/perfetto/
 }
 
 # Environment variables and keystore needed for signing store editor build,
@@ -110,6 +112,31 @@ if [ "${CLASSICAL}" == "1" ]; then
   cp bin/android_release.apk /root/out/templates/
   cp bin/godot-lib.template_release.aar /root/out/templates/
   cp bin/android-template-release-native-symbols.zip /root/out/templates/android_release_template_native_debug_symbols.zip
+
+  # Template builds with perfetto profiler support
+
+  prepare_source
+
+  $SCONS platform=android arch=arm32 $OPTIONS target=template_release profiler=perfetto
+  $SCONS platform=android arch=arm64 $OPTIONS target=template_release profiler=perfetto
+  $SCONS platform=android arch=x86_32 $OPTIONS target=template_release profiler=perfetto
+  $SCONS platform=android arch=x86_64 $OPTIONS target=template_release profiler=perfetto
+
+  $SCONS platform=android arch=arm32 $OPTIONS target=template_debug profiler=perfetto
+  $SCONS platform=android arch=arm64 $OPTIONS target=template_debug profiler=perfetto
+  $SCONS platform=android arch=x86_32 $OPTIONS target=template_debug profiler=perfetto
+  $SCONS platform=android arch=x86_64 $OPTIONS target=template_debug profiler=perfetto
+
+  pushd platform/android/java
+  ./gradlew generateGodotTemplates
+  popd
+
+  mkdir -p /root/out/templates-perfetto
+  cp bin/android_source.zip /root/out/templates-perfetto/
+  cp bin/android_debug.apk /root/out/templates-perfetto/
+  cp bin/android_release.apk /root/out/templates-perfetto/
+  cp bin/godot-lib.template_release.aar /root/out/templates-perfetto/
+  
 fi
 
 # Mono
