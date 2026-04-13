@@ -45,8 +45,12 @@ if [ "${CLASSICAL}" == "1" ]; then
   mkdir -p /root/out/templates
   cp bin/libgodot.ios.template_release.arm64.a /root/out/templates/libgodot.ios.a
   cp bin/libgodot.ios.template_debug.arm64.a /root/out/templates/libgodot.ios.debug.a
+  cp bin/libgodot_camera.ios.template_release.arm64.a /root/out/templates/libgodot_camera.ios.a
+  cp bin/libgodot_camera.ios.template_debug.arm64.a /root/out/templates/libgodot_camera.ios.debug.a
   cp bin/libgodot.ios.template_release.x86_64.simulator.a /root/out/templates/libgodot.ios.simulator.a
   cp bin/libgodot.ios.template_debug.x86_64.simulator.a /root/out/templates/libgodot.ios.debug.simulator.a
+  cp bin/libgodot_camera.ios.template_release.x86_64.simulator.a /root/out/templates/libgodot_camera.ios.simulator.a
+  cp bin/libgodot_camera.ios.template_debug.x86_64.simulator.a /root/out/templates/libgodot_camera.ios.debug.simulator.a
 fi
 
 # Mono
@@ -73,8 +77,12 @@ if [ "${MONO}" == "1" ]; then
   mkdir -p /root/out/templates-mono
   cp bin/libgodot.ios.template_release.arm64.a /root/out/templates-mono/libgodot.ios.a
   cp bin/libgodot.ios.template_debug.arm64.a /root/out/templates-mono/libgodot.ios.debug.a
+  cp bin/libgodot_camera.ios.template_release.arm64.a /root/out/templates-mono/libgodot_camera.ios.a
+  cp bin/libgodot_camera.ios.template_debug.arm64.a /root/out/templates-mono/libgodot_camera.ios.debug.a
   cp bin/libgodot.ios.template_release.x86_64.simulator.a /root/out/templates-mono/libgodot.ios.simulator.a
   cp bin/libgodot.ios.template_debug.x86_64.simulator.a /root/out/templates-mono/libgodot.ios.debug.simulator.a
+  cp bin/libgodot_camera.ios.template_release.x86_64.simulator.a /root/out/templates-mono/libgodot_camera.ios.simulator.a
+  cp bin/libgodot_camera.ios.template_debug.x86_64.simulator.a /root/out/templates-mono/libgodot_camera.ios.debug.simulator.a
 fi
 
 # .NET
@@ -99,8 +107,12 @@ if [ "${DOTNET}" == "1" ]; then
   mkdir -p /root/out/templates-dotnet
   cp bin/libgodot.ios.template_release.arm64.a /root/out/templates-dotnet/libgodot.ios.a
   cp bin/libgodot.ios.template_debug.arm64.a /root/out/templates-dotnet/libgodot.ios.debug.a
+  cp bin/libgodot_camera.ios.template_release.arm64.a /root/out/templates-dotnet/libgodot_camera.ios.a
+  cp bin/libgodot_camera.ios.template_debug.arm64.a /root/out/templates-dotnet/libgodot_camera.ios.debug.a
   cp bin/libgodot.ios.template_release.x86_64.simulator.a /root/out/templates-dotnet/libgodot.ios.simulator.a
   cp bin/libgodot.ios.template_debug.x86_64.simulator.a /root/out/templates-dotnet/libgodot.ios.debug.simulator.a
+  cp bin/libgodot_camera.ios.template_release.x86_64.simulator.a /root/out/templates-dotnet/libgodot_camera.ios.simulator.a
+  cp bin/libgodot_camera.ios.template_debug.x86_64.simulator.a /root/out/templates-dotnet/libgodot_camera.ios.debug.simulator.a
 fi
 
 echo "iOS build successful"
