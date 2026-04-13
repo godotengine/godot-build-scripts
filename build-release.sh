@@ -358,8 +358,12 @@ if [ "${build_classical}" == "1" ]; then
   cp -r git/misc/dist/apple_embedded_xcode ios_xcode
   cp out/ios/templates/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates/libgodot_camera.ios.simulator.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot_camera.a
+  cp out/ios/templates/libgodot_camera.ios.debug.simulator.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot_camera.a
   cp out/ios/templates/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates/libgodot_camera.ios.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64/libgodot_camera.a
+  cp out/ios/templates/libgodot_camera.ios.debug.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64/libgodot_camera.a
   rm -rf ios_xcode/libgodot.visionos.*
   cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos,xros}*
@@ -374,6 +378,8 @@ if [ "${build_classical}" == "1" ]; then
   #cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
   #cp out/visionos/templates/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
   #cp out/visionos/templates/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  #cp out/visionos/templates/libgodot_camera.visionos.a visionos_xcode/libgodot_camera.visionos.release.xcframework/xros-arm64/libgodot_camera.a
+  #cp out/visionos/templates/libgodot_camera.visionos.debug.a visionos_xcode/libgodot_camera.visionos.debug.xcframework/xros-arm64/libgodot_camera.a
   #rm -rf visionos_xcode/libgodot.ios.*
   #cd visionos_xcode
   #zip -q -9 -r "${templatesdir}/visionos.zip" *
@@ -539,8 +545,12 @@ if [ "${build_mono}" == "1" ]; then
   cp -r git/misc/dist/apple_embedded_xcode ios_xcode
   cp out/ios/templates-mono/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates-mono/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates-mono/libgodot_camera.ios.simulator.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot_camera.a
+  cp out/ios/templates-mono/libgodot_camera.ios.debug.simulator.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot_camera.a
   cp out/ios/templates-mono/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates-mono/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates-mono/libgodot_camera.ios.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64/libgodot_camera.a
+  cp out/ios/templates-mono/libgodot_camera.ios.debug.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64/libgodot_camera.a 
   cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
@@ -554,6 +564,8 @@ if [ "${build_mono}" == "1" ]; then
   #cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
   #cp out/visionos/templates-mono/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
   #cp out/visionos/templates-mono/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  #cp out/visionos/templates-mono/libgodot_camera.visionos.a visionos_xcode/libgodot_camera.visionos.release.xcframework/xros-arm64/libgodot_camera.a
+  #cp out/visionos/templates-mono/libgodot_camera.visionos.debug.a visionos_xcode/libgodot_camera.visionos.debug.xcframework/xros-arm64/libgodot_camera.a
   #cd visionos_xcode
   #zip -q -9 -r "${templatesdir_mono}/visionos.zip" *
   #cd ..
@@ -680,8 +692,12 @@ if [ "${build_dotnet}" == "1" ]; then
   cp -r git/misc/dist/apple_embedded_xcode ios_xcode
   cp out/ios/templates-dotnet/libgodot.ios.simulator.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot.a
   cp out/ios/templates-dotnet/libgodot.ios.debug.simulator.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+  cp out/ios/templates-dotnet/libgodot_camera.ios.simulator.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64_x86_64-simulator/libgodot_camera.a
+  cp out/ios/templates-dotnet/libgodot_camera.ios.debug.simulator.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64_x86_64-simulator/libgodot_camera.a
   cp out/ios/templates-dotnet/libgodot.ios.a ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates-dotnet/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
+  cp out/ios/templates-dotnet/libgodot_camera.ios.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64/libgodot_camera.a
+  cp out/ios/templates-dotnet/libgodot_camera.ios.debug.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64/libgodot_camera.a
   cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
   rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cd ios_xcode
@@ -695,6 +711,8 @@ if [ "${build_dotnet}" == "1" ]; then
   #cp -r git/misc/dist/apple_embedded_xcode visionos_xcode
   #cp out/visionos/templates-dotnet/libgodot.visionos.a visionos_xcode/libgodot.visionos.release.xcframework/xros-arm64/libgodot.a
   #cp out/visionos/templates-dotnet/libgodot.visionos.debug.a visionos_xcode/libgodot.visionos.debug.xcframework/xros-arm64/libgodot.a
+  #cp out/visionos/templates-dotnet/libgodot_camera.visionos.a visionos_xcode/libgodot_camera.visionos.release.xcframework/xros-arm64/libgodot_camera.a
+  #cp out/visionos/templates-dotnet/libgodot_camera.visionos.debug.a visionos_xcode/libgodot_camera.visionos.debug.xcframework/xros-arm64/libgodot_camera.a
   #cd visionos_xcode
   #zip -q -9 -r "${templatesdir_dotnet}/visionos.zip" *
   #cd ..

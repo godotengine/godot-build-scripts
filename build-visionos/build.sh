@@ -39,6 +39,8 @@ if [ "${CLASSICAL}" == "1" ]; then
   mkdir -p /root/out/templates
   cp bin/libgodot.visionos.template_release.arm64.a /root/out/templates/libgodot.visionos.a
   cp bin/libgodot.visionos.template_debug.arm64.a /root/out/templates/libgodot.visionos.debug.a
+  cp bin/libgodot_camera.visionos.template_release.arm64.a /root/out/templates/libgodot_camera.visionos.a
+  cp bin/libgodot_camera.visionos.template_debug.arm64.a /root/out/templates/libgodot_camera.visionos.debug.a
 fi
 
 # Mono
@@ -59,6 +61,8 @@ if [ "${MONO}" == "1" ]; then
   mkdir -p /root/out/templates-mono
   cp bin/libgodot.visionos.template_release.arm64.a /root/out/templates-mono/libgodot.visionos.a
   cp bin/libgodot.visionos.template_debug.arm64.a /root/out/templates-mono/libgodot.visionos.debug.a
+  cp bin/libgodot_camera.visionos.template_release.arm64.a /root/out/templates-mono/libgodot_camera.visionos.a
+  cp bin/libgodot_camera.visionos.template_debug.arm64.a /root/out/templates-mono/libgodot_camera.visionos.debug.a
 fi
 
 # .NET
@@ -77,6 +81,8 @@ if [ "${DOTNET}" == "1" ]; then
   mkdir -p /root/out/templates-dotnet
   cp bin/libgodot.visionos.template_release.arm64.a /root/out/templates-dotnet/libgodot.visionos.a
   cp bin/libgodot.visionos.template_debug.arm64.a /root/out/templates-dotnet/libgodot.visionos.debug.a
+  cp bin/libgodot_camera.visionos.template_release.arm64.a /root/out/templates-dotnet/libgodot_camera.visionos.a
+  cp bin/libgodot_camera.visionos.template_debug.arm64.a /root/out/templates-dotnet/libgodot_camera.visionos.debug.a
 fi
 
 echo "visionOS build successful"
