@@ -4,16 +4,21 @@ set -e
 
 # Config
 
+# Swift toolchain path comes from the image (godot-apple sets SWIFT_VERSION);
+# fall back to a sensible default if run against an older image.
+SWIFT_VERSION="${SWIFT_VERSION:-6.3.0}"
+SWIFT_FRONTEND="/root/.local/share/swiftly/toolchains/${SWIFT_VERSION}/usr/bin/swift-frontend"
+
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 # Keep LTO disabled for visionOS - it works but it makes linking apps on deploy very slow,
 # which is seen as a regression in the current workflow.
 # Disable Vulkan and MoltenVK for visionOS - visionOS doesn't support MoltenVK.
-export OPTIONS="production=yes use_lto=no vulkan=no SWIFT_FRONTEND=/root/.local/share/swiftly/toolchains/6.2.0/usr/bin/swift-frontend"
+export OPTIONS="production=yes use_lto=no vulkan=no SWIFT_FRONTEND=${SWIFT_FRONTEND}"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
 
-export VISIONOS_SDK="26.0"
+export VISIONOS_SDK="26.4"
 export VISIONOS_DEVICE="VISIONOS_SDK_PATH=/root/Xcode.app/Contents/Developer/Platforms/XROS.platform/Developer/SDKs/XROS${VISIONOS_SDK}.sdk"
 export VISIONOS_SIMULATOR="VISIONOS_SDK_PATH=/root/Xcode.app/Contents/Developer/Platforms/XRSimulator.platform/Developer/SDKs/XRSimulator${VISIONOS_SDK}.sdk"
 export APPLE_TARGET_ARM64="APPLE_TOOLCHAIN_PATH=/root/ioscross/arm64 apple_target_triple=arm-apple-darwin11-"
