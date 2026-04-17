@@ -165,12 +165,12 @@ if [ ! -d "deps/moltenvk" ]; then
   popd
 fi
 
-# accesskit-c for Windows, macOS and Linux
+# accesskit-c for Android, Windows, macOS and Linux
 if [ ! -d "deps/accesskit" ]; then
   echo "Missing accesskit, downloading it."
   mkdir -p deps/accesskit
   pushd deps/accesskit
-  curl -L -o accesskit.zip https://github.com/godotengine/godot-accesskit-c-static/releases/download/0.21.2/accesskit-c-0.21.2.zip
+  curl -L -o accesskit.zip https://github.com/godotengine/godot-accesskit-c-static/releases/download/0.21.2-1/accesskit-c-0.21.2-1.zip
   unzip -o accesskit.zip && rm -f accesskit.zip
   mv accesskit-c-* accesskit-c
   popd
@@ -300,7 +300,7 @@ mkdir -p ${basedir}/out/macos
 ${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/accesskit:/root/accesskit -v ${basedir}/deps/moltenvk:/root/moltenvk -v ${basedir}/deps/angle:/root/angle --env STEAM=${build_steam} localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
 
 mkdir -p ${basedir}/out/android
-${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/swappy:/root/swappy -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
+${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/accesskit:/root/accesskit -v ${basedir}/deps/swappy:/root/swappy -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
 
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-appleembedded:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
