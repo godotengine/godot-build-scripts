@@ -228,6 +228,15 @@ if [ ! -d "deps/swappy" ]; then
   popd
 fi
 
+if [ ! -d "deps/perfetto" ]; then
+  echo "Missing Perfetto libraries, downloading them."
+  mkdir -p deps/perfetto
+  pushd deps/perfetto
+  curl -L -O https://github.com/google/perfetto/releases/download/v54.0/perfetto-cpp-sdk-src.zip
+  unzip -o perfetto-cpp-sdk-src.zip && rm -f perfetto-cpp-sdk-src.zip
+  popd
+fi
+
 # Keystore for Android editor signing
 # Optional - the config.sh will be copied but if it's not filled in,
 # it will do an unsigned build.
@@ -300,7 +309,7 @@ mkdir -p ${basedir}/out/macos
 ${podman_run} -v ${basedir}/build-macos:/root/build -v ${basedir}/out/macos:/root/out -v ${basedir}/deps/accesskit:/root/accesskit -v ${basedir}/deps/moltenvk:/root/moltenvk -v ${basedir}/deps/angle:/root/angle --env STEAM=${build_steam} localhost/godot-osx:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/macos
 
 mkdir -p ${basedir}/out/android
-${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/swappy:/root/swappy -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
+${podman_run} -v ${basedir}/build-android:/root/build -v ${basedir}/out/android:/root/out -v ${basedir}/deps/swappy:/root/swappy -v ${basedir}/deps/perfetto:/root/perfetto -v ${basedir}/deps/keystore:/root/keystore localhost/godot-android:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/android
 
 mkdir -p ${basedir}/out/ios
 ${podman_run} -v ${basedir}/build-ios:/root/build -v ${basedir}/out/ios:/root/out localhost/godot-appleembedded:${img_version} bash build/build.sh 2>&1 | tee ${basedir}/out/logs/ios
