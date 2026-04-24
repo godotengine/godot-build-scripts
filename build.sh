@@ -118,6 +118,41 @@ case "$choice" in
 esac
 export GODOT_VERSION_STATUS="${status}"
 
+if [ "${skip_git_checkout}" == 0 ]; then
+  git clone https://github.com/godotengine/godot git || /bin/true
+  pushd git
+  git checkout -b ${git_treeish} origin/${git_treeish} || git checkout ${git_treeish}
+  git reset --hard
+  git clean -fdx
+  git pull origin ${git_treeish} || /bin/true
+  popd
+fi
+
+# Validate version.
+pushd git
+correct_version=$(python3 << EOF
+import version;
+if hasattr(version, "patch") and version.patch != 0:
+  git_version = f"{version.major}.{version.minor}.{version.patch}-{version.status}"
+else:
+  git_version = f"{version.major}.{version.minor}-{version.status}"
+stripped_version = "${godot_version}".rstrip("0123456789")
+print(git_version == stripped_version)
+EOF
+  )
+if [[ "$correct_version" != "True" ]]; then
+  read -p "Version in version.py doesn't match the passed ${godot_version}. Continue anyway (y/n)? " choice
+  case "$choice" in
+    y|Y ) echo "yes";;
+    n|N ) echo "No, aborting."; exit 1;;
+    * ) echo "Invalid choice, aborting."; exit 1;;
+  esac
+fi
+
+# Generate tarball.
+sh misc/scripts/make_tarball.sh -v ${godot_version} -g ${git_treeish}
+popd
+
 if [ "${status}" == "stable" ]; then
   build_steam=1
 fi
@@ -257,33 +292,6 @@ if [ ! -d "deps/steam" ]; then
   curl -LO ${base_url}/steam_api.dll
   curl -LO ${base_url}/win64/steam_api64.dll
   curl -LO ${base_url}/osx/libsteam_api.dylib
-  popd
-fi
-
-if [ "${skip_git_checkout}" == 0 ]; then
-  git clone https://github.com/godotengine/godot git || /bin/true
-  pushd git
-  git checkout -b ${git_treeish} origin/${git_treeish} || git checkout ${git_treeish}
-  git reset --hard
-  git clean -fdx
-  git pull origin ${git_treeish} || /bin/true
-
-  # Validate version
-  correct_version=$(python3 << EOF
-import version;
-if hasattr(version, "patch") and version.patch != 0:
-  git_version = f"{version.major}.{version.minor}.{version.patch}"
-else:
-  git_version = f"{version.major}.{version.minor}"
-print(git_version == "${version}")
-EOF
-  )
-  if [[ "$correct_version" != "True" ]]; then
-    echo "Version in version.py doesn't match the passed ${version}."
-    exit 1
-  fi
-
-  sh misc/scripts/make_tarball.sh -v ${godot_version} -g ${git_treeish}
   popd
 fi
 
