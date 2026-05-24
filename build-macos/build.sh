@@ -6,11 +6,11 @@ set -e
 
 # Swift toolchain path comes from the image (godot-apple sets SWIFT_VERSION);
 # fall back to a sensible default if run against an older image.
-SWIFT_VERSION="${SWIFT_VERSION:-6.3.0}"
+SWIFT_VERSION="${SWIFT_VERSION:-6.3.2}"
 SWIFT_FRONTEND="/root/.local/share/swiftly/toolchains/${SWIFT_VERSION}/usr/bin/swift-frontend"
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
-export OPTIONS="osxcross_sdk=darwin25.4 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_FRONTEND=${SWIFT_FRONTEND}"
+export OPTIONS="osxcross_sdk=darwin25.5 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_FRONTEND=${SWIFT_FRONTEND}"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
