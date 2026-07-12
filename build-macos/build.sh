@@ -9,30 +9,23 @@ set -e
 SWIFT_VERSION="${SWIFT_VERSION:-6.3.2}"
 SWIFT_COMPILER="/root/.local/share/swiftly/toolchains/${SWIFT_VERSION}/usr/bin/swiftc"
 
+# macOS SDK sysroot and macOS link flags are image-specific; the container
+# (godot-apple) exports them as MACOS_SDK_PATH and EXTRA_LINK_FLAGS so this
+# script doesn't hardcode paths that move with the SDK / toolchain version.
+#   MACOS_SDK_PATH   — passed to scons; detect.py uses it as the isysroot
+#                      (there is no xcrun on Linux).
+#   EXTRA_LINK_FLAGS — lld via -fuse-ld/-B, plus Xcode's clang_rt.osx.
+MACOS_SDK_PATH="${MACOS_SDK_PATH:-}"
+EXTRA_LINK_FLAGS="${EXTRA_LINK_FLAGS:-}"
+
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
-export OPTIONS="osxcross_sdk=darwin25.5 production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_COMPILER=${SWIFT_COMPILER}"
+export OPTIONS="production=yes use_volk=no vulkan_sdk_path=/root/moltenvk angle_libs=/root/angle accesskit_sdk_path=/root/accesskit/accesskit-c SWIFT_COMPILER=${SWIFT_COMPILER} MACOS_SDK_PATH=${MACOS_SDK_PATH}"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
 
-# Link config for macOS:
-#   -fuse-ld=lld                 — use LLD (not cctools-port ld, which our
-#                                  image doesn't install and whose `.tbd`
-#                                  parsing pulls in the libtapi dependency).
-#   -B /opt/darwin-tools/bin     — prepend darwin-tools to clang's program
-#                                  search so `-fuse-ld=lld` resolves to the
-#                                  Apple-platforms-enabled ld64.lld there
-#                                  (swiftly's bundled lld has Apple platforms
-#                                  disabled at build time).
-#   -L .../XcodeDefault.xctoolchain/usr/lib/clang/21/lib/darwin -lclang_rt.osx
-#                                — Apple's compiler-rt from Xcode, providing
-#                                  __isPlatformVersionAtLeast for
-#                                  `if (@available(...))` / `__builtin_available`.
-#                                  Apple's clang driver auto-links this on
-#                                  macOS; osxcross-style cross-builds have to
-#                                  wire it up explicitly.
-XCODE_CLANG_RT="/root/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/21/lib/darwin"
-EXTRA_LINKFLAGS="linkflags=-fuse-ld=lld -B /opt/darwin-tools/bin -L${XCODE_CLANG_RT} -lclang_rt.osx"
+# Wrap the image-provided macOS link flags in the scons `linkflags=` option.
+EXTRA_LINKFLAGS="linkflags=${EXTRA_LINK_FLAGS}"
 
 rm -rf godot
 mkdir godot
