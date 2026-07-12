@@ -7,17 +7,15 @@ set -e
 # Swift toolchain path comes from the image (godot-apple sets SWIFT_VERSION);
 # fall back to a sensible default if run against an older image.
 SWIFT_VERSION="${SWIFT_VERSION:-6.3.2}"
-# Swift is compiled via SWIFT_FRONTEND (swift-frontend) today; SWIFT_COMPILER
-# (swiftc) is passed too but not yet consumed by scons — ready for when the
-# visionOS PR switches setup_swift_builder to swiftc.
-SWIFT_FRONTEND="/root/.local/share/swiftly/toolchains/${SWIFT_VERSION}/usr/bin/swift-frontend"
+# Swift sources are compiled with swiftc, passed via SWIFT_COMPILER
+# (SWIFT_FRONTEND remains a back-compat alias in Godot's detect.py).
 SWIFT_COMPILER="/root/.local/share/swiftly/toolchains/${SWIFT_VERSION}/usr/bin/swiftc"
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 # Keep LTO disabled for visionOS - it works but it makes linking apps on deploy very slow,
 # which is seen as a regression in the current workflow.
 # Disable Vulkan and MoltenVK for visionOS - visionOS doesn't support MoltenVK.
-export OPTIONS="production=yes use_lto=no vulkan=no SWIFT_FRONTEND=${SWIFT_FRONTEND} SWIFT_COMPILER=${SWIFT_COMPILER}"
+export OPTIONS="production=yes use_lto=no vulkan=no SWIFT_COMPILER=${SWIFT_COMPILER}"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
