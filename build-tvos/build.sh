@@ -4,13 +4,6 @@ set -e
 
 # Config
 
-# Swift toolchain path comes from the image (godot-apple sets SWIFT_VERSION);
-# fall back to a sensible default if run against an older image.
-SWIFT_VERSION="${SWIFT_VERSION:-6.3.2}"
-# Swift sources are compiled with swiftc, passed via SWIFT_COMPILER
-# (SWIFT_FRONTEND remains a back-compat alias in Godot's detect.py).
-SWIFT_COMPILER="/root/.local/share/swiftly/toolchains/${SWIFT_VERSION}/usr/bin/swiftc"
-
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 # Keep LTO disabled for tvOS - it works but it makes linking apps on deploy very slow,
 # which is seen as a regression in the current workflow (mirrors the iOS build).
@@ -19,8 +12,7 @@ export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET=
 export TERM=xterm
 
-export TVOS_SDK="26.5"
-export TVOS_DEVICE="TVOS_SDK_PATH=/root/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS${TVOS_SDK}.sdk"
+export TVOS_DEVICE="TVOS_SDK_PATH=/root/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS${APPLE_SDKV}.sdk"
 export APPLE_TARGET_ARM64="APPLE_TOOLCHAIN_PATH=/root/ioscross/arm64 apple_target_triple=arm-apple-darwin11-"
 
 rm -rf godot

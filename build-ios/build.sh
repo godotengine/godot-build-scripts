@@ -4,13 +4,6 @@ set -e
 
 # Config
 
-# Swift toolchain path comes from the image (godot-apple sets SWIFT_VERSION);
-# fall back to a sensible default if run against an older image.
-SWIFT_VERSION="${SWIFT_VERSION:-6.3.2}"
-# Swift sources are compiled with swiftc, passed via SWIFT_COMPILER
-# (SWIFT_FRONTEND remains a back-compat alias in Godot's detect.py).
-SWIFT_COMPILER="/root/.local/share/swiftly/toolchains/${SWIFT_VERSION}/usr/bin/swiftc"
-
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 # Keep LTO disabled for iOS - it works but it makes linking apps on deploy very slow,
 # which is seen as a regression in the current workflow.
@@ -19,9 +12,8 @@ export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
 
-export IOS_SDK="26.5"
-export IOS_DEVICE="IOS_SDK_PATH=/root/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS${IOS_SDK}.sdk"
-export IOS_SIMULATOR="IOS_SDK_PATH=/root/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator${IOS_SDK}.sdk simulator=yes"
+export IOS_DEVICE="IOS_SDK_PATH=/root/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS${APPLE_SDKV}.sdk"
+export IOS_SIMULATOR="IOS_SDK_PATH=/root/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator${APPLE_SDKV}.sdk simulator=yes"
 export APPLE_TARGET_ARM64="APPLE_TOOLCHAIN_PATH=/root/ioscross/arm64 apple_target_triple=arm-apple-darwin11-"
 export APPLE_TARGET_X86_64="APPLE_TOOLCHAIN_PATH=/root/ioscross/x86_64 apple_target_triple=x86_64-apple-darwin11-"
 
