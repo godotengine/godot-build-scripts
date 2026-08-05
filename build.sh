@@ -205,7 +205,7 @@ if [ ! -d "deps/accesskit" ]; then
   echo "Missing accesskit, downloading it."
   mkdir -p deps/accesskit
   pushd deps/accesskit
-  curl -L -o accesskit.zip https://github.com/godotengine/godot-accesskit-c-static/releases/download/0.21.2/accesskit-c-0.21.2.zip
+  curl -L -o accesskit.zip https://github.com/godotengine/godot-accesskit-c-static/releases/download/0.22.3/accesskit-c-0.22.3.zip
   unzip -o accesskit.zip && rm -f accesskit.zip
   mv accesskit-c-* accesskit-c
   popd
