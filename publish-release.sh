@@ -135,7 +135,8 @@ if [ "${status}" == "stable" -a "${skip_stable}" == "0" ]; then
   pushd ${UPLOAD_STEAM_PATH}
   rm -rf content/bin/[Gg]*
   rm -rf content/editor_data/export_templates/*
-  cp -f ${basedir}/git/*.{md,txt,png,svg} content/
+  cp -f ${basedir}/git/*.{md,txt} content/
+  cp -rf ${basedir}/git/misc/logo content/
   # Steam specific binaries prepared by build-release.sh
   cp -r ${basedir}/steam/[Gg]* content/bin/
   cp -r ${basedir}/steam/steam_api*.dll content/bin/
