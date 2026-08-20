@@ -26,73 +26,19 @@ sign_windows() {
 }
 
 sign_macos() {
-  if [ -z "${OSX_HOST}" ]; then
-    return
-  fi
-  _osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
-  _reldir="$1"
-  _binname="$2"
-  _is_mono="$3"
-
-  if [[ "${_is_mono}" == "1" ]]; then
-    _appname="Godot_mono.app"
-    _sharpdir="${_appname}/Contents/Resources/GodotSharp"
-    _extra_files="${_sharpdir}/Mono/lib/*.dylib ${_sharpdir}/Tools/aot-compilers/*/*"
-  else
-    _appname="Godot.app"
-  fi
-
-  scp "${_reldir}/${_binname}.zip" "${OSX_HOST}:${_osx_tmpdir}"
-  scp "${basedir}/git/misc/dist/osx/editor.entitlements" "${OSX_HOST}:${_osx_tmpdir}"
-  ssh "${OSX_HOST}" "
-            cd ${_osx_tmpdir} && \
-            unzip ${_binname}.zip && \
-            codesign --force --timestamp \
-              --options=runtime --entitlements editor.entitlements \
-              -s ${OSX_KEY_ID} -v ${_extra_files} ${_appname} && \
-            zip -r ${_binname}_signed.zip ${_appname}"
-
-  _request_uuid=$(ssh "${OSX_HOST}" "xcrun notarytool submit ${_osx_tmpdir}/${_binname}_signed.zip --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" --no-progress --output-format json")
-  _request_uuid=$(echo ${_request_uuid} | sed -e 's/.*"id":"\([^"]*\)".*/\1/')
-  if ! ssh "${OSX_HOST}" "xcrun notarytool wait ${_request_uuid} --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\" | grep -q status:\ Accepted"; then
-    echo "Notarization failed."
-    _notarization_log=$(ssh "${OSX_HOST}" "xcrun notarytool log ${_request_uuid} --team-id \"${APPLE_TEAM}\" --apple-id \"${APPLE_ID}\" --password \"${APPLE_ID_PASSWORD}\"")
-    echo "${_notarization_log}"
-    ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
+  if ! ~/macos/notarize.sh "$1" git/misc/dist/osx/editor.entitlements; then
+    echo "notarization failed"
     exit 1
-  else
-    ssh "${OSX_HOST}" "
-            cd ${_osx_tmpdir} && \
-            xcrun stapler staple ${_appname} && \
-            zip -r ${_binname}_stapled.zip ${_appname}"
-    scp "${OSX_HOST}:${_osx_tmpdir}/${_binname}_stapled.zip" "${_reldir}/${_binname}.zip"
-    ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
   fi
 }
 
 sign_macos_template() {
-  if [ -z "${OSX_HOST}" ]; then
-    return
-  fi
-  _osx_tmpdir=$(ssh "${OSX_HOST}" "mktemp -d")
-  _reldir="$1"
-  _is_mono="$2"
-
-  if [[ "${_is_mono}" == "1" ]]; then
-    _extra_files="osx_template.app/Contents/Resources/data.mono.*/Mono/lib/*.dylib"
-  fi
-
-  scp "${_reldir}/osx.zip" "${OSX_HOST}:${_osx_tmpdir}"
-  ssh "${OSX_HOST}" "
-            cd ${_osx_tmpdir} && \
-            unzip osx.zip && \
-            codesign --force -s - \
-              --options=linker-signed \
-              -v ${_extra_files} osx_template.app/Contents/MacOS/* && \
-            zip -r osx_signed.zip osx_template.app"
-
-  scp "${OSX_HOST}:${_osx_tmpdir}/osx_signed.zip" "${_reldir}/osx.zip"
-  ssh "${OSX_HOST}" "rm -rf ${_osx_tmpdir}"
+  for file in $(find "$1/Contents/MacOS" -type f); do
+    if ! ~/macos/sign.sh "$file"; then
+      echo "signing failed"
+      exit 1
+    fi
+  done
 }
 
 godot_version=""
@@ -242,9 +188,9 @@ if [ "${build_classical}" == "1" ]; then
   mkdir -p Godot.app/Contents/MacOS
   cp out/macosx/tools/godot.osx.opt.tools.universal Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
+  sign_macos Godot.app
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
-  sign_macos ${reldir} ${binname} 0
 
   # Templates
   rm -rf osx_template.app
@@ -254,9 +200,9 @@ if [ "${build_classical}" == "1" ]; then
   cp out/macosx/templates/godot.osx.opt.universal osx_template.app/Contents/MacOS/godot_osx_release.64
   cp out/macosx/templates/godot.osx.opt.debug.universal osx_template.app/Contents/MacOS/godot_osx_debug.64
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
+  sign_macos_template osx_template.app
   zip -q -9 -r "${templatesdir}/osx.zip" osx_template.app
   rm -rf osx_template.app
-  sign_macos_template ${templatesdir} 0
 
   ## Server (Classical) ##
 
@@ -470,9 +416,9 @@ if [ "${build_mono}" == "1" ]; then
   cp -rp out/macosx/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
   cp -rp out/aot-compilers Godot_mono.app/Contents/Resources/GodotSharp/Tools/
   chmod +x Godot_mono.app/Contents/MacOS/Godot
+  sign_macos Godot_mono.app
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
-  sign_macos ${reldir_mono} ${binname} 1
 
   # Templates
   rm -rf osx_template.app
@@ -482,9 +428,9 @@ if [ "${build_mono}" == "1" ]; then
   cp out/macosx/templates-mono/godot.osx.opt.universal.mono osx_template.app/Contents/MacOS/godot_osx_release.64
   cp -rp out/macosx/templates-mono/data.mono.osx.64.* osx_template.app/Contents/Resources/
   chmod +x osx_template.app/Contents/MacOS/godot_osx*
+  sign_macos_template osx_template.app
   zip -q -9 -r "${templatesdir_mono}/osx.zip" osx_template.app
   rm -rf osx_template.app
-  sign_macos_template ${templatesdir_mono} 1
 
   ## Server (Mono) ##
 
