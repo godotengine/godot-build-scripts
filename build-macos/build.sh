@@ -39,6 +39,17 @@ lipo_and_extract_dsym() {
   llvm-strip bin/$1.universal$suffix
 }
 
+extract_dsym() {
+  # $1: binary basename, $2: optional suffix (mono, dotnet).
+  local suffix=""
+  [ -n "$2" ] && suffix=".$2"
+  dsymutil bin/$1.x86_64$suffix -o bin/$1.x86_64$suffix.dSYM
+  llvm-strip bin/$1.x86_64$suffix
+
+  dsymutil bin/$1.arm64$suffix -o bin/$1.arm64$suffix.dSYM
+  llvm-strip bin/$1.arm64$suffix
+}
+
 # Classical
 
 if [ "${CLASSICAL}" == "1" ]; then
@@ -46,7 +57,7 @@ if [ "${CLASSICAL}" == "1" ]; then
 
   run_scons platform=macos $OPTIONS arch=x86_64 target=editor
   run_scons platform=macos $OPTIONS arch=arm64 target=editor
-  lipo_and_extract_dsym godot.macos.editor
+  extract_dsym godot.macos.editor
 
   mkdir -p /root/out/tools
   cp -rvp bin/* /root/out/tools
@@ -57,7 +68,7 @@ if [ "${CLASSICAL}" == "1" ]; then
     export BUILD_NAME="steam"
     run_scons platform=macos arch=x86_64 $OPTIONS target=editor steamapi=yes
     run_scons platform=macos arch=arm64 $OPTIONS target=editor steamapi=yes
-    lipo_and_extract_dsym godot.macos.editor
+    extract_dsym godot.macos.editor
 
     mkdir -p /root/out/steam
     cp -rvp bin/* /root/out/steam
@@ -87,7 +98,7 @@ if [ "${MONO}" == "1" ]; then
 
   run_scons platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 target=editor
   run_scons platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 target=editor
-  lipo_and_extract_dsym godot.macos.editor mono
+  extract_dsym godot.macos.editor mono
   ./modules/mono/build_scripts/build_assemblies.py --godot-output-dir=./bin --godot-platform=macos
 
   mkdir -p /root/out/tools-mono
@@ -113,7 +124,7 @@ if [ "${DOTNET}" == "1" ]; then
 
   run_scons platform=macos $OPTIONS $OPTIONS_DOTNET arch=x86_64 target=editor
   run_scons platform=macos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=editor
-  lipo_and_extract_dsym godot.macos.editor dotnet
+  extract_dsym godot.macos.editor dotnet
 
   mkdir -p /root/out/tools-dotnet
   cp -rvp bin/* /root/out/tools-dotnet
