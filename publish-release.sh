@@ -167,6 +167,15 @@ else
   echo "Disabling S3 Bucket publishing as no valid API key was found."
 fi
 
+# Godot Android library
+
+if [ -d "deps/keystore" ]; then
+  echo "Publishing Android library to MavenCentral..."
+  sh build-android/upload-mavencentral.sh
+else
+  echo "Disabling Android library publishing as deps/keystore doesn't exist."
+fi
+
 # Web editor
 
 echo "Uploading web editor... (with retry logic as it can be flaky)"
