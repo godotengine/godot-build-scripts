@@ -62,6 +62,7 @@ export NUM_CORES=16
 # Use your own when making a thirdparty build.
 export WINDOWS_SIGN_NAME=''
 export WINDOWS_SIGN_URL=''
+export WINDOWS_SIGN_CA=''
 
 # Hostname or IP address of an OSX host (Needed for signing)
 # eg 'user@10.1.0.10'
