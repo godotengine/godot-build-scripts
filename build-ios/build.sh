@@ -7,7 +7,7 @@ set -e
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
 # Keep LTO disabled for iOS - it works but it makes linking apps on deploy very slow,
 # which is seen as a regression in the current workflow.
-export OPTIONS="production=yes use_lto=no SWIFT_COMPILER=${SWIFT_COMPILER}"
+export OPTIONS="production=yes use_lto=no SWIFT_COMPILER=${SWIFT_COMPILER} accesskit_sdk_path=/root/accesskit/accesskit-c"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
