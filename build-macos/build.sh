@@ -37,7 +37,6 @@ if [ "${CLASSICAL}" == "1" ]; then
 
   run_scons platform=macos $OPTIONS arch=x86_64 target=editor
   run_scons platform=macos $OPTIONS arch=arm64 target=editor
-  lipo -create bin/godot.macos.editor.x86_64 bin/godot.macos.editor.arm64 -output bin/godot.macos.editor.universal
 
   mkdir -p /root/out/tools
   cp -rvp bin/* /root/out/tools
@@ -48,7 +47,6 @@ if [ "${CLASSICAL}" == "1" ]; then
     export BUILD_NAME="steam"
     run_scons platform=macos arch=x86_64 $OPTIONS target=editor steamapi=yes
     run_scons platform=macos arch=arm64 $OPTIONS target=editor steamapi=yes
-    lipo -create bin/godot.macos.editor.x86_64 bin/godot.macos.editor.arm64 -output bin/godot.macos.editor.universal
 
     mkdir -p /root/out/steam
     cp -rvp bin/* /root/out/steam
@@ -78,7 +76,6 @@ if [ "${MONO}" == "1" ]; then
 
   run_scons platform=macos $OPTIONS $OPTIONS_MONO arch=x86_64 target=editor
   run_scons platform=macos $OPTIONS $OPTIONS_MONO arch=arm64 target=editor
-  lipo -create bin/godot.macos.editor.x86_64.mono bin/godot.macos.editor.arm64.mono -output bin/godot.macos.editor.universal.mono
   ./modules/mono/build_scripts/build_assemblies.py --godot-output-dir=./bin --godot-platform=macos
 
   mkdir -p /root/out/tools-mono
@@ -104,7 +101,6 @@ if [ "${DOTNET}" == "1" ]; then
 
   run_scons platform=macos $OPTIONS $OPTIONS_DOTNET arch=x86_64 target=editor
   run_scons platform=macos $OPTIONS $OPTIONS_DOTNET arch=arm64 target=editor
-  lipo -create bin/godot.macos.editor.x86_64.dotnet bin/godot.macos.editor.arm64.dotnet -output bin/godot.macos.editor.universal.dotnet
 
   mkdir -p /root/out/tools-dotnet
   cp -rvp bin/* /root/out/tools-dotnet
