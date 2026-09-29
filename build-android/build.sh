@@ -7,7 +7,7 @@ set -e
 # Debug symbols are enabled for the Android builds so we can generate a separate debug symbols file.
 # Gradle will strip them out of the final artifacts.
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
-export OPTIONS="production=yes debug_symbols=yes"
+export OPTIONS="production=yes debug_symbols=yes accesskit_sdk_path=/root/accesskit/accesskit-c"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm
