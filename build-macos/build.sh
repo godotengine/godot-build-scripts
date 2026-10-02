@@ -31,10 +31,12 @@ cd godot
 tar xf /root/godot.tar.gz --strip-components=1
 
 lipo_and_extract_dsym() {
-  [ "$2" == "mono" ] && mono=".mono"
-  llvm-lipo -create bin/$1.x86_64$mono bin/$1.arm64$mono -output bin/$1.universal$mono
-  dsymutil bin/$1.universal$mono -o bin/$1.universal$mono.dSYM
-  llvm-strip bin/$1.universal$mono
+  # $1: binary basename, $2: optional suffix (mono, dotnet).
+  local suffix=""
+  [ -n "$2" ] && suffix=".$2"
+  llvm-lipo -create bin/$1.x86_64$suffix bin/$1.arm64$suffix -output bin/$1.universal$suffix
+  dsymutil bin/$1.universal$suffix -o bin/$1.universal$suffix.dSYM
+  llvm-strip bin/$1.universal$suffix
 }
 
 # Classical
