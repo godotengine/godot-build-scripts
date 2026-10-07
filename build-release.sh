@@ -43,16 +43,17 @@ sign_macos_template() {
 }
 
 # Debug symbols are renamed to match the distributed executable name, and zipped
-# individually with the file at the root of the archive.
+# with the file at the root of the archive.
 # On Linux and Windows, the executable's `.gnu_debuglink` is updated to match,
 # so debuggers can find them too. This must be done before signing.
+# Console wrappers' debug symbols are not distributed.
 package_debugsymbols() {
-  # $1: debug symbols built by SCons, $2: renamed executable, $3: destination folder.
-  local dsymname="$(basename $2).debugsymbols"
-  cp $1 ${dsymname}
-  llvm-objcopy --remove-section=.gnu_debuglink $2
-  llvm-objcopy --add-gnu-debuglink=${dsymname} $2
-  zip -q -9 "$3/${dsymname}.zip" ${dsymname}
+  # $1: destination zip, $2: debug symbols built by SCons, $3: renamed executable.
+  local dsymname="$(basename $3).debugsymbols"
+  cp $2 ${dsymname}
+  llvm-objcopy --remove-section=.gnu_debuglink $3
+  llvm-objcopy --add-gnu-debuglink=${dsymname} $3
+  zip -q -9 "$1" ${dsymname}
   rm ${dsymname}
 }
 
@@ -171,12 +172,12 @@ if [ "${do_cleanup}" == "1" ]; then
   mkdir -p ${reldir}
   if [ "${build_mono}" ]; then
     mkdir -p ${reldir_mono}
-    mkdir -p ${dsymdir_mono}/templates
+    mkdir -p ${dsymdir_mono}
   fi
   if [ "${build_dotnet}" ]; then
     mkdir -p ${reldir_dotnet}
   fi
-  mkdir -p ${dsymdir}/templates
+  mkdir -p ${dsymdir}
   mkdir -p ${templatesdir}
   mkdir -p ${templatesdir_mono}
   mkdir -p ${templatesdir_dotnet}
@@ -209,7 +210,7 @@ if [ "${build_classical}" == "1" ]; then
 
     binname="${godot_basename}_linux.${arch}"
     cp out/linux/${arch}/tools/godot.linuxbsd.editor.${arch} ${binname}
-    package_debugsymbols out/linux/${arch}/tools/godot.linuxbsd.editor.${arch}.debugsymbols ${binname} ${dsymdir}
+    package_debugsymbols "${dsymdir}/${binname}.debugsymbols.zip" out/linux/${arch}/tools/godot.linuxbsd.editor.${arch}.debugsymbols ${binname}
     zip -q -9 "${reldir}/${binname}.zip" ${binname}
     rm ${binname}
 
@@ -217,7 +218,7 @@ if [ "${build_classical}" == "1" ]; then
 
     for target in release debug; do
       cp out/linux/${arch}/templates/godot.linuxbsd.template_${target}.${arch} ${templatesdir}/linux_${target}.${arch}
-      package_debugsymbols out/linux/${arch}/templates/godot.linuxbsd.template_${target}.${arch}.debugsymbols ${templatesdir}/linux_${target}.${arch} ${dsymdir}/templates
+      package_debugsymbols "${dsymdir}/${godot_basename}_debugsymbols_linux_${target}.${arch}.zip" out/linux/${arch}/templates/godot.linuxbsd.template_${target}.${arch}.debugsymbols ${templatesdir}/linux_${target}.${arch}
     done
   done
 
@@ -238,8 +239,7 @@ if [ "${build_classical}" == "1" ]; then
     wrpname="${godot_basename}_${win_arch[${arch}]}_console.exe"
     cp out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.exe ${binname}
     cp out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.console.exe ${wrpname}
-    package_debugsymbols out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.exe.debugsymbols ${binname} ${dsymdir}
-    package_debugsymbols out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.console.exe.debugsymbols ${wrpname} ${dsymdir}
+    package_debugsymbols "${dsymdir}/${binname}.debugsymbols.zip" out/windows/${arch}/tools/godot.windows.editor.${arch}${llvm}.exe.debugsymbols ${binname}
     sign_windows ${binname}
     sign_windows ${wrpname}
     zip -q -9 "${reldir}/${binname}.zip" ${binname} ${wrpname}
@@ -252,8 +252,7 @@ if [ "${build_classical}" == "1" ]; then
       dst="${templatesdir}/windows_${target}_${arch}"
       cp ${src}.exe ${dst}.exe
       cp ${src}.console.exe ${dst}_console.exe
-      package_debugsymbols ${src}.exe.debugsymbols ${dst}.exe ${dsymdir}/templates
-      package_debugsymbols ${src}.console.exe.debugsymbols ${dst}_console.exe ${dsymdir}/templates
+      package_debugsymbols "${dsymdir}/${godot_basename}_debugsymbols_windows_${target}_${arch}.exe.zip" ${src}.exe.debugsymbols ${dst}.exe
     done
   done
 
@@ -287,7 +286,7 @@ if [ "${build_classical}" == "1" ]; then
   rm -rf macos_template.app
 
   for target in release debug; do
-    package_dsym out/macos/templates/godot.macos.template_${target}.universal.dSYM godot_macos_${target}.universal.dSYM godot_macos_${target}.universal "${dsymdir}/templates/godot_macos_${target}.universal.dSYM.zip"
+    package_dsym out/macos/templates/godot.macos.template_${target}.universal.dSYM godot_macos_${target}.universal.dSYM godot_macos_${target}.universal "${dsymdir}/${godot_basename}_debugsymbols_macos_${target}.universal.zip"
   done
 
   ## Steam (Classical) ##
@@ -366,8 +365,8 @@ if [ "${build_classical}" == "1" ]; then
   cp out/android/templates/android_source.zip ${templatesdir}/
 
   # Native debug symbols
-  cp out/android/templates/android_release_template_native_debug_symbols.zip ${reldir}/Godot_native_debug_symbols.${templates_version}.template_release.android.zip
-  cp out/android/tools/android_editor_native_debug_symbols.zip ${reldir}/Godot_native_debug_symbols.${templates_version}.editor.android.zip
+  cp out/android/templates/android_release_template_native_debug_symbols.zip ${dsymdir}/${godot_basename}_debugsymbols_android_release.zip
+  cp out/android/tools/android_editor_native_debug_symbols.zip ${dsymdir}/${godot_basename}_android_editor.debugsymbols.zip
 
   ## iOS (Classical) ##
 
@@ -440,7 +439,7 @@ if [ "${build_mono}" == "1" ]; then
     binbasename="${godot_basename}_mono_linux"
     mkdir -p ${binbasename}_${arch}
     cp out/linux/${arch}/tools-mono/godot.linuxbsd.editor.${arch}.mono ${binbasename}_${arch}/${binbasename}.${arch}
-    package_debugsymbols out/linux/${arch}/tools-mono/godot.linuxbsd.editor.${arch}.mono.debugsymbols ${binbasename}_${arch}/${binbasename}.${arch} ${dsymdir_mono}
+    package_debugsymbols "${dsymdir_mono}/${binbasename}.${arch}.debugsymbols.zip" out/linux/${arch}/tools-mono/godot.linuxbsd.editor.${arch}.mono.debugsymbols ${binbasename}_${arch}/${binbasename}.${arch}
     cp -rp out/linux/${arch}/tools-mono/GodotSharp ${binbasename}_${arch}/
     zip -r -q -9 "${reldir_mono}/${binbasename}_${arch}.zip" ${binbasename}_${arch}
     rm -rf ${binbasename}_${arch}
@@ -449,7 +448,7 @@ if [ "${build_mono}" == "1" ]; then
 
     for target in release debug; do
       cp out/linux/${arch}/templates-mono/godot.linuxbsd.template_${target}.${arch}.mono ${templatesdir_mono}/linux_${target}.${arch}
-      package_debugsymbols out/linux/${arch}/templates-mono/godot.linuxbsd.template_${target}.${arch}.mono.debugsymbols ${templatesdir_mono}/linux_${target}.${arch} ${dsymdir_mono}/templates
+      package_debugsymbols "${dsymdir_mono}/${godot_basename}_mono_debugsymbols_linux_${target}.${arch}.zip" out/linux/${arch}/templates-mono/godot.linuxbsd.template_${target}.${arch}.mono.debugsymbols ${templatesdir_mono}/linux_${target}.${arch}
     done
   done
 
@@ -471,8 +470,7 @@ if [ "${build_mono}" == "1" ]; then
     mkdir -p ${binname}
     cp out/windows/${arch}/tools-mono/godot.windows.editor.${arch}${llvm}.mono.exe ${binname}/${binname}.exe
     cp out/windows/${arch}/tools-mono/godot.windows.editor.${arch}${llvm}.mono.console.exe ${binname}/${wrpname}.exe
-    package_debugsymbols out/windows/${arch}/tools-mono/godot.windows.editor.${arch}${llvm}.mono.exe.debugsymbols ${binname}/${binname}.exe ${dsymdir_mono}
-    package_debugsymbols out/windows/${arch}/tools-mono/godot.windows.editor.${arch}${llvm}.mono.console.exe.debugsymbols ${binname}/${wrpname}.exe ${dsymdir_mono}
+    package_debugsymbols "${dsymdir_mono}/${binname}.exe.debugsymbols.zip" out/windows/${arch}/tools-mono/godot.windows.editor.${arch}${llvm}.mono.exe.debugsymbols ${binname}/${binname}.exe
     sign_windows ${binname}/${binname}.exe
     sign_windows ${binname}/${wrpname}.exe
     cp -rp out/windows/${arch}/tools-mono/GodotSharp ${binname}/
@@ -486,8 +484,7 @@ if [ "${build_mono}" == "1" ]; then
       dst="${templatesdir_mono}/windows_${target}_${arch}"
       cp ${src}.exe ${dst}.exe
       cp ${src}.console.exe ${dst}_console.exe
-      package_debugsymbols ${src}.exe.debugsymbols ${dst}.exe ${dsymdir_mono}/templates
-      package_debugsymbols ${src}.console.exe.debugsymbols ${dst}_console.exe ${dsymdir_mono}/templates
+      package_debugsymbols "${dsymdir_mono}/${godot_basename}_mono_debugsymbols_windows_${target}_${arch}.exe.zip" ${src}.exe.debugsymbols ${dst}.exe
     done
   done
 
@@ -519,7 +516,7 @@ if [ "${build_mono}" == "1" ]; then
   rm -rf macos_template.app
 
   for target in release debug; do
-    package_dsym out/macos/templates-mono/godot.macos.template_${target}.universal.mono.dSYM godot_macos_${target}.universal.dSYM godot_macos_${target}.universal "${dsymdir_mono}/templates/godot_macos_${target}.universal.dSYM.zip"
+    package_dsym out/macos/templates-mono/godot.macos.template_${target}.universal.mono.dSYM godot_macos_${target}.universal.dSYM godot_macos_${target}.universal "${dsymdir_mono}/${godot_basename}_mono_debugsymbols_macos_${target}.universal.zip"
   done
 
   ## Android (Mono) ##
