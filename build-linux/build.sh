@@ -5,7 +5,7 @@ set -e
 # Config
 
 export SCONS="scons -j${NUM_CORES} verbose=yes warnings=no progress=no redirect_build_objects=no"
-export OPTIONS="production=yes accesskit_sdk_path=/root/accesskit/accesskit-c"
+export OPTIONS="production=yes debug_symbols=yes separate_debug_symbols=yes debug_paths_relative=yes accesskit_sdk_path=/root/accesskit/accesskit-c"
 export OPTIONS_MONO="module_mono_enabled=yes"
 export OPTIONS_DOTNET="module_dotnet_enabled=yes"
 export TERM=xterm

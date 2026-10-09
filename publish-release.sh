@@ -14,8 +14,9 @@ godot_version=""
 latest_stable=0
 skip_stable=0
 draft_arg=""
+upload_debug_symbols=1
 
-while getopts "h?v:lsd" opt; do
+while getopts "h?v:lsd-:" opt; do
   case "$opt" in
   h|\?)
     echo "Usage: $0 [OPTIONS...]"
@@ -24,6 +25,7 @@ while getopts "h?v:lsd" opt; do
     echo "  -l latest stable release (web editor, itch.io, EGS)"
     echo "  -s don't run stable specific steps"
     echo "  -d publish as draft release on GitHub"
+    echo "  --no-debug-symbols disable uploading debug symbols to godot-builds (default: false)"
     echo
     exit 1
     ;;
@@ -38,6 +40,17 @@ while getopts "h?v:lsd" opt; do
     ;;
   d)
     draft_arg="-d"
+    ;;
+  -)
+    case "${OPTARG}" in
+    no-debug-symbols)
+      upload_debug_symbols=0
+      ;;
+    *)
+      echo "Unknown option --${OPTARG}."
+      exit 1
+      ;;
+    esac
     ;;
   esac
 done
@@ -106,6 +119,21 @@ if [ -z "${GODOT_BUILDS_PATH}" ]; then
 fi
 
 ${GODOT_BUILDS_PATH}/tools/upload-github.sh -v ${version} -f ${status} ${draft_arg}
+
+# Upload debug symbols to GitHub godot-builds (not to the main repository)
+
+if [ "${upload_debug_symbols}" == "1" ]; then
+  echo "Uploading debug symbols to godotengine/godot-builds repository."
+
+  for f in ${reldir}/debugsymbols/[Gg]* ${reldir}/mono/debugsymbols/[Gg]*; do
+    if [ -e "$f" ]; then
+      echo "Uploading $f..."
+      gh release upload ${godot_version} $f -R godotengine/godot-builds
+    fi
+  done
+else
+  echo "Disabling debug symbols upload to godot-builds as requested with --no-debug-symbols."
+fi
 
 # Stable release only
 
