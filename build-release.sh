@@ -259,18 +259,33 @@ if [ "${build_classical}" == "1" ]; then
   ## macOS (Classical) ##
 
   # Editor
-
-  binname="${godot_basename}_macos.universal"
+  binname="${godot_basename}_macos.x86_64"
   rm -rf Godot.app
   cp -r git/misc/dist/macos_tools.app Godot.app
   mkdir -p Godot.app/Contents/MacOS
-  cp out/macos/tools/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
+  rm Godot.app/Contents/Info.plist Godot.app/Contents/Info_arm64.plist
+  mv Godot.app/Contents/Info_x86_64.plist Godot.app/Contents/Info.plist
+  cp out/macos/tools/godot.macos.editor.x86_64 Godot.app/Contents/MacOS/Godot
   chmod +x Godot.app/Contents/MacOS/Godot
   sign_macos Godot.app
   zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
   rm -rf Godot.app
 
-  package_dsym out/macos/tools/godot.macos.editor.universal.dSYM Godot.app.dSYM Godot "${dsymdir}/${binname}.dSYM.zip"
+  package_dsym out/macos/tools/godot.macos.editor.x86_64.dSYM Godot.app.dSYM Godot "${dsymdir}/${binname}.dSYM.zip"
+
+  binname="${godot_basename}_macos.arm64"
+  rm -rf Godot.app
+  cp -r git/misc/dist/macos_tools.app Godot.app
+  mkdir -p Godot.app/Contents/MacOS
+  rm Godot.app/Contents/Info.plist Godot.app/Contents/Info_x86_64.plist
+  mv Godot.app/Contents/Info_arm64.plist Godot.app/Contents/Info.plist
+  cp out/macos/tools/godot.macos.editor.arm64 Godot.app/Contents/MacOS/Godot
+  chmod +x Godot.app/Contents/MacOS/Godot
+  sign_macos Godot.app
+  zip -q -9 -r "${reldir}/${binname}.zip" Godot.app
+  rm -rf Godot.app
+
+  package_dsym out/macos/tools/godot.macos.editor.arm64.dSYM Godot.app.dSYM Godot "${dsymdir}/${binname}.dSYM.zip"
 
   # Templates
 
@@ -278,15 +293,18 @@ if [ "${build_classical}" == "1" ]; then
   cp -r git/misc/dist/macos_template.app .
   mkdir -p macos_template.app/Contents/MacOS
 
-  cp out/macos/templates/godot.macos.template_release.universal macos_template.app/Contents/MacOS/godot_macos_release.universal
-  cp out/macos/templates/godot.macos.template_debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.universal
+  cp out/macos/templates/godot.macos.template_release.arm64 macos_template.app/Contents/MacOS/godot_macos_release.arm64
+  cp out/macos/templates/godot.macos.template_debug.arm64 macos_template.app/Contents/MacOS/godot_macos_debug.arm64
+  cp out/macos/templates/godot.macos.template_release.x86_64 macos_template.app/Contents/MacOS/godot_macos_release.x86_64
+  cp out/macos/templates/godot.macos.template_debug.x86_64 macos_template.app/Contents/MacOS/godot_macos_debug.x86_64
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   sign_macos_template macos_template.app
   zip -q -9 -r "${templatesdir}/macos.zip" macos_template.app
   rm -rf macos_template.app
 
   for target in release debug; do
-    package_dsym out/macos/templates/godot.macos.template_${target}.universal.dSYM godot_macos_${target}.universal.dSYM godot_macos_${target}.universal "${dsymdir}/${godot_basename}_debugsymbols_macos_${target}.universal.zip"
+    package_dsym out/macos/templates/godot.macos.template_${target}.arm64.dSYM godot_macos_${target}.arm64.dSYM godot_macos_${target}.arm64 "${dsymdir}/${godot_basename}_debugsymbols_macos_${target}.arm64.zip"
+    package_dsym out/macos/templates/godot.macos.template_${target}.x86_64.dSYM godot_macos_${target}.x86_64.dSYM godot_macos_${target}.x86_64 "${dsymdir}/${godot_basename}_debugsymbols_macos_${target}.x86_64.zip"
   done
 
   ## Steam (Classical) ##
@@ -306,11 +324,28 @@ if [ "${build_classical}" == "1" ]; then
   fi
 
   if [ -d out/macos/steam ]; then
-    binname="${godot_basename}_macos.universal"
+    binname="${godot_basename}_macos.x86_64"
     rm -rf Godot.app
     cp -r git/misc/dist/macos_tools.app Godot.app
     mkdir -p Godot.app/Contents/{Frameworks,MacOS}
-    cp out/macos/steam/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
+    rm Godot.app/Contents/Info.plist Godot.app/Contents/Info_arm64.plist
+    mv Godot.app/Contents/Info_x86_64.plist Godot.app/Contents/Info.plist
+    cp out/macos/steam/godot.macos.editor.x86_64 Godot.app/Contents/MacOS/Godot
+    cp deps/steam/libsteam_api.dylib Godot.app/Contents/Frameworks/libsteam_api.dylib
+    chmod +x Godot.app/Contents/MacOS/Godot
+    sign_macos Godot.app
+    zip -q -9 -r "${binname}_steam.zip" Godot.app
+    rm -rf Godot.app
+    unzip ${binname}_steam.zip -d ${steamdir}/
+    rm -f ${binname}_steam.zip
+
+    binname="${godot_basename}_macos.arm64"
+    rm -rf Godot.app
+    cp -r git/misc/dist/macos_tools.app Godot.app
+    mkdir -p Godot.app/Contents/{Frameworks,MacOS}
+    rm Godot.app/Contents/Info.plist Godot.app/Contents/Info_x86_64.plist
+    mv Godot.app/Contents/Info_arm64.plist Godot.app/Contents/Info.plist
+    cp out/macos/steam/godot.macos.editor.arm64 Godot.app/Contents/MacOS/Godot
     cp deps/steam/libsteam_api.dylib Godot.app/Contents/Frameworks/libsteam_api.dylib
     chmod +x Godot.app/Contents/MacOS/Godot
     sign_macos Godot.app
@@ -491,32 +526,52 @@ if [ "${build_mono}" == "1" ]; then
   ## macOS (Mono) ##
 
   # Editor
-  binname="${godot_basename}_mono_macos.universal"
+  binname="${godot_basename}_mono_macos.x86_64"
   rm -rf Godot_mono.app
   cp -r git/misc/dist/macos_tools.app Godot_mono.app
   mkdir -p Godot_mono.app/Contents/{MacOS,Resources}
-  cp out/macos/tools-mono/godot.macos.editor.universal.mono Godot_mono.app/Contents/MacOS/Godot
+  rm Godot_mono.app/Contents/Info.plist Godot_mono.app/Contents/Info_arm64.plist
+  mv Godot_mono.app/Contents/Info_x86_64.plist Godot_mono.app/Contents/Info.plist
+  cp out/macos/tools-mono/godot.macos.editor.x86_64.mono Godot_mono.app/Contents/MacOS/Godot
   cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
   chmod +x Godot_mono.app/Contents/MacOS/Godot
   sign_macos Godot_mono.app
   zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
   rm -rf Godot_mono.app
 
-  package_dsym out/macos/tools-mono/godot.macos.editor.universal.mono.dSYM Godot_mono.app.dSYM Godot "${dsymdir_mono}/${binname}.dSYM.zip"
+  package_dsym out/macos/tools-mono/godot.macos.editor.x86_64.mono.dSYM Godot_mono.app.dSYM Godot "${dsymdir_mono}/${binname}.dSYM.zip"
+
+  binname="${godot_basename}_mono_macos.arm64"
+  rm -rf Godot_mono.app
+  cp -r git/misc/dist/macos_tools.app Godot_mono.app
+  mkdir -p Godot_mono.app/Contents/{MacOS,Resources}
+  rm Godot_mono.app/Contents/Info.plist Godot_mono.app/Contents/Info_x86_64.plist
+  mv Godot_mono.app/Contents/Info_arm64.plist Godot_mono.app/Contents/Info.plist
+  cp out/macos/tools-mono/godot.macos.editor.arm64.mono Godot_mono.app/Contents/MacOS/Godot
+  cp -rp out/macos/tools-mono/GodotSharp Godot_mono.app/Contents/Resources/GodotSharp
+  chmod +x Godot_mono.app/Contents/MacOS/Godot
+  sign_macos Godot_mono.app
+  zip -q -9 -r "${reldir_mono}/${binname}.zip" Godot_mono.app
+  rm -rf Godot_mono.app
+
+  package_dsym out/macos/tools-mono/godot.macos.editor.arm64.mono.dSYM Godot_mono.app.dSYM Godot "${dsymdir_mono}/${binname}.dSYM.zip"
 
   # Templates
   rm -rf macos_template.app
   cp -r git/misc/dist/macos_template.app .
   mkdir -p macos_template.app/Contents/{MacOS,Resources}
-  cp out/macos/templates-mono/godot.macos.template_debug.universal.mono macos_template.app/Contents/MacOS/godot_macos_debug.universal
-  cp out/macos/templates-mono/godot.macos.template_release.universal.mono macos_template.app/Contents/MacOS/godot_macos_release.universal
+  cp out/macos/templates-mono/godot.macos.template_debug.arm64.mono macos_template.app/Contents/MacOS/godot_macos_debug.arm64
+  cp out/macos/templates-mono/godot.macos.template_release.arm64.mono macos_template.app/Contents/MacOS/godot_macos_release.arm64
+  cp out/macos/templates-mono/godot.macos.template_debug.x86_64.mono macos_template.app/Contents/MacOS/godot_macos_debug.x86_64
+  cp out/macos/templates-mono/godot.macos.template_release.x86_64.mono macos_template.app/Contents/MacOS/godot_macos_release.x86_64
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   sign_macos_template macos_template.app
   zip -q -9 -r "${templatesdir_mono}/macos.zip" macos_template.app
   rm -rf macos_template.app
 
   for target in release debug; do
-    package_dsym out/macos/templates-mono/godot.macos.template_${target}.universal.mono.dSYM godot_macos_${target}.universal.dSYM godot_macos_${target}.universal "${dsymdir_mono}/${godot_basename}_mono_debugsymbols_macos_${target}.universal.zip"
+    package_dsym out/macos/templates-mono/godot.macos.template_${target}.arm64.mono.dSYM godot_macos_${target}.arm64.dSYM godot_macos_${target}.arm64 "${dsymdir_mono}/${godot_basename}_mono_debugsymbols_macos_${target}.arm64.zip"
+    package_dsym out/macos/templates-mono/godot.macos.template_${target}.x86_64.mono.dSYM godot_macos_${target}.x86_64.dSYM godot_macos_${target}.x86_64 "${dsymdir_mono}/${godot_basename}_mono_debugsymbols_macos_${target}.x86_64.zip"
   done
 
   ## Android (Mono) ##
@@ -653,11 +708,25 @@ if [ "${build_dotnet}" == "1" ]; then
   ## macOS (.NET) ##
 
   # Editor
-  binname="${godot_basename}_dotnet_macos.universal"
+  binname="${godot_basename}_dotnet_macos.x86_64"
   rm -rf Godot_dotnet.app
   cp -r git/misc/dist/macos_tools.app Godot_dotnet.app
   mkdir -p Godot_dotnet.app/Contents/MacOS
-  cp out/macos/tools-dotnet/godot.macos.editor.universal.dotnet Godot_dotnet.app/Contents/MacOS/Godot
+  rm Godot_dotnet.app/Contents/Info.plist Godot_dotnet.app/Contents/Info_arm64.plist
+  mv Godot_dotnet.app/Contents/Info_x86_64.plist Godot_dotnet.app/Contents/Info.plist
+  cp out/macos/tools-dotnet/godot.macos.editor.x86_64.dotnet Godot_dotnet.app/Contents/MacOS/Godot
+  chmod +x Godot_dotnet.app/Contents/MacOS/Godot
+  sign_macos Godot_dotnet.app
+  zip -q -9 -r "${reldir_dotnet}/${binname}.zip" Godot_dotnet.app
+  rm -rf Godot_dotnet.app
+
+  binname="${godot_basename}_dotnet_macos.arm64"
+  rm -rf Godot_dotnet.app
+  cp -r git/misc/dist/macos_tools.app Godot_dotnet.app
+  mkdir -p Godot_dotnet.app/Contents/MacOS
+  rm Godot_dotnet.app/Contents/Info.plist Godot_dotnet.app/Contents/Info_x86_64.plist
+  mv Godot_dotnet.app/Contents/Info_arm64.plist Godot_dotnet.app/Contents/Info.plist
+  cp out/macos/tools-dotnet/godot.macos.editor.arm64.dotnet Godot_dotnet.app/Contents/MacOS/Godot
   chmod +x Godot_dotnet.app/Contents/MacOS/Godot
   sign_macos Godot_dotnet.app
   zip -q -9 -r "${reldir_dotnet}/${binname}.zip" Godot_dotnet.app
@@ -667,8 +736,10 @@ if [ "${build_dotnet}" == "1" ]; then
   rm -rf macos_template.app
   cp -r git/misc/dist/macos_template.app .
   mkdir -p macos_template.app/Contents/MacOS
-  cp out/macos/templates-dotnet/godot.macos.template_debug.universal.dotnet macos_template.app/Contents/MacOS/godot_macos_debug.universal
-  cp out/macos/templates-dotnet/godot.macos.template_release.universal.dotnet macos_template.app/Contents/MacOS/godot_macos_release.universal
+  cp out/macos/templates-dotnet/godot.macos.template_debug.arm64.dotnet macos_template.app/Contents/MacOS/godot_macos_debug.arm64
+  cp out/macos/templates-dotnet/godot.macos.template_release.arm64.dotnet macos_template.app/Contents/MacOS/godot_macos_release.arm64
+  cp out/macos/templates-dotnet/godot.macos.template_debug.x86_64.dotnet macos_template.app/Contents/MacOS/godot_macos_debug.x86_64
+  cp out/macos/templates-dotnet/godot.macos.template_release.x86_64.dotnet macos_template.app/Contents/MacOS/godot_macos_release.x86_64
   chmod +x macos_template.app/Contents/MacOS/godot_macos*
   sign_macos_template macos_template.app
   zip -q -9 -r "${templatesdir_dotnet}/macos.zip" macos_template.app
