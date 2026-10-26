@@ -416,8 +416,6 @@ if [ "${build_classical}" == "1" ]; then
   cp out/ios/templates/libgodot_camera.ios.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64/libgodot_camera.a
   cp out/ios/templates/libgodot_camera.ios.debug.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64/libgodot_camera.a
   rm -rf ios_xcode/libgodot.visionos.*
-  cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
-  rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos,xros}*
   cp -r deps/accesskit/accesskit-c/lib/ios/AccessKit.xcframework ios_xcode/
   cd ios_xcode
   zip -q -9 -r "${templatesdir}/ios.zip" *
@@ -595,8 +593,6 @@ if [ "${build_mono}" == "1" ]; then
   cp out/ios/templates-mono/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates-mono/libgodot_camera.ios.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64/libgodot_camera.a
   cp out/ios/templates-mono/libgodot_camera.ios.debug.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64/libgodot_camera.a 
-  cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
-  rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cp -r deps/accesskit/accesskit-c/lib/ios/AccessKit.xcframework ios_xcode/
   cd ios_xcode
   zip -q -9 -r "${templatesdir_mono}/ios.zip" *
@@ -766,8 +762,6 @@ if [ "${build_dotnet}" == "1" ]; then
   cp out/ios/templates-dotnet/libgodot.ios.debug.a ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
   cp out/ios/templates-dotnet/libgodot_camera.ios.a ios_xcode/libgodot_camera.ios.release.xcframework/ios-arm64/libgodot_camera.a
   cp out/ios/templates-dotnet/libgodot_camera.ios.debug.a ios_xcode/libgodot_camera.ios.debug.xcframework/ios-arm64/libgodot_camera.a
-  cp -r deps/moltenvk/MoltenVK/MoltenVK.xcframework ios_xcode/
-  rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
   cp -r deps/accesskit/accesskit-c/lib/ios/AccessKit.xcframework ios_xcode/
   cd ios_xcode
   zip -q -9 -r "${templatesdir_dotnet}/ios.zip" *
